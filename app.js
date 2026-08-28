@@ -1,55 +1,33 @@
-/* =========================================================
-   ONCOMP — Elektron Uçot Sistemi
-   Supabase bağlantısı və əsas tətbiq məntiqi
-   ========================================================= */
-
-/* ---------- SUPABASE ---------- */
-
 const SUPABASE_URL = "https://frnbduzaiuitpxgvvzwq.supabase.co";
 const SUPABASE_KEY = "sb_publishable_LyQAUsn6sYJlxVzL5gNDNQ_PHQEH8mO";
 
-const supabaseHeaders = {
-    "apikey": SUPABASE_KEY,
-    "Authorization": `Bearer ${SUPABASE_KEY}`,
+const headers = {
+    apikey: SUPABASE_KEY,
+    Authorization: `Bearer ${SUPABASE_KEY}`,
     "Content-Type": "application/json"
 };
 
+const $ = (id) => document.getElementById(id);
 
-/* ---------- ELEMENTLƏR ---------- */
-
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
-const loginButton = document.getElementById("loginBtn");
-
-const loginSection = document.getElementById("loginSection");
-const dashboardSection = document.getElementById("dashboardSection");
-
-const connectionStatus = document.getElementById("connectionStatus");
-
-
-/* ---------- KÖMƏKÇİ FUNKSİYALAR ---------- */
-
-function showMessage(message, type = "info") {
-    let box = document.getElementById("oncompMessage");
+function message(text, type = "info") {
+    let box = $("oncomp-message");
 
     if (!box) {
         box = document.createElement("div");
-        box.id = "oncompMessage";
-
+        box.id = "oncomp-message";
         box.style.position = "fixed";
         box.style.top = "20px";
         box.style.right = "20px";
-        box.style.zIndex = "9999";
-        box.style.padding = "14px 18px";
+        box.style.zIndex = "99999";
+        box.style.padding = "14px 20px";
         box.style.borderRadius = "12px";
-        box.style.fontSize = "14px";
         box.style.fontWeight = "600";
+        box.style.fontFamily = "Arial, sans-serif";
         box.style.boxShadow = "0 10px 30px rgba(0,0,0,.15)";
-
         document.body.appendChild(box);
     }
 
-    box.textContent = message;
+    box.textContent = text;
 
     if (type === "success") {
         box.style.background = "#ecfdf5";
@@ -63,81 +41,30 @@ function showMessage(message, type = "info") {
     }
 
     setTimeout(() => {
-        box.remove();
+        if (box) box.remove();
     }, 3500);
 }
 
 
-/* ---------- SUPABASE YOXLAMASI ---------- */
+/* ==========================================
+   SUPABASE AUTH
+========================================== */
 
-async function checkSupabaseConnection() {
-    try {
-        const response = await fetch(
-            `${SUPABASE_URL}/rest/v1/`,
-            {
-                method: "GET",
-                headers: supabaseHeaders
-            }
-        );
+async function login() {
 
-        if (response.ok) {
-            updateConnectionStatus(true);
-            return true;
-        }
-
-        updateConnectionStatus(false);
-        return false;
-
-    } catch (error) {
-        console.error("Supabase connection error:", error);
-        updateConnectionStatus(false);
-        return false;
-    }
-}
-
-
-/* ---------- BAĞLANTI STATUSU ---------- */
-
-function updateConnectionStatus(connected) {
-
-    if (!connectionStatus) return;
-
-    if (connected) {
-        connectionStatus.textContent = "Supabase bağlantısı aktivdir";
-        connectionStatus.style.color = "#16a34a";
-    } else {
-        connectionStatus.textContent = "Supabase bağlantısı yoxdur";
-        connectionStatus.style.color = "#dc2626";
-    }
-}
-
-
-/* ---------- GİRİŞ ---------- */
-
-async function loginUser() {
-
-    const email = emailInput?.value.trim();
-    const password = passwordInput?.value;
+    const email = $("email")?.value.trim();
+    const password = $("password")?.value;
 
     if (!email || !password) {
-        showMessage(
-            "E-poçt və şifrəni daxil edin.",
-            "error"
-        );
+        message("E-poçt və şifrəni daxil edin.", "error");
         return;
     }
 
-    if (!email.includes("@")) {
-        showMessage(
-            "Düzgün e-poçt ünvanı daxil edin.",
-            "error"
-        );
-        return;
-    }
+    const button = $("loginBtn");
 
-    if (loginButton) {
-        loginButton.disabled = true;
-        loginButton.textContent = "Daxil olunur...";
+    if (button) {
+        button.disabled = true;
+        button.textContent = "Daxil olunur...";
     }
 
     try {
@@ -147,12 +74,12 @@ async function loginUser() {
             {
                 method: "POST",
                 headers: {
-                    "apikey": SUPABASE_KEY,
+                    apikey: SUPABASE_KEY,
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    email: email,
-                    password: password
+                    email,
+                    password
                 })
             }
         );
@@ -163,7 +90,7 @@ async function loginUser() {
             throw new Error(
                 data.error_description ||
                 data.msg ||
-                "Giriş mümkün olmadı."
+                "E-poçt və ya şifrə yanlışdır."
             );
         }
 
@@ -182,86 +109,76 @@ async function loginUser() {
             JSON.stringify(data.user)
         );
 
-        showMessage(
-            "Uğurla daxil oldunuz.",
-            "success"
-        );
+        message("Uğurla daxil oldunuz.", "success");
 
         setTimeout(() => {
-            openDashboard(data.user);
+            showDashboard(data.user);
         }, 500);
 
     } catch (error) {
 
         console.error(error);
 
-        showMessage(
+        message(
             error.message || "Giriş zamanı xəta baş verdi.",
             "error"
         );
 
     } finally {
 
-        if (loginButton) {
-            loginButton.disabled = false;
-            loginButton.textContent = "Daxil ol";
+        if (button) {
+            button.disabled = false;
+            button.textContent = "Daxil ol";
         }
     }
 }
 
 
-/* ---------- DASHBOARD ---------- */
+/* ==========================================
+   DASHBOARD
+========================================== */
 
-function openDashboard(user) {
+function showDashboard(user) {
+
+    const loginSection = $("loginSection");
+    const dashboardSection = $("dashboardSection");
 
     if (loginSection) {
         loginSection.style.display = "none";
     }
 
-    if (dashboardSection) {
-        dashboardSection.style.display = "block";
-    }
-
-    createDashboard(user);
-}
-
-
-/* ---------- DASHBOARD YARADILMASI ---------- */
-
-function createDashboard(user) {
-
     if (!dashboardSection) return;
 
+    dashboardSection.style.display = "block";
+
     dashboardSection.innerHTML = `
+
         <div class="oncomp-dashboard">
 
             <header class="dashboard-header">
 
-                <div>
-                    <div class="dashboard-brand">
-                        <span class="brand-mark">OC</span>
-                        <span>ONCOMP</span>
-                    </div>
+                <div class="brand-area">
+                    <div class="brand-logo">OC</div>
 
-                    <p>Elektron Uçot Sistemi</p>
+                    <div>
+                        <h1>ONCOMP</h1>
+                        <span>Elektron Uçot Sistemi</span>
+                    </div>
                 </div>
 
-                <div class="dashboard-user">
+                <div class="account-area">
 
-                    <div class="user-info">
+                    <div class="account-info">
                         <strong>
                             ${escapeHTML(user?.email || "İstifadəçi")}
                         </strong>
 
-                        <small>
+                        <span>
                             Sistem istifadəçisi
-                        </small>
+                        </span>
                     </div>
 
-                    <button
-                        id="logoutBtn"
-                        class="logout-button"
-                    >
+                    <button id="logoutBtn">
                         Çıxış
                     </button>
 
@@ -270,121 +187,141 @@ function createDashboard(user) {
             </header>
 
 
-            <main class="dashboard-content">
+            <main class="dashboard-main">
 
-                <section class="welcome-card">
+                <section class="hero-panel">
 
-                    <div>
-                        <span class="eyebrow">
-                            ONCOMP SYSTEM
-                        </span>
+                    <span>ONCOMP MANAGEMENT</span>
 
-                        <h1>
-                            Elektron uçot paneli
-                        </h1>
+                    <h2>
+                        Elektron uçot panelinə xoş gəlmisiniz.
+                    </h2>
 
-                        <p>
-                            2-ci əl notebook və planşet satışlarının
-                            idarə olunması üçün mərkəzi sistem.
-                        </p>
-                    </div>
+                    <p>
+                        2-ci əl notebook və planşet satışlarını,
+                        müştəriləri, anbarı və maliyyə göstəricilərini
+                        vahid sistemdən idarə edin.
+                    </p>
 
                 </section>
 
 
-                <section class="stats-grid">
+                <section class="statistics">
 
                     <div class="stat-card">
-                        <span>Ümumi məhsullar</span>
+                        <small>Ümumi məhsul</small>
                         <strong id="totalProducts">0</strong>
                     </div>
 
                     <div class="stat-card">
-                        <span>Satışda olanlar</span>
+                        <small>Aktiv məhsul</small>
                         <strong id="activeProducts">0</strong>
                     </div>
 
                     <div class="stat-card">
-                        <span>Satılan məhsullar</span>
+                        <small>Satış</small>
                         <strong id="soldProducts">0</strong>
                     </div>
 
                     <div class="stat-card">
-                        <span>Ümumi gəlir</span>
+                        <small>Ümumi gəlir</small>
                         <strong id="totalRevenue">0 ₼</strong>
                     </div>
 
                 </section>
 
 
-                <section class="system-section">
+                <section class="modules">
 
-                    <div class="section-title">
-                        <div>
-                            <span class="eyebrow">
-                                İDARƏETMƏ
-                            </span>
-
-                            <h2>
-                                Sistem bölmələri
-                            </h2>
-                        </div>
+                    <div class="section-heading">
+                        <span>SİSTEM</span>
+                        <h2>İdarəetmə bölmələri</h2>
                     </div>
 
 
-                    <div class="modules-grid">
+                    <div class="module-grid">
 
-                        <button class="module-card" data-module="products">
-                            <span class="module-icon">▣</span>
-                            <strong>Məhsullar</strong>
-                            <small>
+                        <button class="module-card"
+                            data-module="products">
+
+                            <b>01</b>
+
+                            <h3>Məhsullar</h3>
+
+                            <p>
                                 Notebook və planşet uçotu
-                            </small>
+                            </p>
+
                         </button>
 
 
-                        <button class="module-card" data-module="sales">
-                            <span class="module-icon">₼</span>
-                            <strong>Satışlar</strong>
-                            <small>
+                        <button class="module-card"
+                            data-module="sales">
+
+                            <b>02</b>
+
+                            <h3>Satışlar</h3>
+
+                            <p>
                                 Satış əməliyyatlarının idarəsi
-                            </small>
+                            </p>
+
                         </button>
 
 
-                        <button class="module-card" data-module="customers">
-                            <span class="module-icon">◎</span>
-                            <strong>Müştərilər</strong>
-                            <small>
+                        <button class="module-card"
+                            data-module="customers">
+
+                            <b>03</b>
+
+                            <h3>Müştərilər</h3>
+
+                            <p>
                                 Müştəri məlumatları
-                            </small>
+                            </p>
+
                         </button>
 
 
-                        <button class="module-card" data-module="reports">
-                            <span class="module-icon">◫</span>
-                            <strong>Hesabatlar</strong>
-                            <small>
-                                Maliyyə və satış hesabatları
-                            </small>
+                        <button class="module-card"
+                            data-module="inventory">
+
+                            <b>04</b>
+
+                            <h3>Anbar</h3>
+
+                            <p>
+                                Məhsul qalığı və stok
+                            </p>
+
                         </button>
 
 
-                        <button class="module-card" data-module="inventory">
-                            <span class="module-icon">▤</span>
-                            <strong>Anbar</strong>
-                            <small>
-                                Stok və məhsul qalığı
-                            </small>
+                        <button class="module-card"
+                            data-module="reports">
+
+                            <b>05</b>
+
+                            <h3>Hesabatlar</h3>
+
+                            <p>
+                                Satış və maliyyə hesabatları
+                            </p>
+
                         </button>
 
 
-                        <button class="module-card" data-module="settings">
-                            <span class="module-icon">⚙</span>
-                            <strong>Ayarlar</strong>
-                            <small>
+                        <button class="module-card"
+                            data-module="settings">
+
+                            <b>06</b>
+
+                            <h3>Ayarlar</h3>
+
+                            <p>
                                 Sistem parametrləri
-                            </small>
+                            </p>
+
                         </button>
 
                     </div>
@@ -397,118 +334,96 @@ function createDashboard(user) {
     `;
 
 
-    document
-        .getElementById("logoutBtn")
-        ?.addEventListener("click", logoutUser);
+    $("logoutBtn")?.addEventListener(
+        "click",
+        logout
+    );
 
 
     document
         .querySelectorAll(".module-card")
         .forEach(card => {
 
-            card.addEventListener("click", () => {
-
-                const module =
-                    card.dataset.module;
-
-                openModule(module);
-            });
+            card.addEventListener(
+                "click",
+                () => openModule(card.dataset.module)
+            );
 
         });
 
 
-    loadDashboardStatistics();
+    loadStatistics();
 }
 
 
-/* ---------- MODULLAR ---------- */
+/* ==========================================
+   STATİSTİKA
+========================================== */
 
-function openModule(module) {
+async function loadStatistics() {
 
-    const titles = {
-        products: "Məhsullar",
-        sales: "Satışlar",
-        customers: "Müştərilər",
-        reports: "Hesabatlar",
-        inventory: "Anbar",
-        settings: "Ayarlar"
+    const token =
+        localStorage.getItem("oncomp_access_token");
+
+    if (!token) return;
+
+    const authHeaders = {
+        ...headers,
+        Authorization: `Bearer ${token}`
     };
-
-    const title =
-        titles[module] || "Bölmə";
-
-    showMessage(
-        `${title} bölməsi hazırlanır...`,
-        "info"
-    );
-}
-
-
-/* ---------- STATİSTİKA ---------- */
-
-async function loadDashboardStatistics() {
 
     try {
 
         const response = await fetch(
             `${SUPABASE_URL}/rest/v1/products?select=id,status,sale_price`,
             {
-                method: "GET",
-                headers: supabaseHeaders
+                headers: authHeaders
             }
         );
 
-        if (!response.ok) return;
+        if (!response.ok) {
+            console.error(
+                "Products query failed:",
+                await response.text()
+            );
+            return;
+        }
 
         const products = await response.json();
 
-        const total =
-            products.length;
+        const total = products.length;
 
         const active =
             products.filter(
-                item => item.status === "active"
+                p => p.status === "active"
             ).length;
 
         const sold =
             products.filter(
-                item => item.status === "sold"
+                p => p.status === "sold"
             ).length;
 
         const revenue =
             products
-                .filter(item => item.status === "sold")
+                .filter(p => p.status === "sold")
                 .reduce(
-                    (sum, item) =>
-                        sum + Number(item.sale_price || 0),
+                    (sum, p) =>
+                        sum + Number(p.sale_price || 0),
                     0
                 );
 
 
-        const totalElement =
-            document.getElementById("totalProducts");
+        if ($("totalProducts"))
+            $("totalProducts").textContent = total;
 
-        const activeElement =
-            document.getElementById("activeProducts");
+        if ($("activeProducts"))
+            $("activeProducts").textContent = active;
 
-        const soldElement =
-            document.getElementById("soldProducts");
+        if ($("soldProducts"))
+            $("soldProducts").textContent = sold;
 
-        const revenueElement =
-            document.getElementById("totalRevenue");
-
-
-        if (totalElement)
-            totalElement.textContent = total;
-
-        if (activeElement)
-            activeElement.textContent = active;
-
-        if (soldElement)
-            soldElement.textContent = sold;
-
-        if (revenueElement)
-            revenueElement.textContent =
+        if ($("totalRevenue"))
+            $("totalRevenue").textContent =
                 `${revenue.toFixed(2)} ₼`;
 
     } catch (error) {
@@ -517,14 +432,37 @@ async function loadDashboardStatistics() {
             "Statistics error:",
             error
         );
-
     }
 }
 
 
-/* ---------- ÇIXIŞ ---------- */
+/* ==========================================
+   MODULLAR
+========================================== */
 
-function logoutUser() {
+function openModule(module) {
+
+    const names = {
+        products: "Məhsullar",
+        sales: "Satışlar",
+        customers: "Müştərilər",
+        inventory: "Anbar",
+        reports: "Hesabatlar",
+        settings: "Ayarlar"
+    };
+
+    message(
+        `${names[module] || "Bölmə"} — növbəti mərhələdə açılacaq.`,
+        "info"
+    );
+}
+
+
+/* ==========================================
+   ÇIXIŞ
+========================================== */
+
+function logout() {
 
     localStorage.removeItem(
         "oncomp_access_token"
@@ -538,54 +476,41 @@ function logoutUser() {
         "oncomp_user"
     );
 
-    if (dashboardSection) {
-        dashboardSection.style.display = "none";
-    }
-
-    if (loginSection) {
-        loginSection.style.display = "block";
-    }
-
-    showMessage(
-        "Sistemdən çıxış edildi.",
-        "success"
-    );
+    location.reload();
 }
 
 
-/* ---------- SESSION YOXLAMASI ---------- */
+/* ==========================================
+   SESSION
+========================================== */
 
-function checkExistingSession() {
+function restoreSession() {
 
     const token =
-        localStorage.getItem(
-            "oncomp_access_token"
-        );
+        localStorage.getItem("oncomp_access_token");
 
     const userData =
-        localStorage.getItem(
-            "oncomp_user"
-        );
+        localStorage.getItem("oncomp_user");
 
-    if (token && userData) {
+    if (!token || !userData) return;
 
-        try {
+    try {
 
-            const user =
-                JSON.parse(userData);
+        const user =
+            JSON.parse(userData);
 
-            openDashboard(user);
+        showDashboard(user);
 
-        } catch (error) {
+    } catch {
 
-            logoutUser();
-
-        }
+        logout();
     }
 }
 
 
-/* ---------- HTML TƏHLÜKƏSİNDƏN QORUNMA ---------- */
+/* ==========================================
+   HTML SECURITY
+========================================== */
 
 function escapeHTML(value) {
 
@@ -598,37 +523,30 @@ function escapeHTML(value) {
 }
 
 
-/* ---------- ENTER İLƏ GİRİŞ ---------- */
-
-passwordInput?.addEventListener(
-    "keydown",
-    event => {
-
-        if (event.key === "Enter") {
-            loginUser();
-        }
-
-    }
-);
-
-
-/* ---------- LOGIN BUTTON ---------- */
-
-loginButton?.addEventListener(
-    "click",
-    loginUser
-);
-
-
-/* ---------- BAŞLANĞIC ---------- */
+/* ==========================================
+   EVENTS
+========================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
-    async () => {
+    () => {
 
-        await checkSupabaseConnection();
+        $("loginBtn")?.addEventListener(
+            "click",
+            login
+        );
 
-        checkExistingSession();
+        $("password")?.addEventListener(
+            "keydown",
+            event => {
 
+                if (event.key === "Enter") {
+                    login();
+                }
+
+            }
+        );
+
+        restoreSession();
     }
 );
