@@ -1,24 +1,25 @@
-```html
 <!DOCTYPE html>
 <html lang="az">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>OnComp — Elektron Uçot Sistemi</title>
+  <title>ONCOMP — Elektron Uçot Sistemi</title>
 
   <link rel="stylesheet" href="style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
 
-  <div class="app">
+  <!-- ================= LOGIN ================= -->
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
+  <section id="loginPage" class="login-page">
+
+    <div class="login-card">
 
       <div class="brand">
-        <div class="brand-logo">OC</div>
+        <div class="brand-icon">OC</div>
 
         <div>
           <h1>ONCOMP</h1>
@@ -26,85 +27,164 @@
         </div>
       </div>
 
-      <nav class="menu">
+      <div class="login-title">
+        <h2>Xoş gəlmisiniz</h2>
+        <p>Sistemə daxil olmaq üçün məlumatlarınızı daxil edin.</p>
+      </div>
 
-        <a href="#" class="menu-item active" data-page="dashboard">
-          <span>▦</span>
-          <span>Dashboard</span>
-        </a>
+      <form id="loginForm">
 
-        <a href="#" class="menu-item" data-page="products">
+        <label>E-poçt</label>
+        <input
+          type="email"
+          id="loginEmail"
+          placeholder="E-poçt ünvanınız"
+          required
+        >
+
+        <label>Şifrə</label>
+        <input
+          type="password"
+          id="loginPassword"
+          placeholder="Şifrəniz"
+          required
+        >
+
+        <button type="submit" class="login-btn">
+          Daxil ol
+        </button>
+
+      </form>
+
+      <div id="loginMessage"></div>
+
+      <div class="connection-status">
+        <span class="status-dot"></span>
+        Supabase bağlantısı aktivdir
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ================= APP ================= -->
+
+  <section id="appPage" class="app-page hidden">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+      <div class="sidebar-brand">
+
+        <div class="brand-icon small">OC</div>
+
+        <div>
+          <strong>ONCOMP</strong>
+          <small>Elektron Uçot</small>
+        </div>
+
+      </div>
+
+
+      <nav class="main-nav">
+
+        <button class="nav-item active" data-page="dashboard">
+          <span>⌂</span>
+          <label>Dashboard</label>
+        </button>
+
+        <button class="nav-item" data-page="products">
           <span>▣</span>
-          <span>Məhsullar</span>
-        </a>
+          <label>Məhsullar</label>
+        </button>
 
-        <a href="#" class="menu-item" data-page="sales">
+        <button class="nav-item" data-page="sales">
+          <span>↗</span>
+          <label>Satışlar</label>
+        </button>
+
+        <button class="nav-item" data-page="customers">
+          <span>♙</span>
+          <label>Müştərilər</label>
+        </button>
+
+        <button class="nav-item" data-page="inventory">
           <span>▤</span>
-          <span>Satışlar</span>
-        </a>
+          <label>Anbar</label>
+        </button>
 
-        <a href="#" class="menu-item" data-page="customers">
-          <span>◉</span>
-          <span>Müştərilər</span>
-        </a>
-
-        <a href="#" class="menu-item" data-page="expenses">
+        <button class="nav-item" data-page="expenses">
           <span>₼</span>
-          <span>Gəlir / Xərc</span>
-        </a>
+          <label>Xərclər</label>
+        </button>
 
-        <a href="#" class="menu-item" data-page="stock">
-          <span>▥</span>
-          <span>Anbar</span>
-        </a>
+        <button class="nav-item" data-page="reports">
+          <span>◒</span>
+          <label>Hesabatlar</label>
+        </button>
 
-        <a href="#" class="menu-item" data-page="reports">
-          <span>◫</span>
-          <span>Hesabatlar</span>
-        </a>
+        <button class="nav-item" data-page="settings">
+          <span>⚙</span>
+          <label>Parametrlər</label>
+        </button>
 
       </nav>
+
 
       <div class="sidebar-bottom">
 
         <div class="system-status">
           <span class="status-dot"></span>
+
           <div>
             <strong>Sistem aktivdir</strong>
             <small>Supabase bağlantısı</small>
           </div>
         </div>
 
+        <button id="logoutBtn" class="logout-btn">
+          ⇥ Çıxış
+        </button>
+
       </div>
 
     </aside>
 
 
-    <!-- MAIN -->
-    <main class="main">
+    <!-- MAIN CONTENT -->
 
-      <!-- HEADER -->
+    <main class="main-content">
+
+      <!-- TOPBAR -->
+
       <header class="topbar">
 
-        <div>
-          <div class="breadcrumb">OnComp / Dashboard</div>
-          <h2 id="pageTitle">Dashboard</h2>
+        <div class="page-heading">
+
+          <span id="pageEyebrow">ONCOMP</span>
+
+          <h1 id="pageTitle">Dashboard</h1>
+
         </div>
 
-        <div class="topbar-right">
 
-          <button class="notification-btn" title="Bildirişlər">
-            🔔
-            <span class="notification-badge">0</span>
+        <div class="topbar-actions">
+
+          <button class="icon-btn" title="Bildirişlər">
+            ♢
           </button>
 
-          <div class="user-profile">
+          <div class="admin-profile">
 
-            <div class="avatar">A</div>
+            <div class="avatar">
+              A
+            </div>
 
-            <div class="user-info">
-              <strong>Admin</strong>
-              <span>Administrator</span>
+            <div>
+              <strong id="adminName">Admin</strong>
+              <small>Administrator</small>
             </div>
 
           </div>
@@ -114,240 +194,71 @@
       </header>
 
 
-      <!-- CONTENT -->
-      <section class="content">
+      <!-- ================= DASHBOARD ================= -->
+
+      <section id="dashboardPage" class="content-page active-page">
+
+        <div class="welcome-row">
+
+          <div>
+            <h2>Ümumi vəziyyət</h2>
+            <p>ONCOMP sisteminizin bugünkü göstəriciləri.</p>
+          </div>
+
+          <button class="primary-btn" data-page-action="products">
+            + Məhsul əlavə et
+          </button>
+
+        </div>
 
 
-        <!-- DASHBOARD PAGE -->
-        <div class="page active" id="dashboardPage">
+        <!-- STAT CARDS -->
 
-          <div class="welcome">
+        <div class="stats-grid">
+
+          <div class="stat-card">
+
+            <div class="stat-icon">▣</div>
 
             <div>
-              <span class="eyebrow">ONCOMP ELEKTRON UÇOT SİSTEMİ</span>
-
-              <h3>Xoş gəlmisiniz, Admin 👋</h3>
-
-              <p>
-                2-ci əl notebook və planşet satışlarınızı
-                bir paneldən idarə edin.
-              </p>
-            </div>
-
-            <button class="primary-btn" onclick="openModal('productModal')">
-              + Yeni məhsul
-            </button>
-
-          </div>
-
-
-          <!-- STATISTICS -->
-
-          <div class="stats-grid">
-
-            <div class="stat-card">
-
-              <div class="stat-icon">▣</div>
-
-              <div>
-                <span>Ümumi məhsul</span>
-                <strong id="totalProducts">0</strong>
-              </div>
-
-            </div>
-
-
-            <div class="stat-card">
-
-              <div class="stat-icon">₼</div>
-
-              <div>
-                <span>Ümumi satış</span>
-                <strong id="totalSales">0.00 ₼</strong>
-              </div>
-
-            </div>
-
-
-            <div class="stat-card">
-
-              <div class="stat-icon">◉</div>
-
-              <div>
-                <span>Müştərilər</span>
-                <strong id="totalCustomers">0</strong>
-              </div>
-
-            </div>
-
-
-            <div class="stat-card">
-
-              <div class="stat-icon">▥</div>
-
-              <div>
-                <span>Anbar qalığı</span>
-                <strong id="stockCount">0</strong>
-              </div>
-
+              <span>Ümumi məhsullar</span>
+              <strong id="statProducts">0</strong>
             </div>
 
           </div>
 
 
-          <!-- DASHBOARD GRID -->
+          <div class="stat-card">
 
-          <div class="dashboard-grid">
+            <div class="stat-icon">₼</div>
 
-
-            <!-- RECENT SALES -->
-
-            <div class="panel">
-
-              <div class="panel-header">
-
-                <div>
-                  <span class="panel-label">SATIŞLAR</span>
-                  <h3>Son satışlar</h3>
-                </div>
-
-                <button
-                  class="text-btn"
-                  onclick="showPage('sales')">
-                  Hamısına bax →
-                </button>
-
-              </div>
-
-              <div class="table-wrapper">
-
-                <table>
-
-                  <thead>
-                    <tr>
-                      <th>Məhsul</th>
-                      <th>Müştəri</th>
-                      <th>Məbləğ</th>
-                      <th>Tarix</th>
-                    </tr>
-                  </thead>
-
-                  <tbody id="recentSales">
-
-                    <tr>
-                      <td colspan="4" class="empty">
-                        Hələ satış yoxdur
-                      </td>
-                    </tr>
-
-                  </tbody>
-
-                </table>
-
-              </div>
-
-            </div>
-
-
-            <!-- STOCK -->
-
-            <div class="panel">
-
-              <div class="panel-header">
-
-                <div>
-                  <span class="panel-label">ANBAR</span>
-                  <h3>Son məhsullar</h3>
-                </div>
-
-                <button
-                  class="text-btn"
-                  onclick="showPage('stock')">
-                  Anbara bax →
-                </button>
-
-              </div>
-
-              <div id="recentProducts" class="product-list">
-
-                <div class="empty">
-                  Hələ məhsul əlavə edilməyib
-                </div>
-
-              </div>
-
+            <div>
+              <span>Anbar dəyəri</span>
+              <strong id="statInventory">0 ₼</strong>
             </div>
 
           </div>
 
 
-          <!-- QUICK ACTIONS -->
+          <div class="stat-card">
 
-          <div class="quick-section">
+            <div class="stat-icon">↗</div>
 
-            <div class="section-heading">
-
-              <div>
-                <span class="panel-label">SÜRƏTLİ ƏMƏLİYYATLAR</span>
-                <h3>İdarəetmə</h3>
-              </div>
-
+            <div>
+              <span>Bu ay satış</span>
+              <strong id="statSales">0 ₼</strong>
             </div>
 
-
-            <div class="quick-grid">
-
-              <button
-                class="quick-card"
-                onclick="openModal('productModal')">
-
-                <span class="quick-icon">+</span>
-
-                <strong>Məhsul əlavə et</strong>
-
-                <small>Notebook və ya planşet</small>
-
-              </button>
+          </div>
 
 
-              <button
-                class="quick-card"
-                onclick="openModal('saleModal')">
+          <div class="stat-card">
 
-                <span class="quick-icon">₼</span>
+            <div class="stat-icon">◆</div>
 
-                <strong>Satış qeyd et</strong>
-
-                <small>Yeni satış əməliyyatı</small>
-
-              </button>
-
-
-              <button
-                class="quick-card"
-                onclick="openModal('customerModal')">
-
-                <span class="quick-icon">◉</span>
-
-                <strong>Müştəri əlavə et</strong>
-
-                <small>Müştəri məlumatları</small>
-
-              </button>
-
-
-              <button
-                class="quick-card"
-                onclick="showPage('reports')">
-
-                <span class="quick-icon">◫</span>
-
-                <strong>Hesabatlara bax</strong>
-
-                <small>Satış və maliyyə analitikası</small>
-
-              </button>
-
+            <div>
+              <span>Bu ay mənfəət</span>
+              <strong id="statProfit">0 ₼</strong>
             </div>
 
           </div>
@@ -355,75 +266,63 @@
         </div>
 
 
-        <!-- PRODUCTS PAGE -->
+        <!-- DASHBOARD GRID -->
 
-        <div class="page" id="productsPage">
+        <div class="dashboard-grid">
 
-          <div class="page-heading">
+          <div class="panel large-panel">
 
-            <div>
-              <span class="panel-label">UÇOT</span>
-              <h3>Məhsullar</h3>
-              <p>Notebook və planşetlərin idarə edilməsi.</p>
-            </div>
+            <div class="panel-header">
 
-            <button
-              class="primary-btn"
-              onclick="openModal('productModal')">
-              + Məhsul əlavə et
-            </button>
+              <div>
+                <h3>Aylıq satışlar</h3>
+                <p>Satış performansı</p>
+              </div>
 
-          </div>
-
-          <div class="panel">
-
-            <div class="toolbar">
-
-              <input
-                type="search"
-                id="productSearch"
-                placeholder="Məhsul axtar..."
-              >
-
-              <select id="productCategoryFilter">
-
-                <option value="">Bütün kateqoriyalar</option>
-                <option value="Notebook">Notebook</option>
-                <option value="Planşet">Planşet</option>
-
+              <select id="salesPeriod">
+                <option>Son 7 gün</option>
+                <option selected>Bu ay</option>
+                <option>Bu il</option>
               </select>
 
             </div>
 
-            <div class="table-wrapper">
+            <div id="salesChart" class="chart-area">
+              <div class="empty-chart">
+                Satış məlumatları burada görünəcək
+              </div>
+            </div>
 
-              <table>
+          </div>
 
-                <thead>
 
-                  <tr>
-                    <th>Məhsul</th>
-                    <th>Kateqoriya</th>
-                    <th>Marka</th>
-                    <th>Model</th>
-                    <th>Alış qiyməti</th>
-                    <th>Satış qiyməti</th>
-                    <th>Status</th>
-                  </tr>
+          <div class="panel">
 
-                </thead>
+            <div class="panel-header">
 
-                <tbody id="productsTable">
+              <div>
+                <h3>Anbar vəziyyəti</h3>
+                <p>Məhsul stokları</p>
+              </div>
 
-                  <tr>
-                    <td colspan="7" class="empty">
-                      Məhsul yoxdur
-                    </td>
-                  </tr>
+            </div>
 
-                </tbody>
+            <div id="stockSummary" class="stock-summary">
 
-              </table>
+              <div class="stock-row">
+                <span>Mövcud məhsullar</span>
+                <strong id="stockAvailable">0</strong>
+              </div>
+
+              <div class="stock-row warning">
+                <span>Kritik stok</span>
+                <strong id="stockCritical">0</strong>
+              </div>
+
+              <div class="stock-row">
+                <span>Satılmış məhsullar</span>
+                <strong id="stockSold">0</strong>
+              </div>
 
             </div>
 
@@ -432,290 +331,561 @@
         </div>
 
 
-        <!-- SALES PAGE -->
+        <!-- RECENT SALES -->
 
-        <div class="page" id="salesPage">
+        <div class="panel">
 
-          <div class="page-heading">
+          <div class="panel-header">
 
             <div>
-              <span class="panel-label">UÇOT</span>
-              <h3>Satışlar</h3>
-              <p>Bütün satış əməliyyatlarını idarə edin.</p>
+              <h3>Son satışlar</h3>
+              <p>Sistemdəki son əməliyyatlar</p>
             </div>
 
-            <button
-              class="primary-btn"
-              onclick="openModal('saleModal')">
-              + Yeni satış
+            <button class="text-btn" data-page-action="sales">
+              Hamısına bax →
             </button>
 
           </div>
 
-          <div class="panel">
+          <div class="table-wrapper">
 
-            <div class="table-wrapper">
+            <table>
 
-              <table>
+              <thead>
+                <tr>
+                  <th>Məhsul</th>
+                  <th>Müştəri</th>
+                  <th>Məbləğ</th>
+                  <th>Ödəniş</th>
+                  <th>Tarix</th>
+                </tr>
+              </thead>
 
-                <thead>
+              <tbody id="recentSalesTable">
 
-                  <tr>
-                    <th>Məhsul</th>
-                    <th>Müştəri</th>
-                    <th>Satış qiyməti</th>
-                    <th>Mənfəət</th>
-                    <th>Tarix</th>
-                    <th>Status</th>
-                  </tr>
+                <tr>
+                  <td colspan="5" class="empty-state">
+                    Hələ satış yoxdur
+                  </td>
+                </tr>
 
-                </thead>
+              </tbody>
 
-                <tbody id="salesTable">
+            </table>
 
-                  <tr>
-                    <td colspan="6" class="empty">
-                      Satış yoxdur
-                    </td>
-                  </tr>
+          </div>
 
-                </tbody>
+        </div>
 
-              </table>
+      </section>
 
+
+      <!-- ================= PRODUCTS ================= -->
+
+      <section id="productsPage" class="content-page">
+
+        <div class="page-toolbar">
+
+          <div>
+            <h2>Məhsullar</h2>
+            <p>Notebook və planşetlərin uçotu</p>
+          </div>
+
+          <button id="addProductBtn" class="primary-btn">
+            + Yeni məhsul
+          </button>
+
+        </div>
+
+
+        <div class="filter-bar">
+
+          <input
+            type="search"
+            id="productSearch"
+            placeholder="Məhsul, marka və ya model axtar..."
+          >
+
+          <select id="productCategoryFilter">
+            <option value="">Bütün kateqoriyalar</option>
+          </select>
+
+          <select id="productStatusFilter">
+            <option value="">Bütün statuslar</option>
+            <option value="active">Aktiv</option>
+            <option value="sold">Satılıb</option>
+          </select>
+
+        </div>
+
+
+        <div class="panel">
+
+          <div class="table-wrapper">
+
+            <table>
+
+              <thead>
+                <tr>
+                  <th>Məhsul</th>
+                  <th>Kateqoriya</th>
+                  <th>Seriya / IMEI</th>
+                  <th>Alış</th>
+                  <th>Satış</th>
+                  <th>Stok</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+
+              <tbody id="productsTable">
+
+                <tr>
+                  <td colspan="8" class="empty-state">
+                    Məhsul yoxdur
+                  </td>
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ================= SALES ================= -->
+
+      <section id="salesPage" class="content-page">
+
+        <div class="page-toolbar">
+
+          <div>
+            <h2>Satışlar</h2>
+            <p>Bütün satış əməliyyatları</p>
+          </div>
+
+          <button id="newSaleBtn" class="primary-btn">
+            + Yeni satış
+          </button>
+
+        </div>
+
+
+        <div class="panel">
+
+          <div class="table-wrapper">
+
+            <table>
+
+              <thead>
+                <tr>
+                  <th>Satış №</th>
+                  <th>Müştəri</th>
+                  <th>Məbləğ</th>
+                  <th>Mənfəət</th>
+                  <th>Ödəniş</th>
+                  <th>Tarix</th>
+                </tr>
+              </thead>
+
+              <tbody id="salesTable">
+
+                <tr>
+                  <td colspan="6" class="empty-state">
+                    Hələ satış yoxdur
+                  </td>
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ================= CUSTOMERS ================= -->
+
+      <section id="customersPage" class="content-page">
+
+        <div class="page-toolbar">
+
+          <div>
+            <h2>Müştərilər</h2>
+            <p>Müştəri bazası və satış tarixçəsi</p>
+          </div>
+
+          <button id="addCustomerBtn" class="primary-btn">
+            + Yeni müştəri
+          </button>
+
+        </div>
+
+
+        <div class="filter-bar">
+
+          <input
+            type="search"
+            id="customerSearch"
+            placeholder="Müştəri adı və ya telefon axtar..."
+          >
+
+        </div>
+
+
+        <div class="panel">
+
+          <div class="table-wrapper">
+
+            <table>
+
+              <thead>
+                <tr>
+                  <th>Ad Soyad</th>
+                  <th>Telefon</th>
+                  <th>E-poçt</th>
+                  <th>Ünvan</th>
+                  <th>Qeydiyyat</th>
+                  <th></th>
+                </tr>
+              </thead>
+
+              <tbody id="customersTable">
+
+                <tr>
+                  <td colspan="6" class="empty-state">
+                    Müştəri yoxdur
+                  </td>
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ================= INVENTORY ================= -->
+
+      <section id="inventoryPage" class="content-page">
+
+        <div class="page-toolbar">
+
+          <div>
+            <h2>Anbar</h2>
+            <p>Məhsul ehtiyatlarının vəziyyəti</p>
+          </div>
+
+        </div>
+
+
+        <div class="stats-grid">
+
+          <div class="stat-card">
+            <div class="stat-icon">▤</div>
+            <div>
+              <span>Anbarda</span>
+              <strong id="inventoryAvailable">0</strong>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">!</div>
+            <div>
+              <span>Kritik stok</span>
+              <strong id="inventoryCritical">0</strong>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">✓</div>
+            <div>
+              <span>Satılıb</span>
+              <strong id="inventorySold">0</strong>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">₼</div>
+            <div>
+              <span>Anbar dəyəri</span>
+              <strong id="inventoryValue">0 ₼</strong>
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="panel">
+
+          <div class="panel-header">
+
+            <div>
+              <h3>Anbar məhsulları</h3>
+              <p>Mövcud məhsullar</p>
+            </div>
+
+          </div>
+
+          <div id="inventoryList" class="inventory-list">
+
+            <div class="empty-state">
+              Anbarda məhsul yoxdur
             </div>
 
           </div>
 
         </div>
 
+      </section>
 
-        <!-- CUSTOMERS PAGE -->
 
-        <div class="page" id="customersPage">
+      <!-- ================= EXPENSES ================= -->
 
-          <div class="page-heading">
+      <section id="expensesPage" class="content-page">
 
+        <div class="page-toolbar">
+
+          <div>
+            <h2>Xərclər</h2>
+            <p>Şirkətin xərc uçotu</p>
+          </div>
+
+          <button id="addExpenseBtn" class="primary-btn">
+            + Yeni xərc
+          </button>
+
+        </div>
+
+
+        <div class="panel">
+
+          <div class="table-wrapper">
+
+            <table>
+
+              <thead>
+                <tr>
+                  <th>Xərc</th>
+                  <th>Kateqoriya</th>
+                  <th>Məbləğ</th>
+                  <th>Tarix</th>
+                  <th>Qeyd</th>
+                  <th></th>
+                </tr>
+              </thead>
+
+              <tbody id="expensesTable">
+
+                <tr>
+                  <td colspan="6" class="empty-state">
+                    Xərc yoxdur
+                  </td>
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ================= REPORTS ================= -->
+
+      <section id="reportsPage" class="content-page">
+
+        <div class="page-toolbar">
+
+          <div>
+            <h2>Hesabatlar</h2>
+            <p>Satış, gəlir, xərc və mənfəət analitikası</p>
+          </div>
+
+          <button id="refreshReportsBtn" class="secondary-btn">
+            ↻ Yenilə
+          </button>
+
+        </div>
+
+
+        <div class="stats-grid">
+
+          <div class="stat-card">
+            <div class="stat-icon">↗</div>
             <div>
-              <span class="panel-label">MÜŞTƏRİLƏR</span>
-              <h3>Müştərilər</h3>
-              <p>Müştəri məlumatlarını idarə edin.</p>
+              <span>Ümumi gəlir</span>
+              <strong id="reportRevenue">0 ₼</strong>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">₼</div>
+            <div>
+              <span>Ümumi xərc</span>
+              <strong id="reportExpenses">0 ₼</strong>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">◆</div>
+            <div>
+              <span>Ümumi mənfəət</span>
+              <strong id="reportProfit">0 ₼</strong>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">#</div>
+            <div>
+              <span>Satış sayı</span>
+              <strong id="reportSalesCount">0</strong>
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="dashboard-grid">
+
+          <div class="panel large-panel">
+
+            <div class="panel-header">
+              <div>
+                <h3>Satış analitikası</h3>
+                <p>Satış göstəricilərinin təhlili</p>
+              </div>
             </div>
 
-            <button
-              class="primary-btn"
-              onclick="openModal('customerModal')">
-              + Müştəri əlavə et
+            <div id="reportChart" class="chart-area">
+              Hesabat qrafiki
+            </div>
+
+          </div>
+
+
+          <div class="panel">
+
+            <div class="panel-header">
+              <div>
+                <h3>Kateqoriyalar</h3>
+                <p>Məhsul bölgüsü</p>
+              </div>
+            </div>
+
+            <div id="categoryReport">
+              Məlumat yoxdur
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ================= SETTINGS ================= -->
+
+      <section id="settingsPage" class="content-page">
+
+        <div class="page-toolbar">
+
+          <div>
+            <h2>Parametrlər</h2>
+            <p>ONCOMP sistem ayarları</p>
+          </div>
+
+        </div>
+
+
+        <div class="settings-grid">
+
+          <div class="panel">
+
+            <div class="panel-header">
+
+              <div>
+                <h3>Şirkət məlumatları</h3>
+                <p>Sistem daxilində istifadə olunan məlumatlar</p>
+              </div>
+
+            </div>
+
+            <div class="form-grid">
+
+              <div class="form-group">
+                <label>Şirkət adı</label>
+                <input id="companyName" value="ONCOMP">
+              </div>
+
+              <div class="form-group">
+                <label>E-poçt</label>
+                <input id="companyEmail" placeholder="info@oncomp.az">
+              </div>
+
+              <div class="form-group">
+                <label>Telefon</label>
+                <input id="companyPhone" placeholder="+994">
+              </div>
+
+              <div class="form-group">
+                <label>Ünvan</label>
+                <input id="companyAddress" placeholder="Azərbaycan">
+              </div>
+
+            </div>
+
+            <button id="saveSettingsBtn" class="primary-btn">
+              Yadda saxla
             </button>
 
           </div>
 
-          <div class="panel">
-
-            <div class="table-wrapper">
-
-              <table>
-
-                <thead>
-
-                  <tr>
-                    <th>Ad soyad</th>
-                    <th>Telefon</th>
-                    <th>E-poçt</th>
-                    <th>Qeyd</th>
-                  </tr>
-
-                </thead>
-
-                <tbody id="customersTable">
-
-                  <tr>
-                    <td colspan="4" class="empty">
-                      Müştəri yoxdur
-                    </td>
-                  </tr>
-
-                </tbody>
-
-              </table>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- EXPENSES PAGE -->
-
-        <div class="page" id="expensesPage">
-
-          <div class="page-heading">
-
-            <div>
-              <span class="panel-label">MALİYYƏ</span>
-              <h3>Gəlir / Xərc</h3>
-              <p>Gəlir və xərclərin uçotu.</p>
-            </div>
-
-            <button
-              class="primary-btn"
-              onclick="openModal('expenseModal')">
-              + Əməliyyat əlavə et
-            </button>
-
-          </div>
-
-          <div class="stats-grid">
-
-            <div class="stat-card">
-              <div class="stat-icon">↑</div>
-              <div>
-                <span>Gəlir</span>
-                <strong id="incomeTotal">0.00 ₼</strong>
-              </div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-icon">↓</div>
-              <div>
-                <span>Xərc</span>
-                <strong id="expenseTotal">0.00 ₼</strong>
-              </div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-icon">₼</div>
-              <div>
-                <span>Mənfəət</span>
-                <strong id="profitTotal">0.00 ₼</strong>
-              </div>
-            </div>
-
-          </div>
 
           <div class="panel">
 
-            <div class="table-wrapper">
+            <div class="panel-header">
 
-              <table>
-
-                <thead>
-                  <tr>
-                    <th>Növ</th>
-                    <th>Açıqlama</th>
-                    <th>Məbləğ</th>
-                    <th>Tarix</th>
-                  </tr>
-                </thead>
-
-                <tbody id="expensesTable">
-
-                  <tr>
-                    <td colspan="4" class="empty">
-                      Əməliyyat yoxdur
-                    </td>
-                  </tr>
-
-                </tbody>
-
-              </table>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- STOCK PAGE -->
-
-        <div class="page" id="stockPage">
-
-          <div class="page-heading">
-
-            <div>
-              <span class="panel-label">ANBAR</span>
-              <h3>Anbar</h3>
-              <p>Mövcud məhsullar və qalıqlar.</p>
-            </div>
-
-          </div>
-
-          <div class="panel">
-
-            <div id="stockList" class="stock-grid">
-
-              <div class="empty">
-                Anbarda məhsul yoxdur
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- REPORTS PAGE -->
-
-        <div class="page" id="reportsPage">
-
-          <div class="page-heading">
-
-            <div>
-              <span class="panel-label">ANALİTİKA</span>
-              <h3>Hesabatlar</h3>
-              <p>OnComp üzrə ümumi maliyyə göstəriciləri.</p>
-            </div>
-
-          </div>
-
-          <div class="stats-grid">
-
-            <div class="stat-card">
-              <div class="stat-icon">₼</div>
               <div>
-                <span>Satış dövriyyəsi</span>
-                <strong id="reportRevenue">0.00 ₼</strong>
+                <h3>Sistem</h3>
+                <p>Texniki vəziyyət</p>
               </div>
+
             </div>
 
-            <div class="stat-card">
-              <div class="stat-icon">↑</div>
+            <div class="system-info">
+
               <div>
-                <span>Ümumi mənfəət</span>
-                <strong id="reportProfit">0.00 ₼</strong>
+                <span>Frontend</span>
+                <strong>ONCOMP</strong>
               </div>
-            </div>
 
-            <div class="stat-card">
-              <div class="stat-icon">▣</div>
               <div>
-                <span>Satılan məhsul</span>
-                <strong id="reportSold">0</strong>
+                <span>Database</span>
+                <strong>Supabase</strong>
               </div>
-            </div>
 
-            <div class="stat-card">
-              <div class="stat-icon">▥</div>
               <div>
-                <span>Anbar qalığı</span>
-                <strong id="reportStock">0</strong>
+                <span>Status</span>
+                <strong class="online">Aktiv</strong>
               </div>
+
             </div>
-
-          </div>
-
-          <div class="panel report-panel">
-
-            <h3>Sistem haqqında</h3>
-
-            <p>
-              OnComp — 2-ci əl notebook və planşet satışlarının
-              uçotu, anbar idarəetməsi, müştəri bazası və
-              maliyyə hesabatları üçün elektron idarəetmə sistemidir.
-            </p>
 
           </div>
 
@@ -725,373 +895,39 @@
 
     </main>
 
-  </div>
+  </section>
 
 
-  <!-- PRODUCT MODAL -->
+  <!-- ================= MODAL ================= -->
 
-  <div class="modal" id="productModal">
+  <div id="modalOverlay" class="modal-overlay hidden">
 
-    <div class="modal-box">
+    <div class="modal">
 
       <div class="modal-header">
 
         <div>
-          <span class="panel-label">YENİ</span>
-          <h3>Məhsul əlavə et</h3>
+          <h2 id="modalTitle">Yeni məlumat</h2>
+          <p id="modalDescription">Məlumatları daxil edin.</p>
         </div>
 
-        <button class="close-btn" onclick="closeModal('productModal')">
+        <button id="closeModalBtn" class="modal-close">
           ×
         </button>
 
       </div>
 
-      <form id="productForm">
-
-        <div class="form-grid">
-
-          <label>
-            Məhsul adı
-            <input
-              name="name"
-              type="text"
-              placeholder="Məs: Lenovo ThinkPad T480"
-              required>
-          </label>
-
-          <label>
-            Kateqoriya
-
-            <select name="category" required>
-              <option value="">Seçin</option>
-              <option value="Notebook">Notebook</option>
-              <option value="Planşet">Planşet</option>
-            </select>
-
-          </label>
-
-          <label>
-            Marka
-            <input
-              name="brand"
-              type="text"
-              placeholder="Məs: Lenovo">
-          </label>
-
-          <label>
-            Model
-            <input
-              name="model"
-              type="text"
-              placeholder="Məs: T480">
-          </label>
-
-          <label>
-            Alış qiyməti
-            <input
-              name="purchase_price"
-              type="number"
-              step="0.01"
-              min="0"
-              placeholder="0.00">
-          </label>
-
-          <label>
-            Satış qiyməti
-            <input
-              name="sale_price"
-              type="number"
-              step="0.01"
-              min="0"
-              placeholder="0.00">
-          </label>
-
-        </div>
-
-        <label>
-          Qeyd
-          <textarea
-            name="description"
-            rows="3"
-            placeholder="Məhsul haqqında əlavə məlumat..."></textarea>
-        </label>
-
-        <div class="modal-actions">
-
-          <button
-            type="button"
-            class="secondary-btn"
-            onclick="closeModal('productModal')">
-            Ləğv et
-          </button>
-
-          <button
-            type="submit"
-            class="primary-btn">
-            Yadda saxla
-          </button>
-
-        </div>
-
-      </form>
+      <div id="modalBody"></div>
 
     </div>
 
   </div>
 
 
-  <!-- SALE MODAL -->
+  <!-- ================= TOAST ================= -->
 
-  <div class="modal" id="saleModal">
-
-    <div class="modal-box">
-
-      <div class="modal-header">
-
-        <div>
-          <span class="panel-label">SATIŞ</span>
-          <h3>Yeni satış</h3>
-        </div>
-
-        <button
-          class="close-btn"
-          onclick="closeModal('saleModal')">
-          ×
-        </button>
-
-      </div>
-
-      <form id="saleForm">
-
-        <div class="form-grid">
-
-          <label>
-            Məhsul
-            <select name="product_id" id="saleProduct" required>
-              <option value="">Məhsul seçin</option>
-            </select>
-          </label>
-
-          <label>
-            Müştəri
-            <select name="customer_id" id="saleCustomer">
-              <option value="">Müştəri seçin</option>
-            </select>
-          </label>
-
-          <label>
-            Satış qiyməti
-            <input
-              name="sale_price"
-              type="number"
-              step="0.01"
-              min="0"
-              required>
-          </label>
-
-          <label>
-            Ödəniş üsulu
-            <select name="payment_method">
-              <option value="Nağd">Nağd</option>
-              <option value="Kart">Kart</option>
-              <option value="Köçürmə">Köçürmə</option>
-            </select>
-          </label>
-
-        </div>
-
-        <label>
-          Qeyd
-          <textarea
-            name="notes"
-            rows="3"
-            placeholder="Satış haqqında qeyd..."></textarea>
-        </label>
-
-        <div class="modal-actions">
-
-          <button
-            type="button"
-            class="secondary-btn"
-            onclick="closeModal('saleModal')">
-            Ləğv et
-          </button>
-
-          <button
-            type="submit"
-            class="primary-btn">
-            Satışı yadda saxla
-          </button>
-
-        </div>
-
-      </form>
-
-    </div>
-
-  </div>
-
-
-  <!-- CUSTOMER MODAL -->
-
-  <div class="modal" id="customerModal">
-
-    <div class="modal-box">
-
-      <div class="modal-header">
-
-        <div>
-          <span class="panel-label">YENİ</span>
-          <h3>Müştəri əlavə et</h3>
-        </div>
-
-        <button
-          class="close-btn"
-          onclick="closeModal('customerModal')">
-          ×
-        </button>
-
-      </div>
-
-      <form id="customerForm">
-
-        <div class="form-grid">
-
-          <label>
-            Ad soyad
-            <input
-              name="name"
-              type="text"
-              placeholder="Müştərinin adı"
-              required>
-          </label>
-
-          <label>
-            Telefon
-            <input
-              name="phone"
-              type="tel"
-              placeholder="+994">
-          </label>
-
-          <label>
-            E-poçt
-            <input
-              name="email"
-              type="email"
-              placeholder="example@mail.com">
-          </label>
-
-        </div>
-
-        <label>
-          Qeyd
-          <textarea
-            name="notes"
-            rows="3"
-            placeholder="Müştəri haqqında qeyd..."></textarea>
-        </label>
-
-        <div class="modal-actions">
-
-          <button
-            type="button"
-            class="secondary-btn"
-            onclick="closeModal('customerModal')">
-            Ləğv et
-          </button>
-
-          <button
-            type="submit"
-            class="primary-btn">
-            Yadda saxla
-          </button>
-
-        </div>
-
-      </form>
-
-    </div>
-
-  </div>
-
-
-  <!-- EXPENSE MODAL -->
-
-  <div class="modal" id="expenseModal">
-
-    <div class="modal-box">
-
-      <div class="modal-header">
-
-        <div>
-          <span class="panel-label">MALİYYƏ</span>
-          <h3>Əməliyyat əlavə et</h3>
-        </div>
-
-        <button
-          class="close-btn"
-          onclick="closeModal('expenseModal')">
-          ×
-        </button>
-
-      </div>
-
-      <form id="expenseForm">
-
-        <div class="form-grid">
-
-          <label>
-            Əməliyyat növü
-            <select name="type" required>
-              <option value="income">Gəlir</option>
-              <option value="expense">Xərc</option>
-            </select>
-          </label>
-
-          <label>
-            Məbləğ
-            <input
-              name="amount"
-              type="number"
-              step="0.01"
-              min="0"
-              required>
-          </label>
-
-        </div>
-
-        <label>
-          Açıqlama
-          <textarea
-            name="description"
-            rows="3"
-            placeholder="Əməliyyat haqqında məlumat..."
-            required></textarea>
-        </label>
-
-        <div class="modal-actions">
-
-          <button
-            type="button"
-            class="secondary-btn"
-            onclick="closeModal('expenseModal')">
-            Ləğv et
-          </button>
-
-          <button
-            type="submit"
-            class="primary-btn">
-            Yadda saxla
-          </button>
-
-        </div>
-
-      </form>
-
-    </div>
-
+  <div id="toast" class="toast hidden">
+    <span id="toastMessage"></span>
   </div>
 
 
@@ -1099,4 +935,3 @@
 
 </body>
 </html>
-```
