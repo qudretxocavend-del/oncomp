@@ -1,76 +1,78 @@
 const SUPABASE_URL = "https://frnbduzaiuitpxgvvzwq.supabase.co";
 const SUPABASE_KEY = "sb_publishable_LyQAUsn6sYJlxVzL5gNDNQ_PHQEH8mO";
 
-const vacancyList = document.getElementById("vacancy-list");
+const loginForm = document.querySelector("form");
 
-async function loadVacancies() {
-  try {
-    const response = await fetch(
-      `${SUPABASE_URL}/rest/v1/vacancies?select=*&active=eq.true&order=created_at.desc`,
-      {
-        method: "GET",
-        headers: {
-          "apikey": SUPABASE_KEY,
-          "Authorization": `Bearer ${SUPABASE_KEY}`,
-          "Content-Type": "application/json"
-        }
-      }
-    );
+if (loginForm) {
+  loginForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
 
-    if (!response.ok) {
-      throw new Error(`Supabase xətası: ${response.status}`);
-    }
+    const emailInput =
+      document.querySelector('input[type="email"]') ||
+      document.querySelector('input[name="email"]');
 
-    const vacancies = await response.json();
+    const passwordInput =
+      document.querySelector('input[type="password"]') ||
+      document.querySelector('input[name="password"]');
 
-    if (!vacancies.length) {
-      vacancyList.innerHTML = `
-        <div class="loading">
-          Hazırda aktiv vakansiya yoxdur.
-        </div>
-      `;
+    const email = emailInput?.value.trim();
+    const password = passwordInput?.value;
+
+    if (!email || !password) {
+      alert("E-poçt və şifrəni daxil edin.");
       return;
     }
 
-    vacancyList.innerHTML = vacancies.map(vacancy => `
-      <article class="vacancy-card">
-        <h3>${escapeHtml(vacancy.title || "Vakansiya")}</h3>
+    const button =
+      loginForm.querySelector('button[type="submit"]') ||
+      loginForm.querySelector("button");
 
-        <div class="vacancy-company">
-          ${escapeHtml(vacancy.company || "Şirkət göstərilməyib")}
-        </div>
+    if (button) {
+      button.disabled = true;
+      button.textContent = "Daxil olunur...";
+    }
 
-        <p class="vacancy-description">
-          ${escapeHtml(vacancy.description || "Ətraflı məlumat yoxdur.")}
-        </p>
+    try {
+      const response = await fetch(
+        `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
+        {
+          method: "POST",
+          headers: {
+            "apikey": SUPABASE_KEY,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password
+          })
+        }
+      );
 
-        <div class="vacancy-info">
-          ${vacancy.city ? `<span>📍 ${escapeHtml(vacancy.city)}</span>` : ""}
-          ${vacancy.category ? `<span>💼 ${escapeHtml(vacancy.category)}</span>` : ""}
-          ${vacancy.salary ? `<span>💰 ${escapeHtml(vacancy.salary)}</span>` : ""}
-          ${vacancy.work_schedule ? `<span>🕐 ${escapeHtml(vacancy.work_schedule)}</span>` : ""}
-        </div>
-      </article>
-    `).join("");
+      const data = await response.json();
 
-  } catch (error) {
-    console.error(error);
+      if (!response.ok) {
+        throw new Error(
+          data.error_description ||
+          data.msg ||
+          "E-poçt və ya şifrə yanlışdır."
+        );
+      }
 
-    vacancyList.innerHTML = `
-      <div class="loading">
-        Vakansiyalar yüklənərkən xəta baş verdi.
-      </div>
-    `;
-  }
+      localStorage.setItem(
+        "oncomp_session",
+        JSON.stringify(data)
+      );
+
+      window.location.href = "dashboard.html";
+
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    } finally {
+      if (button) {
+        button.disabled = false;
+        button.textContent = "Daxil ol";
+      }
+    }
+  });
 }
-
-function escapeHtml(value) {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-loadVacancies();
