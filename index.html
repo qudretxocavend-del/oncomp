@@ -1,338 +1,1102 @@
+```html
 <!DOCTYPE html>
 <html lang="az">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ONCOMP — Elektron Uçot Sistemi</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-:root{
-  --bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#718096;--line:#e6ebf2;
-  --primary:#0f3d8f;--primary2:#1769e0;--success:#159570;--danger:#d64545;
-  --shadow:0 10px 30px rgba(24,39,75,.07);--radius:18px
-}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
-button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}
-.login{min-height:100vh;display:grid;place-items:center;background:linear-gradient(135deg,#081b43,#0f3d8f 55%,#1769e0)}
-.login-card{width:min(430px,92vw);background:#fff;border-radius:26px;padding:36px;box-shadow:0 25px 70px #00194a55}
-.logo{display:flex;gap:12px;align-items:center;font-weight:900;letter-spacing:2px;font-size:24px}
-.logo-mark{width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,#1769e0,#0f3d8f);display:grid;place-items:center;color:#fff}
-.login h1{font-size:27px;margin:28px 0 8px}.login p{color:var(--muted);margin-top:0}
-.field{margin:13px 0}.field label{display:block;font-size:13px;font-weight:700;margin-bottom:7px}
-input,select,textarea{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:11px;background:#fff;outline:none}
-input:focus,select:focus,textarea:focus{border-color:#5c8fe8;box-shadow:0 0 0 3px #1769e014}
-.btn{padding:11px 16px;border-radius:11px;font-weight:700}.btn-primary{background:var(--primary);color:#fff}.btn-secondary{background:#edf3ff;color:var(--primary)}.btn-danger{background:#fff0f0;color:var(--danger)}
-.full{width:100%;margin-top:10px}.hidden{display:none!important}
-.app{display:flex;min-height:100vh}.sidebar{width:245px;background:#081b43;color:#fff;position:fixed;left:0;top:0;bottom:0;padding:22px 15px;overflow:auto}
-.sidebar .brand{padding:8px 10px 24px}.sidebar .logo-mark{background:#fff;color:#0f3d8f}.sidebar .logo{font-size:21px}
-.nav{display:grid;gap:5px}.nav button{background:transparent;color:#cbd7ee;text-align:left;padding:12px 13px;border-radius:11px;font-weight:650}
-.nav button:hover,.nav button.active{background:#ffffff16;color:#fff}.nav .section{font-size:10px;color:#7f94b9;text-transform:uppercase;letter-spacing:1.4px;padding:18px 13px 6px}
-.main{margin-left:245px;width:calc(100% - 245px);padding:26px 30px}.top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:24px}.top h2{margin:0;font-size:25px}.userbox{background:#fff;border:1px solid var(--line);padding:8px 12px;border-radius:12px;font-size:13px}
-.page{display:none}.page.active{display:block}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:19px}.metric small{color:var(--muted);font-weight:650}.metric strong{display:block;font-size:28px;margin-top:8px}.metric .mini{font-size:12px;color:var(--muted);margin-top:5px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
-.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 16px}.toolbar .grow{flex:1;min-width:220px}
-.table-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
-.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:760px}th,td{padding:13px 15px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}th{background:#f8faff;color:#5d6b84;font-size:11px;text-transform:uppercase;letter-spacing:.5px}tr:hover td{background:#fbfdff}
-.badge{display:inline-block;padding:5px 8px;border-radius:99px;background:#edf3ff;color:#315ea9;font-size:11px;font-weight:750}.badge.green{background:#e8f8f2;color:#087957}.badge.red{background:#fff0f0;color:#b93636}.badge.orange{background:#fff5df;color:#a76b00}
-.modal{position:fixed;inset:0;background:#07152a99;display:none;align-items:center;justify-content:center;padding:20px;z-index:10}.modal.open{display:flex}.modal-box{width:min(760px,96vw);max-height:90vh;overflow:auto;background:#fff;border-radius:20px;padding:24px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.modal-head h3{margin:0}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.span2{grid-column:1/-1}.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}.toast{position:fixed;right:22px;bottom:22px;background:#172033;color:#fff;padding:13px 17px;border-radius:12px;box-shadow:var(--shadow);z-index:20;max-width:390px}.empty{text-align:center;padding:40px;color:var(--muted)}
-.report-filter{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.report-filter .field{min-width:150px}
-.kpi{font-size:22px;font-weight:850}.muted{color:var(--muted)}.danger-text{color:var(--danger)}
-@media(max-width:1050px){.cards{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.sidebar{width:215px}.main{margin-left:215px;width:calc(100% - 215px)}}
-@media(max-width:720px){.sidebar{position:relative;width:100%;height:auto}.app{display:block}.main{margin-left:0;width:100%;padding:18px}.cards{grid-template-columns:1fr 1fr}.formgrid{grid-template-columns:1fr}.span2{grid-column:auto}.top{align-items:flex-start}.sidebar .nav{grid-template-columns:1fr 1fr}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>OnComp — Elektron Uçot Sistemi</title>
+
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<div id="loginView" class="login">
-  <div class="login-card">
-    <div class="logo"><div class="logo-mark">OC</div> ONCOMP</div>
-    <h1>Elektron Uçot Sistemi</h1>
-    <p>2-ci əl notebook və planşet satışlarının idarə edilməsi.</p>
-    <div class="field"><label>E-poçt</label><input id="loginEmail" type="email" placeholder="admin@example.com"></div>
-    <div class="field"><label>Şifrə</label><input id="loginPassword" type="password" placeholder="••••••••"></div>
-    <button class="btn btn-primary full" onclick="login()">Daxil ol</button>
-    <button class="btn btn-secondary full" onclick="openConfig()">Supabase bağlantısı</button>
-    <p id="loginMsg" class="danger-text" style="margin-top:12px"></p>
-  </div>
-</div>
+  <div class="app">
 
-<div id="appView" class="app hidden">
-  <aside class="sidebar">
-    <div class="brand"><div class="logo"><div class="logo-mark">OC</div> ONCOMP</div></div>
-    <div class="nav">
-      <div class="section">Əsas</div>
-      <button data-page="dashboard" class="active">📊 Dashboard</button>
-      <button data-page="products">💻 Məhsullar / Anbar</button>
-      <button data-page="sales">💰 Satışlar</button>
-      <button data-page="purchases">🛒 Alışlar</button>
-      <div class="section">Maliyyə və əlaqələr</div>
-      <button data-page="customers">👥 Müştərilər</button>
-      <button data-page="suppliers">🚚 Təchizatçılar</button>
-      <button data-page="expenses">💸 Xərclər</button>
-      <button data-page="cash">💳 Kassa</button>
-      <div class="section">Xidmət</div>
-      <button data-page="repairs">🔧 Təmir</button>
-      <button data-page="returns">↩️ Qaytarmalar</button>
-      <button data-page="warranties">🛡️ Zəmanətlər</button>
-      <div class="section">Analitika</div>
-      <button data-page="reports">📈 Hesabatlar</button>
-      <button data-page="settings">⚙️ Parametrlər</button>
-      <button onclick="logout()">🚪 Çıxış</button>
-    </div>
-  </aside>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
 
-  <main class="main">
-    <div class="top"><div><h2 id="pageTitle">Dashboard</h2><div class="muted" id="todayText"></div></div><div class="userbox" id="userBox">—</div></div>
+      <div class="brand">
+        <div class="brand-logo">OC</div>
 
-    <section id="dashboard" class="page active">
-      <div class="cards">
-        <div class="card metric"><small>Bu gün satış</small><strong id="mTodaySales">0 ₼</strong><div class="mini">Satış dövriyyəsi</div></div>
-        <div class="card metric"><small>Bu gün alış</small><strong id="mTodayPurchases">0 ₼</strong><div class="mini">Alınan məhsullar</div></div>
-        <div class="card metric"><small>Bu gün xərclər</small><strong id="mTodayExpenses">0 ₼</strong><div class="mini">Əməliyyat xərcləri</div></div>
-        <div class="card metric"><small>Bu gün mənfəət</small><strong id="mTodayProfit">0 ₼</strong><div class="mini">Brüt mənfəət</div></div>
-      </div>
-      <div class="cards" style="margin-top:16px">
-        <div class="card metric"><small>Anbarda</small><strong id="mInventory">0</strong><div class="mini">Aktiv məhsul</div></div>
-        <div class="card metric"><small>Notebook</small><strong id="mNotebooks">0</strong><div class="mini">Anbarda</div></div>
-        <div class="card metric"><small>Planşet</small><strong id="mTablets">0</strong><div class="mini">Anbarda</div></div>
-        <div class="card metric"><small>Təmirdə</small><strong id="mRepairs">0</strong><div class="mini">Məhsul</div></div>
-      </div>
-      <div class="grid2">
-        <div class="card"><h3>Son satışlar</h3><div id="recentSales" class="empty">Yüklənir...</div></div>
-        <div class="card"><h3>Anbar xülasəsi</h3><div id="inventorySummary" class="empty">Yüklənir...</div></div>
-      </div>
-    </section>
-
-    <section id="products" class="page">
-      <div class="toolbar"><input id="productSearch" class="grow" placeholder="Məhsul, marka, model, serial axtar..." oninput="loadProducts()"><select id="productStatus" onchange="loadProducts()"><option value="">Bütün statuslar</option><option value="in_stock">Anbarda</option><option value="reserved">Rezerv</option><option value="repair">Təmirdə</option><option value="sold">Satılıb</option></select><button class="btn btn-primary" onclick="openProductModal()">+ Məhsul əlavə et</button></div>
-      <div class="table-card"><div class="table-wrap"><table><thead><tr><th>Kod</th><th>Növ</th><th>Marka / Model</th><th>Serial</th><th>Maya</th><th>Satış</th><th>Status</th><th></th></tr></thead><tbody id="productsBody"></tbody></table></div></div>
-    </section>
-
-    <section id="sales" class="page">
-      <div class="toolbar"><input id="salesSearch" class="grow" placeholder="Satış nömrəsi və ya müştəri axtar..." oninput="loadSales()"><button class="btn btn-primary" onclick="openSaleModal()">+ Satış yarat</button></div>
-      <div class="table-card"><div class="table-wrap"><table><thead><tr><th>Satış №</th><th>Tarix</th><th>Müştəri</th><th>Məbləğ</th><th>Ödənilib</th><th>Borc</th><th>Ödəniş</th></tr></thead><tbody id="salesBody"></tbody></table></div></div>
-    </section>
-
-    <section id="purchases" class="page">
-      <div class="toolbar"><input id="purchaseSearch" class="grow" placeholder="Alış nömrəsi axtar..." oninput="loadPurchases()"><button class="btn btn-primary" onclick="openPurchaseModal()">+ Alış yarat</button></div>
-      <div class="table-card"><div class="table-wrap"><table><thead><tr><th>Alış №</th><th>Tarix</th><th>Təchizatçı</th><th>Məbləğ</th><th>Ödənilib</th><th>Borc</th><th>Ödəniş</th></tr></thead><tbody id="purchasesBody"></tbody></table></div></div>
-    </section>
-
-    <section id="customers" class="page">
-      <div class="toolbar"><input id="customerSearch" class="grow" placeholder="Ad, telefon və ya e-poçt..." oninput="loadCustomers()"><button class="btn btn-primary" onclick="openCustomerModal()">+ Müştəri</button></div>
-      <div class="table-card"><div class="table-wrap"><table><thead><tr><th>Ad soyad</th><th>Telefon</th><th>E-poçt</th><th>Ünvan</th><th></th></tr></thead><tbody id="customersBody"></tbody></table></div></div>
-    </section>
-
-    <section id="suppliers" class="page">
-      <div class="toolbar"><input id="supplierSearch" class="grow" placeholder="Təchizatçı axtar..." oninput="loadSuppliers()"><button class="btn btn-primary" onclick="openSupplierModal()">+ Təchizatçı</button></div>
-      <div class="table-card"><div class="table-wrap"><table><thead><tr><th>Ad</th><th>Telefon</th><th>E-poçt</th><th>Ünvan</th><th></th></tr></thead><tbody id="suppliersBody"></tbody></table></div></div>
-    </section>
-
-    <section id="expenses" class="page">
-      <div class="toolbar"><input id="expenseSearch" class="grow" placeholder="Xərc adı axtar..." oninput="loadExpenses()"><button class="btn btn-primary" onclick="openExpenseModal()">+ Xərc əlavə et</button></div>
-      <div class="table-card"><div class="table-wrap"><table><thead><tr><th>Tarix</th><th>Xərc</th><th>Məbləğ</th><th>Ödəniş</th><th>Açıqlama</th></tr></thead><tbody id="expensesBody"></tbody></table></div></div>
-    </section>
-
-    <section id="cash" class="page">
-      <div class="toolbar"><button class="btn btn-primary" onclick="openCashModal()">+ Kassa əməliyyatı</button></div>
-      <div class="table-card"><div class="table-wrap"><table><thead><tr><th>Tarix</th><th>Növ</th><th>Başlıq</th><th>Məbləğ</th><th>Ödəniş</th><th>Açıqlama</th></tr></thead><tbody id="cashBody"></tbody></table></div></div>
-    </section>
-
-    <section id="repairs" class="page">
-      <div class="toolbar"><button class="btn btn-primary" onclick="openRepairModal()">+ Təmir qeydiyyatı</button></div>
-      <div class="table-card"><div class="table-wrap"><table><thead><tr><th>Təmir №</th><th>Tarix</th><th>Məhsul</th><th>Problem</th><th>Məbləğ</th><th>Status</th></tr></thead><tbody id="repairsBody"></tbody></table></div></div>
-    </section>
-
-    <section id="returns" class="page">
-      <div class="toolbar"><button class="btn btn-primary" onclick="openReturnModal()">+ Qaytarma</button></div>
-      <div class="table-card"><div class="table-wrap"><table><thead><tr><th>Qaytarma №</th><th>Tarix</th><th>Satış №</th><th>Səbəb</th><th>Refund</th><th>Status</th></tr></thead><tbody id="returnsBody"></tbody></table></div></div>
-    </section>
-
-    <section id="warranties" class="page">
-      <div class="toolbar"><button class="btn btn-secondary" onclick="loadWarranties()">Yenilə</button></div>
-      <div class="table-card"><div class="table-wrap"><table><thead><tr><th>Başlanğıc</th><th>Bitmə</th><th>Məhsul</th><th>Müştəri</th><th>Status</th></tr></thead><tbody id="warrantiesBody"></tbody></table></div></div>
-    </section>
-
-    <section id="reports" class="page">
-      <div class="card">
-        <h3>Hesabatlar</h3>
-        <div class="report-filter">
-          <div class="field"><label>Hesabat</label><select id="reportType"><option value="daily">Gündəlik</option><option value="monthly">Aylıq</option><option value="quarterly">Rüblük</option><option value="yearly">İllik</option><option value="inventory">Anbar</option></select></div>
-          <div class="field"><label>Başlanğıc</label><input id="reportFrom" type="date"></div>
-          <div class="field"><label>Son tarix</label><input id="reportTo" type="date"></div>
-          <button class="btn btn-primary" onclick="runReport()">Hesabatı göstər</button>
+        <div>
+          <h1>ONCOMP</h1>
+          <span>Elektron Uçot Sistemi</span>
         </div>
       </div>
-      <div id="reportOutput" class="table-card" style="margin-top:18px"><div class="empty">Hesabat seçin.</div></div>
-    </section>
 
-    <section id="settings" class="page">
-      <div class="grid2">
-        <div class="card"><h3>Supabase bağlantısı</h3><p class="muted">URL və anon açarını burada saxlayaraq sistemi başqa layihəyə də keçirə bilərsiniz.</p><button class="btn btn-primary" onclick="openConfig()">Bağlantını dəyiş</button></div>
-        <div class="card"><h3>Hesab</h3><p id="settingsUser" class="muted">—</p><button class="btn btn-danger" onclick="logout()">Çıxış</button></div>
+      <nav class="menu">
+
+        <a href="#" class="menu-item active" data-page="dashboard">
+          <span>▦</span>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="#" class="menu-item" data-page="products">
+          <span>▣</span>
+          <span>Məhsullar</span>
+        </a>
+
+        <a href="#" class="menu-item" data-page="sales">
+          <span>▤</span>
+          <span>Satışlar</span>
+        </a>
+
+        <a href="#" class="menu-item" data-page="customers">
+          <span>◉</span>
+          <span>Müştərilər</span>
+        </a>
+
+        <a href="#" class="menu-item" data-page="expenses">
+          <span>₼</span>
+          <span>Gəlir / Xərc</span>
+        </a>
+
+        <a href="#" class="menu-item" data-page="stock">
+          <span>▥</span>
+          <span>Anbar</span>
+        </a>
+
+        <a href="#" class="menu-item" data-page="reports">
+          <span>◫</span>
+          <span>Hesabatlar</span>
+        </a>
+
+      </nav>
+
+      <div class="sidebar-bottom">
+
+        <div class="system-status">
+          <span class="status-dot"></span>
+          <div>
+            <strong>Sistem aktivdir</strong>
+            <small>Supabase bağlantısı</small>
+          </div>
+        </div>
+
       </div>
-    </section>
-  </main>
-</div>
 
-<div id="modal" class="modal"><div class="modal-box"><div class="modal-head"><h3 id="modalTitle">Yeni</h3><button class="btn btn-secondary" onclick="closeModal()">✕</button></div><div id="modalBody"></div></div></div>
-<div id="toast" class="toast hidden"></div>
+    </aside>
 
-<script>
-const SUPABASE_URL = 'https://gtnvgnlboyelflzcqhr.supabase.co';
-let supabaseKey = localStorage.getItem('oncomp_supabase_key') || '';
-let sb = null, currentUser = null, profile = null;
-const money = n => new Intl.NumberFormat('az-AZ',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(n||0))+' ₼';
-const esc = s => String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-const toast = (m, bad=false)=>{const t=document.getElementById('toast');t.textContent=m;t.classList.remove('hidden');t.style.background=bad?'#b93636':'#172033';setTimeout(()=>t.classList.add('hidden'),3500)};
-const today = ()=>new Date().toISOString().slice(0,10);
-function initClient(){ if(!supabaseKey){sb=null;return false} sb=supabase.createClient(SUPABASE_URL,supabaseKey); return true; }
-function openConfig(){
-  openModal('Supabase bağlantısı',`
-    <div class="field"><label>Supabase URL</label><input id="cfgUrl" value="${esc(SUPABASE_URL)}" disabled></div>
-    <div class="field"><label>Publishable / anon key</label><input id="cfgKey" type="password" value="${esc(supabaseKey)}" placeholder="eyJ..."></div>
-    <p class="muted">Supabase Dashboard → Project Settings → API bölməsindən Publishable key (və ya legacy anon key) götürün.</p>
-    <div class="actions"><button class="btn btn-primary" onclick="saveConfig()">Yadda saxla</button></div>`);
-}
-function saveConfig(){supabaseKey=document.getElementById('cfgKey').value.trim();localStorage.setItem('oncomp_supabase_key',supabaseKey);initClient();closeModal();toast('Supabase bağlantısı saxlanıldı.');}
-async function login(){
-  if(!initClient()){document.getElementById('loginMsg').textContent='Əvvəlcə “Supabase bağlantısı” bölməsindən key daxil edin.';return}
-  const email=document.getElementById('loginEmail').value.trim(), password=document.getElementById('loginPassword').value;
-  if(!email||!password){document.getElementById('loginMsg').textContent='E-poçt və şifrə daxil edin.';return}
-  const {data,error}=await sb.auth.signInWithPassword({email,password});
-  if(error){document.getElementById('loginMsg').textContent=error.message;return}
-  currentUser=data.user; await loadProfile(); showApp(); await loadAll();
-}
-async function loadProfile(){
-  const {data,error}=await sb.from('profiles').select('*').eq('id',currentUser.id).maybeSingle();
-  if(error) throw error;
-  profile=data;
-  if(!profile){toast('Profil tapılmadı. Supabase-də profiles sətrini yaradın.',true);}
-}
-function showApp(){document.getElementById('loginView').classList.add('hidden');document.getElementById('appView').classList.remove('hidden');document.getElementById('userBox').textContent=profile?.full_name || currentUser.email;document.getElementById('settingsUser').textContent=(profile?.full_name||'İstifadəçi')+' · '+currentUser.email;document.getElementById('todayText').textContent=new Date().toLocaleDateString('az-AZ',{weekday:'long',year:'numeric',month:'long',day:'numeric'});}
-async function logout(){if(sb)await sb.auth.signOut();location.reload();}
-document.querySelectorAll('.nav button[data-page]').forEach(b=>b.addEventListener('click',async()=>{document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(b.dataset.page).classList.add('active');document.getElementById('pageTitle').textContent=b.textContent.replace(/^[^ ]+ /,'');await pageLoad(b.dataset.page)}));
-async function pageLoad(p){try{if(p==='dashboard')await loadDashboard();if(p==='products')await loadProducts();if(p==='sales')await loadSales();if(p==='purchases')await loadPurchases();if(p==='customers')await loadCustomers();if(p==='suppliers')await loadSuppliers();if(p==='expenses')await loadExpenses();if(p==='cash')await loadCash();if(p==='repairs')await loadRepairs();if(p==='returns')await loadReturns();if(p==='warranties')await loadWarranties()}catch(e){toast(e.message,true)}}
-async function loadAll(){await loadDashboard();}
 
-function openModal(title,body){document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').innerHTML=body;document.getElementById('modal').classList.add('open')}
-function closeModal(){document.getElementById('modal').classList.remove('open')}
+    <!-- MAIN -->
+    <main class="main">
 
-async function loadDashboard(){
-  const {data,error}=await sb.rpc('dashboard_summary',{p_date:today()}); if(error) throw error; const d=data||{};
-  document.getElementById('mTodaySales').textContent=money(d.today_sales);document.getElementById('mTodayPurchases').textContent=money(d.today_purchases);document.getElementById('mTodayExpenses').textContent=money(d.today_expenses);document.getElementById('mTodayProfit').textContent=money(d.today_profit);
-  document.getElementById('mInventory').textContent=d.inventory_count||0;document.getElementById('mNotebooks').textContent=d.notebook_count||0;document.getElementById('mTablets').textContent=d.tablet_count||0;document.getElementById('mRepairs').textContent=d.repair_count||0;
-  const {data:sales}=await sb.from('sales').select('id,sale_number,sale_date,total_amount,customers(full_name)').order('sale_date',{ascending:false}).limit(6);
-  document.getElementById('recentSales').innerHTML=(sales||[]).map(s=>`<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line)"><span>${esc(s.sale_number)} · ${esc(s.customers?.full_name||'Müştəri yoxdur')}</span><b>${money(s.total_amount)}</b></div>`).join('')||'<div class="empty">Satış yoxdur.</div>';
-  const {data:inv}=await sb.from('inventory_report').select('*').order('product_type').limit(10);
-  document.getElementById('inventorySummary').innerHTML=(inv||[]).map(x=>`<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line)"><span>${esc(x.brand)} · ${esc(x.product_type)}</span><b>${x.in_stock_count} ədəd</b></div>`).join('')||'<div class="empty">Anbar boşdur.</div>';
-}
+      <!-- HEADER -->
+      <header class="topbar">
 
-async function loadProducts(){
-  let q=sb.from('products').select('*,product_categories(name)').order('created_at',{ascending:false}).limit(300);
-  const st=document.getElementById('productStatus')?.value;const search=document.getElementById('productSearch')?.value.trim();
-  if(st)q=q.eq('status',st);if(search)q=q.or(`product_code.ilike.%${search}%,brand.ilike.%${search}%,model.ilike.%${search}%,serial_number.ilike.%${search}%`);
-  const {data,error}=await q;if(error)throw error;
-  document.getElementById('productsBody').innerHTML=(data||[]).map(p=>`<tr><td>${esc(p.product_code)}</td><td>${esc(p.product_type)}</td><td><b>${esc(p.brand)}</b> ${esc(p.model)}</td><td>${esc(p.serial_number||'—')}</td><td>${money(p.cost_price)}</td><td>${money(p.planned_sale_price)}</td><td>${statusBadge(p.status)}</td><td><button class="btn btn-secondary" onclick='editProduct(${JSON.stringify(p).replace(/'/g,"&#39;")})'>Redaktə</button></td></tr>`).join('')||emptyRow(8);
-}
-const statusBadge=s=>{const map={in_stock:['Anbarda',''],reserved:['Rezerv','orange'],repair:['Təmirdə','orange'],sold:['Satılıb','green'],returned:['Qaytarılıb','red'],inactive:['Passiv','red']};const a=map[s]||[s,''];return `<span class="badge ${a[1]}">${a[0]}</span>`};
-const emptyRow=n=>`<tr><td colspan="${n}" class="empty">Məlumat yoxdur.</td></tr>`;
+        <div>
+          <div class="breadcrumb">OnComp / Dashboard</div>
+          <h2 id="pageTitle">Dashboard</h2>
+        </div>
 
-function productForm(p={}){return `<div class="formgrid">
-<div class="field"><label>Məhsul kodu *</label><input id="p_code" value="${esc(p.product_code||'OC-'+Date.now().toString().slice(-6))}"></div>
-<div class="field"><label>Növ *</label><select id="p_type"><option value="notebook" ${p.product_type==='notebook'?'selected':''}>Notebook</option><option value="tablet" ${p.product_type==='tablet'?'selected':''}>Planşet</option><option value="accessory" ${p.product_type==='accessory'?'selected':''}>Aksesuar</option><option value="other" ${p.product_type==='other'?'selected':''}>Digər</option></select></div>
-<div class="field"><label>Marka *</label><input id="p_brand" value="${esc(p.brand||'')}"></div><div class="field"><label>Model *</label><input id="p_model" value="${esc(p.model||'')}"></div>
-<div class="field"><label>Serial nömrə</label><input id="p_serial" value="${esc(p.serial_number||'')}"></div><div class="field"><label>IMEI</label><input id="p_imei" value="${esc(p.imei||'')}"></div>
-<div class="field"><label>Prosessor</label><input id="p_cpu" value="${esc(p.processor||'')}"></div><div class="field"><label>RAM</label><input id="p_ram" value="${esc(p.ram||'')}"></div>
-<div class="field"><label>Yaddaş</label><input id="p_storage" value="${esc(p.storage||'')}"></div><div class="field"><label>Ekran</label><input id="p_screen" value="${esc(p.screen_size||'')}"></div>
-<div class="field"><label>Batareya %</label><input id="p_battery" type="number" min="0" max="100" value="${esc(p.battery_health??'')}"></div><div class="field"><label>Alış qiyməti *</label><input id="p_purchase" type="number" step="0.01" value="${esc(p.purchase_price??0)}"></div>
-<div class="field"><label>Əlavə xərc</label><input id="p_extra" type="number" step="0.01" value="${esc(p.additional_cost??0)}"></div><div class="field"><label>Satış qiyməti *</label><input id="p_sale" type="number" step="0.01" value="${esc(p.planned_sale_price??0)}"></div>
-<div class="field"><label>Minimum satış</label><input id="p_min" type="number" step="0.01" value="${esc(p.minimum_sale_price??0)}"></div><div class="field"><label>Status</label><select id="p_status"><option value="in_stock">Anbarda</option><option value="reserved">Rezerv</option><option value="repair">Təmirdə</option><option value="inactive">Passiv</option><option value="returned">Qaytarılıb</option></select></div>
-<div class="field span2"><label>Qüsurlar / qeyd</label><textarea id="p_note" rows="3">${esc(p.defects||p.note||'')}</textarea></div>
-</div><div class="actions"><button class="btn btn-secondary" onclick="closeModal()">Ləğv et</button><button class="btn btn-primary" onclick="saveProduct('${p.id||''}')">Yadda saxla</button></div>`}
-function openProductModal(){openModal('Yeni məhsul',productForm())}
-function editProduct(p){openModal('Məhsulu redaktə et',productForm(p));setTimeout(()=>document.getElementById('p_status').value=p.status,0)}
-async function saveProduct(id){
- const v={product_code:document.getElementById('p_code').value.trim(),product_type:document.getElementById('p_type').value,brand:document.getElementById('p_brand').value.trim(),model:document.getElementById('p_model').value.trim(),serial_number:document.getElementById('p_serial').value.trim()||null,imei:document.getElementById('p_imei').value.trim()||null,processor:document.getElementById('p_cpu').value.trim()||null,ram:document.getElementById('p_ram').value.trim()||null,storage:document.getElementById('p_storage').value.trim()||null,screen_size:document.getElementById('p_screen').value.trim()||null,battery_health:document.getElementById('p_battery').value===''?null:Number(document.getElementById('p_battery').value),purchase_price:Number(document.getElementById('p_purchase').value||0),additional_cost:Number(document.getElementById('p_extra').value||0),planned_sale_price:Number(document.getElementById('p_sale').value||0),minimum_sale_price:Number(document.getElementById('p_min').value||0),status:document.getElementById('p_status').value,defects:document.getElementById('p_note').value.trim()||null,created_by:currentUser.id};
- if(!v.brand||!v.model){toast('Marka və model vacibdir.',true);return}
- const res=id?await sb.from('products').update(v).eq('id',id):await sb.from('products').insert(v);if(res.error)throw toast(res.error.message,true);closeModal();toast('Məhsul yadda saxlanıldı.');await loadProducts();await loadDashboard();
-}
+        <div class="topbar-right">
 
-async function loadSales(){let q=sb.from('sales').select('*,customers(full_name)').order('sale_date',{ascending:false}).limit(300);const s=document.getElementById('salesSearch')?.value.trim();if(s)q=q.or(`sale_number.ilike.%${s}%`);const {data,error}=await q;if(error)throw error;document.getElementById('salesBody').innerHTML=(data||[]).map(x=>`<tr><td>${esc(x.sale_number)}</td><td>${new Date(x.sale_date).toLocaleString('az-AZ')}</td><td>${esc(x.customers?.full_name||'—')}</td><td><b>${money(x.total_amount)}</b></td><td>${money(x.paid_amount)}</td><td>${money(x.debt_amount)}</td><td>${esc(x.payment_method)}</td></tr>`).join('')||emptyRow(7)}
-async function loadPurchases(){let q=sb.from('purchases').select('*,suppliers(full_name)').order('purchase_date',{ascending:false}).limit(300);const s=document.getElementById('purchaseSearch')?.value.trim();if(s)q=q.ilike('purchase_number',`%${s}%`);const {data,error}=await q;if(error)throw error;document.getElementById('purchasesBody').innerHTML=(data||[]).map(x=>`<tr><td>${esc(x.purchase_number)}</td><td>${esc(x.purchase_date)}</td><td>${esc(x.suppliers?.full_name||'—')}</td><td><b>${money(x.total_amount)}</b></td><td>${money(x.paid_amount)}</td><td>${money(x.debt_amount)}</td><td>${esc(x.payment_method)}</td></tr>`).join('')||emptyRow(7)}
+          <button class="notification-btn" title="Bildirişlər">
+            🔔
+            <span class="notification-badge">0</span>
+          </button>
 
-async function getCustomers(){const {data,error}=await sb.from('customers').select('*').order('created_at',{ascending:false}).limit(500);if(error)throw error;return data||[]}
-async function loadCustomers(){const all=await getCustomers(),s=document.getElementById('customerSearch')?.value.toLowerCase().trim();const d=s?all.filter(x=>(x.full_name+' '+(x.phone||'')+' '+(x.email||'')).toLowerCase().includes(s)):all;document.getElementById('customersBody').innerHTML=d.map(x=>`<tr><td><b>${esc(x.full_name)}</b></td><td>${esc(x.phone||'—')}</td><td>${esc(x.email||'—')}</td><td>${esc(x.address||'—')}</td><td><button class="btn btn-danger" onclick="deleteRow('customers','${x.id}',loadCustomers)">Sil</button></td></tr>`).join('')||emptyRow(5)}
-function openCustomerModal(){openModal('Yeni müştəri',`<div class="formgrid"><div class="field"><label>Ad soyad *</label><input id="c_name"></div><div class="field"><label>Telefon</label><input id="c_phone"></div><div class="field"><label>E-poçt</label><input id="c_email"></div><div class="field"><label>Ünvan</label><input id="c_address"></div><div class="field span2"><label>Qeyd</label><textarea id="c_note"></textarea></div></div><div class="actions"><button class="btn btn-primary" onclick="saveCustomer()">Yadda saxla</button></div>`)}
-async function saveCustomer(){const v={full_name:document.getElementById('c_name').value.trim(),phone:document.getElementById('c_phone').value.trim()||null,email:document.getElementById('c_email').value.trim()||null,address:document.getElementById('c_address').value.trim()||null,note:document.getElementById('c_note').value.trim()||null};if(!v.full_name)return toast('Ad soyad vacibdir.',true);const {error}=await sb.from('customers').insert(v);if(error)throw toast(error.message,true);closeModal();toast('Müştəri əlavə edildi.');loadCustomers()}
-async function getSuppliers(){const {data,error}=await sb.from('suppliers').select('*').order('created_at',{ascending:false}).limit(500);if(error)throw error;return data||[]}
-async function loadSuppliers(){const all=await getSuppliers(),s=document.getElementById('supplierSearch')?.value.toLowerCase().trim();const d=s?all.filter(x=>(x.full_name+' '+(x.phone||'')+' '+(x.email||'')).toLowerCase().includes(s)):all;document.getElementById('suppliersBody').innerHTML=d.map(x=>`<tr><td><b>${esc(x.full_name)}</b></td><td>${esc(x.phone||'—')}</td><td>${esc(x.email||'—')}</td><td>${esc(x.address||'—')}</td><td><button class="btn btn-danger" onclick="deleteRow('suppliers','${x.id}',loadSuppliers)">Sil</button></td></tr>`).join('')||emptyRow(5)}
-function openSupplierModal(){openModal('Yeni təchizatçı',`<div class="formgrid"><div class="field"><label>Ad *</label><input id="s_name"></div><div class="field"><label>Telefon</label><input id="s_phone"></div><div class="field"><label>E-poçt</label><input id="s_email"></div><div class="field"><label>Ünvan</label><input id="s_address"></div><div class="field span2"><label>Qeyd</label><textarea id="s_note"></textarea></div></div><div class="actions"><button class="btn btn-primary" onclick="saveSupplier()">Yadda saxla</button></div>`)}
-async function saveSupplier(){const v={full_name:document.getElementById('s_name').value.trim(),phone:document.getElementById('s_phone').value.trim()||null,email:document.getElementById('s_email').value.trim()||null,address:document.getElementById('s_address').value.trim()||null,note:document.getElementById('s_note').value.trim()||null,created_at_user:currentUser.id};if(!v.full_name)return toast('Ad vacibdir.',true);const {error}=await sb.from('suppliers').insert(v);if(error)throw toast(error.message,true);closeModal();toast('Təchizatçı əlavə edildi.');loadSuppliers()}
+          <div class="user-profile">
 
-async function loadExpenses(){let q=sb.from('expenses').select('*').order('expense_date',{ascending:false}).limit(300);const s=document.getElementById('expenseSearch')?.value.trim();if(s)q=q.ilike('title',`%${s}%`);const {data,error}=await q;if(error)throw error;document.getElementById('expensesBody').innerHTML=(data||[]).map(x=>`<tr><td>${esc(x.expense_date)}</td><td><b>${esc(x.title)}</b></td><td>${money(x.amount)}</td><td>${esc(x.payment_method)}</td><td>${esc(x.description||'—')}</td></tr>`).join('')||emptyRow(5)}
-function openExpenseModal(){openModal('Yeni xərc',`<div class="formgrid"><div class="field"><label>Başlıq *</label><input id="e_title"></div><div class="field"><label>Məbləğ *</label><input id="e_amount" type="number" step="0.01"></div><div class="field"><label>Tarix</label><input id="e_date" type="date" value="${today()}"></div><div class="field"><label>Ödəniş</label><select id="e_method"><option value="cash">Nağd</option><option value="card">Kart</option><option value="bank_transfer">Bank</option><option value="mixed">Qarışıq</option></select></div><div class="field span2"><label>Açıqlama</label><textarea id="e_desc"></textarea></div></div><div class="actions"><button class="btn btn-primary" onclick="saveExpense()">Yadda saxla</button></div>`)}
-async function saveExpense(){const v={title:document.getElementById('e_title').value.trim(),amount:Number(document.getElementById('e_amount').value||0),expense_date:document.getElementById('e_date').value,payment_method:document.getElementById('e_method').value,description:document.getElementById('e_desc').value.trim()||null,created_by:currentUser.id};if(!v.title||v.amount<=0)return toast('Başlıq və düzgün məbləğ daxil edin.',true);const {error}=await sb.from('expenses').insert(v);if(error)throw toast(error.message,true);closeModal();toast('Xərc əlavə edildi.');loadExpenses();loadDashboard()}
+            <div class="avatar">A</div>
 
-async function loadCash(){const {data,error}=await sb.from('cash_transactions').select('*').order('transaction_date',{ascending:false}).limit(300);if(error)throw error;document.getElementById('cashBody').innerHTML=(data||[]).map(x=>`<tr><td>${new Date(x.transaction_date).toLocaleString('az-AZ')}</td><td>${statusBadge(x.transaction_type==='income'?'in_stock':'sold')}</td><td>${esc(x.title)}</td><td>${money(x.amount)}</td><td>${esc(x.payment_method)}</td><td>${esc(x.description||'—')}</td></tr>`).join('')||emptyRow(6)}
-function openCashModal(){openModal('Kassa əməliyyatı',`<div class="formgrid"><div class="field"><label>Növ</label><select id="k_type"><option value="income">Gəlir</option><option value="expense">Xərc</option></select></div><div class="field"><label>Başlıq *</label><input id="k_title"></div><div class="field"><label>Məbləğ *</label><input id="k_amount" type="number" step="0.01"></div><div class="field"><label>Ödəniş</label><select id="k_method"><option value="cash">Nağd</option><option value="card">Kart</option><option value="bank_transfer">Bank</option><option value="mixed">Qarışıq</option></select></div><div class="field span2"><label>Açıqlama</label><textarea id="k_desc"></textarea></div></div><div class="actions"><button class="btn btn-primary" onclick="saveCash()">Yadda saxla</button></div>`)}
-async function saveCash(){const v={transaction_type:document.getElementById('k_type').value,title:document.getElementById('k_title').value.trim(),amount:Number(document.getElementById('k_amount').value||0),payment_method:document.getElementById('k_method').value,description:document.getElementById('k_desc').value.trim()||null,created_by:currentUser.id};if(!v.title||v.amount<=0)return toast('Başlıq və məbləğ vacibdir.',true);const {error}=await sb.from('cash_transactions').insert(v);if(error)throw toast(error.message,true);closeModal();toast('Kassa əməliyyatı əlavə edildi.');loadCash()}
+            <div class="user-info">
+              <strong>Admin</strong>
+              <span>Administrator</span>
+            </div>
 
-async function loadRepairs(){const {data,error}=await sb.from('repairs').select('*,products(brand,model)').order('created_at',{ascending:false}).limit(300);if(error)throw error;document.getElementById('repairsBody').innerHTML=(data||[]).map(x=>`<tr><td>${esc(x.repair_number)}</td><td>${esc(x.received_date)}</td><td>${esc((x.products?.brand||'')+' '+(x.products?.model||''))||'—'}</td><td>${esc(x.problem_description)}</td><td>${money(x.repair_cost)}</td><td>${esc(x.status)}</td></tr>`).join('')||emptyRow(6)}
-async function openRepairModal(){const {data}=await sb.from('products').select('id,brand,model,product_code').in('status',['in_stock','repair']).order('brand');openModal('Təmir qeydiyyatı',`<div class="formgrid"><div class="field"><label>Təmir № *</label><input id="r_num" value="REP-${Date.now().toString().slice(-7)}"></div><div class="field"><label>Məhsul</label><select id="r_product"><option value="">Seçin</option>${(data||[]).map(x=>`<option value="${x.id}">${esc(x.product_code)} · ${esc(x.brand)} ${esc(x.model)}</option>`).join('')}</select></div><div class="field span2"><label>Problem *</label><textarea id="r_problem"></textarea></div><div class="field"><label>Təmir xərci</label><input id="r_cost" type="number" step="0.01" value="0"></div><div class="field"><label>Status</label><select id="r_status"><option value="received">Qəbul edildi</option><option value="diagnostics">Diaqnostika</option><option value="repairing">Təmir olunur</option><option value="waiting_part">Ehtiyat hissəsi gözləyir</option><option value="ready">Hazırdır</option></select></div></div><div class="actions"><button class="btn btn-primary" onclick="saveRepair()">Yadda saxla</button></div>`)}
-async function saveRepair(){const v={repair_number:document.getElementById('r_num').value.trim(),product_id:document.getElementById('r_product').value||null,problem_description:document.getElementById('r_problem').value.trim(),repair_cost:Number(document.getElementById('r_cost').value||0),status:document.getElementById('r_status').value,created_by:currentUser.id};if(!v.repair_number||!v.problem_description)return toast('Təmir nömrəsi və problem vacibdir.',true);const {error}=await sb.from('repairs').insert(v);if(error)throw toast(error.message,true);if(v.product_id)await sb.from('products').update({status:'repair'}).eq('id',v.product_id);closeModal();toast('Təmir qeydiyyata alındı.');loadRepairs();loadDashboard()}
+          </div>
 
-async function loadReturns(){const {data,error}=await sb.from('returns').select('*,sales(sale_number)').order('return_date',{ascending:false}).limit(300);if(error)throw error;document.getElementById('returnsBody').innerHTML=(data||[]).map(x=>`<tr><td>${esc(x.return_number)}</td><td>${esc(x.return_date)}</td><td>${esc(x.sales?.sale_number||'—')}</td><td>${esc(x.reason)}</td><td>${money(x.refund_amount)}</td><td>${esc(x.status)}</td></tr>`).join('')||emptyRow(6)}
-async function openReturnModal(){const {data}=await sb.from('sales').select('id,sale_number,customer_id').order('sale_date',{ascending:false}).limit(200);openModal('Qaytarma',`<div class="formgrid"><div class="field"><label>Qaytarma № *</label><input id="rt_num" value="RET-${Date.now().toString().slice(-7)}"></div><div class="field"><label>Satış</label><select id="rt_sale">${(data||[]).map(x=>`<option value="${x.id}">${esc(x.sale_number)}</option>`).join('')}</select></div><div class="field"><label>Refund məbləği</label><input id="rt_amount" type="number" step="0.01" value="0"></div><div class="field"><label>Status</label><select id="rt_status"><option value="pending">Gözləyir</option><option value="approved">Təsdiqləndi</option><option value="completed">Tamamlandı</option><option value="rejected">Rədd edildi</option></select></div><div class="field span2"><label>Səbəb *</label><textarea id="rt_reason"></textarea></div></div><div class="actions"><button class="btn btn-primary" onclick="saveReturn()">Yadda saxla</button></div>`)}
-async function saveReturn(){const v={return_number:document.getElementById('rt_num').value.trim(),sale_id:document.getElementById('rt_sale').value,return_date:today(),reason:document.getElementById('rt_reason').value.trim(),refund_amount:Number(document.getElementById('rt_amount').value||0),status:document.getElementById('rt_status').value,created_by:currentUser.id};if(!v.reason)return toast('Səbəb vacibdir.',true);const {data:sale}=await sb.from('sales').select('customer_id').eq('id',v.sale_id).single();v.customer_id=sale?.customer_id||null;const {error}=await sb.from('returns').insert(v);if(error)throw toast(error.message,true);closeModal();toast('Qaytarma əlavə edildi.');loadReturns()}
+        </div>
 
-async function loadWarranties(){await sb.rpc('update_warranty_status');const {data,error}=await sb.from('warranties').select('*,products(brand,model),customers(full_name)').order('end_date');if(error)throw error;document.getElementById('warrantiesBody').innerHTML=(data||[]).map(x=>`<tr><td>${esc(x.start_date)}</td><td>${esc(x.end_date)}</td><td>${esc((x.products?.brand||'')+' '+(x.products?.model||''))}</td><td>${esc(x.customers?.full_name||'—')}</td><td>${statusBadge(x.status==='expired'?'sold':x.status==='expiring'?'repair':'in_stock')}</td></tr>`).join('')||emptyRow(5)}
+      </header>
 
-async function runReport(){
- const type=document.getElementById('reportType').value,from=document.getElementById('reportFrom').value,to=document.getElementById('reportTo').value;
- let table='',data=[],error=null;
- if(type==='inventory'){({data,error}=await sb.from('inventory_report').select('*').order('product_type,brand'))}
- else if(type==='daily'){({data,error}=await sb.from('daily_sales_report').select('*').gte('report_date',from||'1900-01-01').lte('report_date',to||'2999-12-31'))}
- else if(type==='monthly'){({data,error}=await sb.from('monthly_sales_report').select('*'))}
- else if(type==='quarterly'){({data,error}=await sb.from('quarterly_sales_report').select('*'))}
- else {({data,error}=await sb.from('yearly_sales_report').select('*'))}
- if(error){toast(error.message,true);return}
- if(type==='inventory')table=`<table><thead><tr><th>Növ</th><th>Marka</th><th>Anbarda</th><th>Rezerv</th><th>Təmirdə</th><th>Maya dəyəri</th><th>Potensial satış</th></tr></thead><tbody>${(data||[]).map(x=>`<tr><td>${esc(x.product_type)}</td><td>${esc(x.brand)}</td><td>${x.in_stock_count}</td><td>${x.reserved_count}</td><td>${x.repair_count}</td><td>${money(x.inventory_cost_value)}</td><td>${money(x.potential_sales_value)}</td></tr>`).join('')}</tbody></table>`;
- else if(type==='daily')table=`<table><thead><tr><th>Tarix</th><th>Satış sayı</th><th>Dövriyyə</th><th>Maya</th><th>Brüt mənfəət</th></tr></thead><tbody>${(data||[]).map(x=>`<tr><td>${x.report_date}</td><td>${x.sale_count}</td><td>${money(x.sales_amount)}</td><td>${money(x.cost_amount)}</td><td>${money(x.gross_profit)}</td></tr>`).join('')}</tbody></table>`;
- else if(type==='monthly')table=`<table><thead><tr><th>İl</th><th>Ay</th><th>Satış</th><th>Dövriyyə</th><th>Maya</th><th>Mənfəət</th></tr></thead><tbody>${(data||[]).map(x=>`<tr><td>${x.year}</td><td>${x.month}</td><td>${x.sale_count}</td><td>${money(x.sales_amount)}</td><td>${money(x.cost_amount)}</td><td>${money(x.gross_profit)}</td></tr>`).join('')}</tbody></table>`;
- else if(type==='quarterly')table=`<table><thead><tr><th>İl</th><th>Rüb</th><th>Satış</th><th>Dövriyyə</th><th>Maya</th><th>Mənfəət</th></tr></thead><tbody>${(data||[]).map(x=>`<tr><td>${x.year}</td><td>Q${x.quarter}</td><td>${x.sale_count}</td><td>${money(x.sales_amount)}</td><td>${money(x.cost_amount)}</td><td>${money(x.gross_profit)}</td></tr>`).join('')}</tbody></table>`;
- else table=`<table><thead><tr><th>İl</th><th>Satış</th><th>Dövriyyə</th><th>Maya</th><th>Mənfəət</th></tr></thead><tbody>${(data||[]).map(x=>`<tr><td>${x.year}</td><td>${x.sale_count}</td><td>${money(x.sales_amount)}</td><td>${money(x.cost_amount)}</td><td>${money(x.gross_profit)}</td></tr>`).join('')}</tbody></table>`;
- document.getElementById('reportOutput').innerHTML='<div class="table-wrap">'+(table||'<div class="empty">Məlumat yoxdur.</div>')+'</div>';
-}
 
-async function openSaleModal(){
- const [{data:products},{data:customers}]=await Promise.all([sb.from('products').select('id,product_code,brand,model,cost_price,planned_sale_price').eq('status','in_stock').order('brand'),getCustomers()]);
- openModal('Yeni satış',`<div class="formgrid"><div class="field"><label>Satış № *</label><input id="sale_num" value="SAL-${Date.now().toString().slice(-8)}"></div><div class="field"><label>Müştəri</label><select id="sale_customer"><option value="">Müştərisiz</option>${customers.map(x=>`<option value="${x.id}">${esc(x.full_name)} · ${esc(x.phone||'')}</option>`).join('')}</select></div><div class="field span2"><label>Məhsul *</label><select id="sale_product" onchange="salePriceAuto()"><option value="">Seçin</option>${(products||[]).map(x=>`<option value="${x.id}" data-price="${x.planned_sale_price}" data-cost="${x.cost_price}">${esc(x.product_code)} · ${esc(x.brand)} ${esc(x.model)} · ${money(x.planned_sale_price)}</option>`).join('')}</select></div><div class="field"><label>Satış qiyməti *</label><input id="sale_price" type="number" step="0.01"></div><div class="field"><label>Ödənilən</label><input id="sale_paid" type="number" step="0.01" value="0"></div><div class="field"><label>Ödəniş üsulu</label><select id="sale_method"><option value="cash">Nağd</option><option value="card">Kart</option><option value="bank_transfer">Bank</option><option value="mixed">Qarışıq</option></select></div><div class="field"><label>Zəmanət (ay)</label><input id="sale_warranty" type="number" value="0" min="0"></div></div><div class="actions"><button class="btn btn-primary" onclick="saveSale()">Satışı yadda saxla</button></div>`);
-}
-function salePriceAuto(){const o=document.querySelector('#sale_product option:checked');if(o)document.getElementById('sale_price').value=o.dataset.price||0}
-async function saveSale(){
- const product=document.getElementById('sale_product').value,price=Number(document.getElementById('sale_price').value||0),paid=Number(document.getElementById('sale_paid').value||0);
- if(!product||price<=0)return toast('Məhsul və satış qiyməti vacibdir.',true);
- const sale={sale_number:document.getElementById('sale_num').value.trim(),customer_id:document.getElementById('sale_customer').value||null,paid_amount:paid,payment_method:document.getElementById('sale_method').value,warranty_months:Number(document.getElementById('sale_warranty').value||0),created_by:currentUser.id,subtotal:price};
- let {data,error}=await sb.from('sales').insert(sale).select().single();if(error)throw toast(error.message,true);
- const {error:e2}=await sb.from('sale_items').insert({sale_id:data.id,product_id:product,quantity:1,unit_price:price,cost_price:0});if(e2){await sb.from('sales').delete().eq('id',data.id);return toast(e2.message,true)}
- closeModal();toast('Satış uğurla yaradıldı.');loadSales();loadDashboard()
-}
-async function openPurchaseModal(){
- const [{data:products},{data:suppliers}]=await Promise.all([sb.from('products').select('id,product_code,brand,model').order('brand'),getSuppliers()]);
- openModal('Yeni alış',`<div class="formgrid"><div class="field"><label>Alış № *</label><input id="buy_num" value="BUY-${Date.now().toString().slice(-8)}"></div><div class="field"><label>Təchizatçı</label><select id="buy_supplier"><option value="">Təchizatçı yoxdur</option>${suppliers.map(x=>`<option value="${x.id}">${esc(x.full_name)}</option>`).join('')}</select></div><div class="field span2"><label>Mövcud məhsul</label><select id="buy_product"><option value="">Yeni məhsul deyil, mövcud məhsula bağla</option>${(products||[]).map(x=>`<option value="${x.id}">${esc(x.product_code)} · ${esc(x.brand)} ${esc(x.model)}</option>`).join('')}</select></div><div class="field"><label>Alış qiyməti *</label><input id="buy_price" type="number" step="0.01"></div><div class="field"><label>Ödənilən</label><input id="buy_paid" type="number" step="0.01" value="0"></div><div class="field"><label>Ödəniş</label><select id="buy_method"><option value="cash">Nağd</option><option value="card">Kart</option><option value="bank_transfer">Bank</option><option value="mixed">Qarışıq</option></select></div><div class="field"><label>Tarix</label><input id="buy_date" type="date" value="${today()}"></div></div><p class="muted">Məhsulun tam texniki məlumatını ayrıca “Məhsullar / Anbar” bölməsindən yaratmaq daha düzgündür.</p><div class="actions"><button class="btn btn-primary" onclick="savePurchase()">Alışı yadda saxla</button></div>`);
-}
-async function savePurchase(){
- const product=document.getElementById('buy_product').value,price=Number(document.getElementById('buy_price').value||0),paid=Number(document.getElementById('buy_paid').value||0);
- if(!product||price<=0)return toast('Bu sadə alış forması üçün məhsul və qiymət seçilməlidir.',true);
- const p={purchase_number:document.getElementById('buy_num').value.trim(),supplier_id:document.getElementById('buy_supplier').value||null,purchase_date:document.getElementById('buy_date').value,paid_amount:paid,payment_method:document.getElementById('buy_method').value,created_by:currentUser.id,subtotal:price};
- let {data,error}=await sb.from('purchases').insert(p).select().single();if(error)throw toast(error.message,true);
- const {error:e2}=await sb.from('purchase_items').insert({purchase_id:data.id,product_id:product,quantity:1,unit_price:price});if(e2)return toast(e2.message,true);
- closeModal();toast('Alış yaradıldı.');loadPurchases();loadDashboard()
-}
-async function deleteRow(table,id,reload){if(!confirm('Bu məlumatı silmək istəyirsiniz?'))return;const {error}=await sb.from(table).delete().eq('id',id);if(error)return toast(error.message,true);toast('Silindi.');reload()}
+      <!-- CONTENT -->
+      <section class="content">
 
-window.addEventListener('load',async()=>{initClient();if(sb){const {data}=await sb.auth.getSession();if(data.session){currentUser=data.session.user;try{await loadProfile();showApp();await loadAll()}catch(e){console.error(e)}}}});
-</script>
+
+        <!-- DASHBOARD PAGE -->
+        <div class="page active" id="dashboardPage">
+
+          <div class="welcome">
+
+            <div>
+              <span class="eyebrow">ONCOMP ELEKTRON UÇOT SİSTEMİ</span>
+
+              <h3>Xoş gəlmisiniz, Admin 👋</h3>
+
+              <p>
+                2-ci əl notebook və planşet satışlarınızı
+                bir paneldən idarə edin.
+              </p>
+            </div>
+
+            <button class="primary-btn" onclick="openModal('productModal')">
+              + Yeni məhsul
+            </button>
+
+          </div>
+
+
+          <!-- STATISTICS -->
+
+          <div class="stats-grid">
+
+            <div class="stat-card">
+
+              <div class="stat-icon">▣</div>
+
+              <div>
+                <span>Ümumi məhsul</span>
+                <strong id="totalProducts">0</strong>
+              </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+              <div class="stat-icon">₼</div>
+
+              <div>
+                <span>Ümumi satış</span>
+                <strong id="totalSales">0.00 ₼</strong>
+              </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+              <div class="stat-icon">◉</div>
+
+              <div>
+                <span>Müştərilər</span>
+                <strong id="totalCustomers">0</strong>
+              </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+              <div class="stat-icon">▥</div>
+
+              <div>
+                <span>Anbar qalığı</span>
+                <strong id="stockCount">0</strong>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- DASHBOARD GRID -->
+
+          <div class="dashboard-grid">
+
+
+            <!-- RECENT SALES -->
+
+            <div class="panel">
+
+              <div class="panel-header">
+
+                <div>
+                  <span class="panel-label">SATIŞLAR</span>
+                  <h3>Son satışlar</h3>
+                </div>
+
+                <button
+                  class="text-btn"
+                  onclick="showPage('sales')">
+                  Hamısına bax →
+                </button>
+
+              </div>
+
+              <div class="table-wrapper">
+
+                <table>
+
+                  <thead>
+                    <tr>
+                      <th>Məhsul</th>
+                      <th>Müştəri</th>
+                      <th>Məbləğ</th>
+                      <th>Tarix</th>
+                    </tr>
+                  </thead>
+
+                  <tbody id="recentSales">
+
+                    <tr>
+                      <td colspan="4" class="empty">
+                        Hələ satış yoxdur
+                      </td>
+                    </tr>
+
+                  </tbody>
+
+                </table>
+
+              </div>
+
+            </div>
+
+
+            <!-- STOCK -->
+
+            <div class="panel">
+
+              <div class="panel-header">
+
+                <div>
+                  <span class="panel-label">ANBAR</span>
+                  <h3>Son məhsullar</h3>
+                </div>
+
+                <button
+                  class="text-btn"
+                  onclick="showPage('stock')">
+                  Anbara bax →
+                </button>
+
+              </div>
+
+              <div id="recentProducts" class="product-list">
+
+                <div class="empty">
+                  Hələ məhsul əlavə edilməyib
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- QUICK ACTIONS -->
+
+          <div class="quick-section">
+
+            <div class="section-heading">
+
+              <div>
+                <span class="panel-label">SÜRƏTLİ ƏMƏLİYYATLAR</span>
+                <h3>İdarəetmə</h3>
+              </div>
+
+            </div>
+
+
+            <div class="quick-grid">
+
+              <button
+                class="quick-card"
+                onclick="openModal('productModal')">
+
+                <span class="quick-icon">+</span>
+
+                <strong>Məhsul əlavə et</strong>
+
+                <small>Notebook və ya planşet</small>
+
+              </button>
+
+
+              <button
+                class="quick-card"
+                onclick="openModal('saleModal')">
+
+                <span class="quick-icon">₼</span>
+
+                <strong>Satış qeyd et</strong>
+
+                <small>Yeni satış əməliyyatı</small>
+
+              </button>
+
+
+              <button
+                class="quick-card"
+                onclick="openModal('customerModal')">
+
+                <span class="quick-icon">◉</span>
+
+                <strong>Müştəri əlavə et</strong>
+
+                <small>Müştəri məlumatları</small>
+
+              </button>
+
+
+              <button
+                class="quick-card"
+                onclick="showPage('reports')">
+
+                <span class="quick-icon">◫</span>
+
+                <strong>Hesabatlara bax</strong>
+
+                <small>Satış və maliyyə analitikası</small>
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- PRODUCTS PAGE -->
+
+        <div class="page" id="productsPage">
+
+          <div class="page-heading">
+
+            <div>
+              <span class="panel-label">UÇOT</span>
+              <h3>Məhsullar</h3>
+              <p>Notebook və planşetlərin idarə edilməsi.</p>
+            </div>
+
+            <button
+              class="primary-btn"
+              onclick="openModal('productModal')">
+              + Məhsul əlavə et
+            </button>
+
+          </div>
+
+          <div class="panel">
+
+            <div class="toolbar">
+
+              <input
+                type="search"
+                id="productSearch"
+                placeholder="Məhsul axtar..."
+              >
+
+              <select id="productCategoryFilter">
+
+                <option value="">Bütün kateqoriyalar</option>
+                <option value="Notebook">Notebook</option>
+                <option value="Planşet">Planşet</option>
+
+              </select>
+
+            </div>
+
+            <div class="table-wrapper">
+
+              <table>
+
+                <thead>
+
+                  <tr>
+                    <th>Məhsul</th>
+                    <th>Kateqoriya</th>
+                    <th>Marka</th>
+                    <th>Model</th>
+                    <th>Alış qiyməti</th>
+                    <th>Satış qiyməti</th>
+                    <th>Status</th>
+                  </tr>
+
+                </thead>
+
+                <tbody id="productsTable">
+
+                  <tr>
+                    <td colspan="7" class="empty">
+                      Məhsul yoxdur
+                    </td>
+                  </tr>
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- SALES PAGE -->
+
+        <div class="page" id="salesPage">
+
+          <div class="page-heading">
+
+            <div>
+              <span class="panel-label">UÇOT</span>
+              <h3>Satışlar</h3>
+              <p>Bütün satış əməliyyatlarını idarə edin.</p>
+            </div>
+
+            <button
+              class="primary-btn"
+              onclick="openModal('saleModal')">
+              + Yeni satış
+            </button>
+
+          </div>
+
+          <div class="panel">
+
+            <div class="table-wrapper">
+
+              <table>
+
+                <thead>
+
+                  <tr>
+                    <th>Məhsul</th>
+                    <th>Müştəri</th>
+                    <th>Satış qiyməti</th>
+                    <th>Mənfəət</th>
+                    <th>Tarix</th>
+                    <th>Status</th>
+                  </tr>
+
+                </thead>
+
+                <tbody id="salesTable">
+
+                  <tr>
+                    <td colspan="6" class="empty">
+                      Satış yoxdur
+                    </td>
+                  </tr>
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- CUSTOMERS PAGE -->
+
+        <div class="page" id="customersPage">
+
+          <div class="page-heading">
+
+            <div>
+              <span class="panel-label">MÜŞTƏRİLƏR</span>
+              <h3>Müştərilər</h3>
+              <p>Müştəri məlumatlarını idarə edin.</p>
+            </div>
+
+            <button
+              class="primary-btn"
+              onclick="openModal('customerModal')">
+              + Müştəri əlavə et
+            </button>
+
+          </div>
+
+          <div class="panel">
+
+            <div class="table-wrapper">
+
+              <table>
+
+                <thead>
+
+                  <tr>
+                    <th>Ad soyad</th>
+                    <th>Telefon</th>
+                    <th>E-poçt</th>
+                    <th>Qeyd</th>
+                  </tr>
+
+                </thead>
+
+                <tbody id="customersTable">
+
+                  <tr>
+                    <td colspan="4" class="empty">
+                      Müştəri yoxdur
+                    </td>
+                  </tr>
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- EXPENSES PAGE -->
+
+        <div class="page" id="expensesPage">
+
+          <div class="page-heading">
+
+            <div>
+              <span class="panel-label">MALİYYƏ</span>
+              <h3>Gəlir / Xərc</h3>
+              <p>Gəlir və xərclərin uçotu.</p>
+            </div>
+
+            <button
+              class="primary-btn"
+              onclick="openModal('expenseModal')">
+              + Əməliyyat əlavə et
+            </button>
+
+          </div>
+
+          <div class="stats-grid">
+
+            <div class="stat-card">
+              <div class="stat-icon">↑</div>
+              <div>
+                <span>Gəlir</span>
+                <strong id="incomeTotal">0.00 ₼</strong>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon">↓</div>
+              <div>
+                <span>Xərc</span>
+                <strong id="expenseTotal">0.00 ₼</strong>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon">₼</div>
+              <div>
+                <span>Mənfəət</span>
+                <strong id="profitTotal">0.00 ₼</strong>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="panel">
+
+            <div class="table-wrapper">
+
+              <table>
+
+                <thead>
+                  <tr>
+                    <th>Növ</th>
+                    <th>Açıqlama</th>
+                    <th>Məbləğ</th>
+                    <th>Tarix</th>
+                  </tr>
+                </thead>
+
+                <tbody id="expensesTable">
+
+                  <tr>
+                    <td colspan="4" class="empty">
+                      Əməliyyat yoxdur
+                    </td>
+                  </tr>
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- STOCK PAGE -->
+
+        <div class="page" id="stockPage">
+
+          <div class="page-heading">
+
+            <div>
+              <span class="panel-label">ANBAR</span>
+              <h3>Anbar</h3>
+              <p>Mövcud məhsullar və qalıqlar.</p>
+            </div>
+
+          </div>
+
+          <div class="panel">
+
+            <div id="stockList" class="stock-grid">
+
+              <div class="empty">
+                Anbarda məhsul yoxdur
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- REPORTS PAGE -->
+
+        <div class="page" id="reportsPage">
+
+          <div class="page-heading">
+
+            <div>
+              <span class="panel-label">ANALİTİKA</span>
+              <h3>Hesabatlar</h3>
+              <p>OnComp üzrə ümumi maliyyə göstəriciləri.</p>
+            </div>
+
+          </div>
+
+          <div class="stats-grid">
+
+            <div class="stat-card">
+              <div class="stat-icon">₼</div>
+              <div>
+                <span>Satış dövriyyəsi</span>
+                <strong id="reportRevenue">0.00 ₼</strong>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon">↑</div>
+              <div>
+                <span>Ümumi mənfəət</span>
+                <strong id="reportProfit">0.00 ₼</strong>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon">▣</div>
+              <div>
+                <span>Satılan məhsul</span>
+                <strong id="reportSold">0</strong>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon">▥</div>
+              <div>
+                <span>Anbar qalığı</span>
+                <strong id="reportStock">0</strong>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="panel report-panel">
+
+            <h3>Sistem haqqında</h3>
+
+            <p>
+              OnComp — 2-ci əl notebook və planşet satışlarının
+              uçotu, anbar idarəetməsi, müştəri bazası və
+              maliyyə hesabatları üçün elektron idarəetmə sistemidir.
+            </p>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <!-- PRODUCT MODAL -->
+
+  <div class="modal" id="productModal">
+
+    <div class="modal-box">
+
+      <div class="modal-header">
+
+        <div>
+          <span class="panel-label">YENİ</span>
+          <h3>Məhsul əlavə et</h3>
+        </div>
+
+        <button class="close-btn" onclick="closeModal('productModal')">
+          ×
+        </button>
+
+      </div>
+
+      <form id="productForm">
+
+        <div class="form-grid">
+
+          <label>
+            Məhsul adı
+            <input
+              name="name"
+              type="text"
+              placeholder="Məs: Lenovo ThinkPad T480"
+              required>
+          </label>
+
+          <label>
+            Kateqoriya
+
+            <select name="category" required>
+              <option value="">Seçin</option>
+              <option value="Notebook">Notebook</option>
+              <option value="Planşet">Planşet</option>
+            </select>
+
+          </label>
+
+          <label>
+            Marka
+            <input
+              name="brand"
+              type="text"
+              placeholder="Məs: Lenovo">
+          </label>
+
+          <label>
+            Model
+            <input
+              name="model"
+              type="text"
+              placeholder="Məs: T480">
+          </label>
+
+          <label>
+            Alış qiyməti
+            <input
+              name="purchase_price"
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="0.00">
+          </label>
+
+          <label>
+            Satış qiyməti
+            <input
+              name="sale_price"
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="0.00">
+          </label>
+
+        </div>
+
+        <label>
+          Qeyd
+          <textarea
+            name="description"
+            rows="3"
+            placeholder="Məhsul haqqında əlavə məlumat..."></textarea>
+        </label>
+
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            class="secondary-btn"
+            onclick="closeModal('productModal')">
+            Ləğv et
+          </button>
+
+          <button
+            type="submit"
+            class="primary-btn">
+            Yadda saxla
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <!-- SALE MODAL -->
+
+  <div class="modal" id="saleModal">
+
+    <div class="modal-box">
+
+      <div class="modal-header">
+
+        <div>
+          <span class="panel-label">SATIŞ</span>
+          <h3>Yeni satış</h3>
+        </div>
+
+        <button
+          class="close-btn"
+          onclick="closeModal('saleModal')">
+          ×
+        </button>
+
+      </div>
+
+      <form id="saleForm">
+
+        <div class="form-grid">
+
+          <label>
+            Məhsul
+            <select name="product_id" id="saleProduct" required>
+              <option value="">Məhsul seçin</option>
+            </select>
+          </label>
+
+          <label>
+            Müştəri
+            <select name="customer_id" id="saleCustomer">
+              <option value="">Müştəri seçin</option>
+            </select>
+          </label>
+
+          <label>
+            Satış qiyməti
+            <input
+              name="sale_price"
+              type="number"
+              step="0.01"
+              min="0"
+              required>
+          </label>
+
+          <label>
+            Ödəniş üsulu
+            <select name="payment_method">
+              <option value="Nağd">Nağd</option>
+              <option value="Kart">Kart</option>
+              <option value="Köçürmə">Köçürmə</option>
+            </select>
+          </label>
+
+        </div>
+
+        <label>
+          Qeyd
+          <textarea
+            name="notes"
+            rows="3"
+            placeholder="Satış haqqında qeyd..."></textarea>
+        </label>
+
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            class="secondary-btn"
+            onclick="closeModal('saleModal')">
+            Ləğv et
+          </button>
+
+          <button
+            type="submit"
+            class="primary-btn">
+            Satışı yadda saxla
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <!-- CUSTOMER MODAL -->
+
+  <div class="modal" id="customerModal">
+
+    <div class="modal-box">
+
+      <div class="modal-header">
+
+        <div>
+          <span class="panel-label">YENİ</span>
+          <h3>Müştəri əlavə et</h3>
+        </div>
+
+        <button
+          class="close-btn"
+          onclick="closeModal('customerModal')">
+          ×
+        </button>
+
+      </div>
+
+      <form id="customerForm">
+
+        <div class="form-grid">
+
+          <label>
+            Ad soyad
+            <input
+              name="name"
+              type="text"
+              placeholder="Müştərinin adı"
+              required>
+          </label>
+
+          <label>
+            Telefon
+            <input
+              name="phone"
+              type="tel"
+              placeholder="+994">
+          </label>
+
+          <label>
+            E-poçt
+            <input
+              name="email"
+              type="email"
+              placeholder="example@mail.com">
+          </label>
+
+        </div>
+
+        <label>
+          Qeyd
+          <textarea
+            name="notes"
+            rows="3"
+            placeholder="Müştəri haqqında qeyd..."></textarea>
+        </label>
+
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            class="secondary-btn"
+            onclick="closeModal('customerModal')">
+            Ləğv et
+          </button>
+
+          <button
+            type="submit"
+            class="primary-btn">
+            Yadda saxla
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <!-- EXPENSE MODAL -->
+
+  <div class="modal" id="expenseModal">
+
+    <div class="modal-box">
+
+      <div class="modal-header">
+
+        <div>
+          <span class="panel-label">MALİYYƏ</span>
+          <h3>Əməliyyat əlavə et</h3>
+        </div>
+
+        <button
+          class="close-btn"
+          onclick="closeModal('expenseModal')">
+          ×
+        </button>
+
+      </div>
+
+      <form id="expenseForm">
+
+        <div class="form-grid">
+
+          <label>
+            Əməliyyat növü
+            <select name="type" required>
+              <option value="income">Gəlir</option>
+              <option value="expense">Xərc</option>
+            </select>
+          </label>
+
+          <label>
+            Məbləğ
+            <input
+              name="amount"
+              type="number"
+              step="0.01"
+              min="0"
+              required>
+          </label>
+
+        </div>
+
+        <label>
+          Açıqlama
+          <textarea
+            name="description"
+            rows="3"
+            placeholder="Əməliyyat haqqında məlumat..."
+            required></textarea>
+        </label>
+
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            class="secondary-btn"
+            onclick="closeModal('expenseModal')">
+            Ləğv et
+          </button>
+
+          <button
+            type="submit"
+            class="primary-btn">
+            Yadda saxla
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <script src="app.js"></script>
+
 </body>
 </html>
+```
