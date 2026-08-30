@@ -12,107 +12,66 @@ const supabaseClient = window.supabase.createClient(
   SUPABASE_KEY
 );
 
-/* =========================================================
-   ELEMENTS
-   ========================================================= */
+const loginPage = document.getElementById("loginPage");
+const appPage = document.getElementById("appPage");
+const loginForm = document.getElementById("loginForm");
+const loginMessage = document.getElementById("loginMessage");
+const logoutBtn = document.getElementById("logoutBtn");
 
-const $ = id => document.getElementById(id);
-
-const loginPage = $("loginPage");
-const appPage = $("appPage");
-const loginForm = $("loginForm");
-const loginMessage = $("loginMessage");
-const logoutBtn = $("logoutBtn");
-
-let products = [];
-let customers = [];
-let sales = [];
-let expenses = [];
-
-/* =========================================================
-   HELPERS
-   ========================================================= */
-
-function money(value) {
-  return Number(value || 0).toLocaleString("az-AZ", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  }) + " ₼";
+function showLogin() {
+  loginPage.classList.remove("hidden");
+  appPage.classList.add("hidden");
 }
 
-function escapeHTML(value) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+function showApp() {
+  loginPage.classList.add("hidden");
+  appPage.classList.remove("hidden");
 }
 
-function showMessage(message, type = "error") {
+function showMessage(message, type = "") {
   if (!loginMessage) return;
 
   loginMessage.textContent = message;
   loginMessage.className = type;
 }
 
-function toast(message) {
-  const el = $("toast");
-  const text = $("toastMessage");
-
-  if (!el || !text) return;
-
-  text.textContent = message;
-  el.classList.remove("hidden");
-
-  clearTimeout(window.__toastTimer);
-
-  window.__toastTimer = setTimeout(() => {
-    el.classList.add("hidden");
-  }, 3000);
-}
-
-/* =========================================================
-   AUTH — İŞLƏYƏN LOGIN QORUNUR
-   ========================================================= */
-
-function showLogin() {
-  loginPage?.classList.remove("hidden");
-  appPage?.classList.add("hidden");
-}
-
-function showApp() {
-  loginPage?.classList.add("hidden");
-  appPage?.classList.remove("hidden");
-}
-
 async function checkSession() {
-  const { data, error } =
-    await supabaseClient.auth.getSession();
+  try {
+    const { data, error } =
+      await supabaseClient.auth.getSession();
 
-  if (error) {
-    console.error(error);
+    if (error) {
+      console.error("SESSION ERROR:", error);
+      showLogin();
+      return;
+    }
+
+    if (data && data.session) {
+      showApp();
+
+      if (typeof loadDashboard === "function") {
+        await loadDashboard();
+      }
+
+      return;
+    }
+
     showLogin();
-    return;
-  }
 
-  if (data?.session) {
-    showApp();
-    await loadAll();
-  } else {
+  } catch (error) {
+    console.error("CHECK SESSION ERROR:", error);
     showLogin();
   }
 }
 
-loginForm?.addEventListener("submit", async event => {
-
+loginForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const email =
-    $("loginEmail")?.value.trim();
+    document.getElementById("loginEmail")?.value.trim();
 
   const password =
-    $("loginPassword")?.value;
+    document.getElementById("loginPassword")?.value;
 
   if (!email || !password) {
     showMessage("E-poçt və şifrə daxil edin.");
@@ -129,52 +88,73 @@ loginForm?.addEventListener("submit", async event => {
 
   showMessage("");
 
-  const { data, error } =
-    await supabaseClient.auth.signInWithPassword({
-      email,
-      password
-    });
+  try {
+    const { data, error } =
+      await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
 
-  if (button) {
-    button.disabled = false;
-    button.textContent = "Daxil ol";
-  }
+    if (error) {
+      console.error("LOGIN ERROR:", error);
 
-  if (error) {
-    console.error(error);
-    showMessage("E-poçt və ya şifrə yanlışdır.");
-    return;
-  }
+      showMessage(
+        "E-poçt və ya şifrə yanlışdır."
+      );
 
-  if (data?.session) {
-    showApp();
-    showMessage("Uğurla daxil oldunuz.", "success");
-    await loadAll();
+      return;
+    }
+
+    if (data?.session) {
+      showApp();
+      showMessage("");
+
+      if (typeof loadDashboard === "function") {
+        await loadDashboard();
+      }
+    }
+
+  } catch (error) {
+    console.error("LOGIN EXCEPTION:", error);
+
+    showMessage(
+      "Sistemə giriş zamanı xəta baş verdi."
+    );
+
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = "Daxil ol";
+    }
   }
 });
 
 logoutBtn?.addEventListener("click", async () => {
 
-  await supabaseClient.auth.signOut();
+  try {
+    await supabaseClient.auth.signOut();
+  } catch (error) {
+    console.error("LOGOUT ERROR:", error);
+  }
 
   showLogin();
 
-  loginForm?.reset();
+  if (loginForm) {
+    loginForm.reset();
+  }
 });
 
 supabaseClient.auth.onAuthStateChange(
-  async (event, session) => {
+  async (_event, session) => {
 
     if (session) {
+      currentUser = session.user;
       showApp();
-
-      if (event === "SIGNED_IN") {
-        await loadAll();
-      }
-
     } else {
+      currentUser = null;
       showLogin();
     }
+
   }
 );
 
