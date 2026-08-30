@@ -346,3 +346,470 @@ document.addEventListener("DOMContentLoaded", async () => {
   await checkSession();
 
 });
+/* ================= PRODUCTS ================= */
+
+const addProductBtn = document.getElementById("addProductBtn");
+const productsTable = document.getElementById("productsTable");
+const productSearch = document.getElementById("productSearch");
+const productCategoryFilter = document.getElementById("productCategoryFilter");
+const productStatusFilter = document.getElementById("productStatusFilter");
+
+async function loadProducts() {
+  if (!productsTable) return;
+
+  const { data, error } = await supabaseClient
+    .from("products")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Məhsullar yüklənmədi:", error);
+    productsTable.innerHTML = `
+      <tr>
+        <td colspan="8" class="empty-state">
+          Məhsullar yüklənərkən xəta baş verdi
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  renderProducts(data || []);
+  updateCategoryFilter(data || []);
+}
+
+function renderProducts(products) {
+
+  const search =
+    productSearch?.value.trim().toLowerCase() || "";
+
+  const category =
+    productCategoryFilter?.value || "";
+
+  const status =
+    productStatusFilter?.value || "";
+
+  const filtered = products.filter(product => {
+
+    const text = `
+      ${product.name || ""}
+      ${product.brand || ""}
+      ${product.model || ""}
+      ${product.serial_number || ""}
+      ${product.imei || ""}
+    `.toLowerCase();
+
+    const matchesSearch =
+      !search || text.includes(search);
+
+    const matchesCategory =
+      !category || product.category === category;
+
+    const matchesStatus =
+      !status || product.status === status;
+
+    return (
+      matchesSearch &&
+      matchesCategory &&
+      matchesStatus
+    );
+  });
+
+  if (!filtered.length) {
+    productsTable.innerHTML = `
+      <tr>
+        <td colspan="8" class="empty-state">
+          Məhsul yoxdur
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  productsTable.innerHTML = filtered.map(product => {
+
+    const statusText =
+      product.status === "sold"
+        ? "Satılıb"
+        : "Aktiv";
+
+    return `
+      <tr>
+        <td>
+          <strong>${escapeHTML(product.name || "—")}</strong>
+          <br>
+          <small>
+            ${escapeHTML(product.brand || "")}
+            ${escapeHTML(product.model || "")}
+          </small>
+        </td>
+
+        <td>${escapeHTML(product.category || "—")}</td>
+
+        <td>
+          ${escapeHTML(
+            product.serial_number ||
+            product.imei ||
+            "—"
+          )}
+        </td>
+
+        <td>
+          ${Number(product.purchase_price || 0).toFixed(2)} ₼
+        </td>
+
+        <td>
+          ${Number(product.sale_price || 0).toFixed(2)} ₼
+        </td>
+
+        <td>${product.stock ?? 0}</td>
+
+        <td>
+          <span class="status-badge">
+            ${statusText}
+          </span>
+        </td>
+
+        <td>
+          <button
+            class="text-btn"
+            onclick="deleteProduct(${product.id})"
+          >
+            Sil
+          </button>
+        </td>
+      </tr>
+    `;
+
+  }).join("");
+}
+
+
+function updateCategoryFilter(products) {
+
+  if (!productCategoryFilter) return;
+
+  const current =
+    productCategoryFilter.value;
+
+  const categories = [
+    ...new Set(
+      products
+        .map(product => product.category)
+        .filter(Boolean)
+    )
+  ];
+
+  productCategoryFilter.innerHTML = `
+    <option value="">Bütün kateqoriyalar</option>
+    ${categories.map(category => `
+      <option value="${escapeHTML(category)}">
+        ${escapeHTML(category)}
+      </option>
+    `).join("")}
+  `;
+
+  productCategoryFilter.value = current;
+}
+
+
+/* ================= ADD PRODUCT ================= */
+
+addProductBtn?.addEventListener("click", () => {
+
+  const modalOverlay =
+    document.getElementById("modalOverlay");
+
+  const modalTitle =
+    document.getElementById("modalTitle");
+
+  const modalDescription =
+    document.getElementById("modalDescription");
+
+  const modalBody =
+    document.getElementById("modalBody");
+
+  modalTitle.textContent =
+    "Yeni məhsul";
+
+  modalDescription.textContent =
+    "Notebook və ya planşet məlumatlarını daxil edin.";
+
+  modalBody.innerHTML = `
+
+    <form id="productForm">
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label>Məhsul adı *</label>
+          <input id="productName" required
+            placeholder="Məsələn: Notebook">
+        </div>
+
+        <div class="form-group">
+          <label>Marka</label>
+          <input id="productBrand"
+            placeholder="Lenovo, HP, Apple...">
+        </div>
+
+        <div class="form-group">
+          <label>Model</label>
+          <input id="productModel"
+            placeholder="ThinkPad T480">
+        </div>
+
+        <div class="form-group">
+          <label>Kateqoriya</label>
+          <select id="productCategory">
+            <option value="Notebook">Notebook</option>
+            <option value="Planşet">Planşet</option>
+            <option value="Digər">Digər</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Seriya nömrəsi</label>
+          <input id="productSerial"
+            placeholder="Serial number">
+        </div>
+
+        <div class="form-group">
+          <label>IMEI</label>
+          <input id="productImei"
+            placeholder="IMEI">
+        </div>
+
+        <div class="form-group">
+          <label>Alış qiyməti</label>
+          <input
+            id="productPurchase"
+            type="number"
+            min="0"
+            step="0.01"
+            value="0">
+        </div>
+
+        <div class="form-group">
+          <label>Satış qiyməti</label>
+          <input
+            id="productSale"
+            type="number"
+            min="0"
+            step="0.01"
+            value="0">
+        </div>
+
+        <div class="form-group">
+          <label>Stok</label>
+          <input
+            id="productStock"
+            type="number"
+            min="0"
+            value="1">
+        </div>
+
+        <div class="form-group">
+          <label>Vəziyyət</label>
+          <select id="productCondition">
+            <option value="used">2-ci əl</option>
+            <option value="new">Yeni</option>
+            <option value="refurbished">Bərpa olunmuş</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="grid-column:1/-1">
+          <label>Qeyd</label>
+          <textarea
+            id="productNotes"
+            rows="3"
+            placeholder="Məhsul haqqında əlavə qeyd..."></textarea>
+        </div>
+
+      </div>
+
+      <div style="
+        display:flex;
+        justify-content:flex-end;
+        gap:10px;
+        margin-top:20px;
+      ">
+
+        <button
+          type="button"
+          class="secondary-btn"
+          id="cancelProductBtn">
+          Ləğv et
+        </button>
+
+        <button
+          type="submit"
+          class="primary-btn">
+          Məhsulu yadda saxla
+        </button>
+
+      </div>
+
+    </form>
+  `;
+
+  modalOverlay.classList.remove("hidden");
+
+  document
+    .getElementById("cancelProductBtn")
+    ?.addEventListener("click", closeProductModal);
+
+  document
+    .getElementById("productForm")
+    ?.addEventListener("submit", saveProduct);
+});
+
+
+function closeProductModal() {
+
+  document
+    .getElementById("modalOverlay")
+    ?.classList.add("hidden");
+}
+
+
+/* ================= SAVE PRODUCT ================= */
+
+async function saveProduct(event) {
+
+  event.preventDefault();
+
+  const product = {
+
+    name:
+      document.getElementById("productName").value.trim(),
+
+    brand:
+      document.getElementById("productBrand").value.trim(),
+
+    model:
+      document.getElementById("productModel").value.trim(),
+
+    category:
+      document.getElementById("productCategory").value,
+
+    serial_number:
+      document.getElementById("productSerial").value.trim(),
+
+    imei:
+      document.getElementById("productImei").value.trim(),
+
+    purchase_price:
+      Number(document.getElementById("productPurchase").value || 0),
+
+    sale_price:
+      Number(document.getElementById("productSale").value || 0),
+
+    stock:
+      Number(document.getElementById("productStock").value || 0),
+
+    status: "active",
+
+    condition:
+      document.getElementById("productCondition").value,
+
+    notes:
+      document.getElementById("productNotes").value.trim()
+  };
+
+  const { error } =
+    await supabaseClient
+      .from("products")
+      .insert(product);
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      "Məhsul əlavə edilmədi: " +
+      error.message
+    );
+
+    return;
+  }
+
+  closeProductModal();
+
+  await loadProducts();
+  await loadDashboard();
+
+  alert("Məhsul uğurla əlavə edildi.");
+}
+
+
+/* ================= DELETE PRODUCT ================= */
+
+async function deleteProduct(id) {
+
+  if (!confirm("Bu məhsulu silmək istəyirsiniz?")) {
+    return;
+  }
+
+  const { error } =
+    await supabaseClient
+      .from("products")
+      .delete()
+      .eq("id", id);
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      "Məhsul silinmədi: " +
+      error.message
+    );
+
+    return;
+  }
+
+  await loadProducts();
+  await loadDashboard();
+}
+
+
+/* ================= SEARCH / FILTER ================= */
+
+productSearch?.addEventListener(
+  "input",
+  loadProducts
+);
+
+productCategoryFilter?.addEventListener(
+  "change",
+  loadProducts
+);
+
+productStatusFilter?.addEventListener(
+  "change",
+  loadProducts
+);
+
+
+/* ================= HTML SECURITY ================= */
+
+function escapeHTML(value) {
+
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+
+/* ================= START PRODUCTS ================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+    loadProducts();
+  }
+);
