@@ -615,31 +615,41 @@ function renderCustomers() {
 }
 
 async function addCustomer(formData) {
+  const fullName = (formData.name || formData.full_name || "").trim();
 
-  const customer = {
-
-    name:
-      formData.name?.trim(),
-
-    phone:
-      formData.phone?.trim() || null,
-
-    email:
-      formData.email?.trim() || null,
-
-    address:
-      formData.address?.trim() || null,
-
-    notes:
-      formData.notes?.trim() || null
-  };
-
-  if (!customer.name) {
-
-    toast("Müştəri adı daxil edilməlidir.");
-
+  if (!fullName) {
+    showToast("Ad Soyad daxil edilməlidir.");
     return false;
   }
+
+  const customer = {
+    full_name: fullName,
+    phone: formData.phone?.trim() || null,
+    email: formData.email?.trim() || null,
+    address: formData.address?.trim() || null,
+    notes: formData.notes?.trim() || null
+  };
+
+  const { data, error } = await supabaseClient
+    .from("customers")
+    .insert(customer)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Customer insert error:", error);
+    showToast("Müştəri əlavə edilmədi: " + (error.message || "Naməlum xəta"));
+    return false;
+  }
+
+  console.log("Customer created:", data);
+
+  showToast("Müştəri uğurla əlavə edildi.");
+
+  await loadCustomers();
+
+  return true;
+}
 
   const { error } =
     await supabaseClient
