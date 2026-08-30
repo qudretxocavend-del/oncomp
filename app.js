@@ -1,7 +1,7 @@
-```javascript
 /* =========================================================
-   ONCOMP — PREMIUM ELEKTRON UÇOT SİSTEMİ
-   Supabase + Vanilla JS
+   ONCOMP — Elektron Uçot Sistemi
+   FINAL APP.JS
+   AUTH + PRODUCTS + CUSTOMERS + SALES + EXPENSES
    ========================================================= */
 
 const SUPABASE_URL = "https://frnbduzaiuitpxgvvzwq.supabase.co";
@@ -26,13 +26,10 @@ let expenses = [];
 const $ = id => document.getElementById(id);
 
 function money(value) {
-  return Number(value || 0).toLocaleString("az-AZ", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  }) + " ₼";
+  return `${Number(value || 0).toFixed(2)} ₼`;
 }
 
-function esc(value) {
+function escapeHTML(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
@@ -41,24 +38,26 @@ function esc(value) {
     .replaceAll("'", "&#039;");
 }
 
-function toast(message) {
-  const el = $("toast");
-  const msg = $("toastMessage");
+function showToast(message) {
+  const toast = $("toast");
+  const text = $("toastMessage");
 
-  if (!el || !msg) return;
+  if (!toast || !text) {
+    alert(message);
+    return;
+  }
 
-  msg.textContent = message;
-  el.classList.remove("hidden");
+  text.textContent = message;
+  toast.classList.remove("hidden");
 
-  clearTimeout(window.__toastTimer);
-
-  window.__toastTimer = setTimeout(() => {
-    el.classList.add("hidden");
+  setTimeout(() => {
+    toast.classList.add("hidden");
   }, 3000);
 }
 
 /* =========================================================
-   AUTH — İŞLƏYƏN VERSİYA QORUNUR
+   AUTH
+   SƏNİN İŞLƏYƏN LOGIN KODUN
    ========================================================= */
 
 function showLogin() {
@@ -71,11 +70,13 @@ function showApp() {
   $("appPage")?.classList.remove("hidden");
 }
 
-function showMessage(message, type = "") {
-  if (!$("loginMessage")) return;
+function showMessage(message, type = "error") {
+  const box = $("loginMessage");
 
-  $("loginMessage").textContent = message;
-  $("loginMessage").className = type;
+  if (!box) return;
+
+  box.textContent = message;
+  box.className = type;
 }
 
 async function checkSession() {
@@ -88,7 +89,7 @@ async function checkSession() {
     return;
   }
 
-  if (data.session) {
+  if (data?.session) {
     currentUser = data.session.user;
     showApp();
     await loadAll();
@@ -97,25 +98,20 @@ async function checkSession() {
   }
 }
 
-$("loginForm")?.addEventListener("submit", async event => {
-  event.preventDefault();
+async function login(email, password) {
 
-  const email =
-    $("loginEmail")?.value.trim();
-
-  const password =
-    $("loginPassword")?.value;
+  const button =
+    $("loginForm")?.querySelector("button");
 
   if (!email || !password) {
     showMessage("E-poçt və şifrə daxil edin.");
     return;
   }
 
-  const button =
-    $("loginForm").querySelector("button");
-
-  button.disabled = true;
-  button.textContent = "Daxil olunur...";
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Daxil olunur...";
+  }
 
   showMessage("");
 
@@ -125,8 +121,10 @@ $("loginForm")?.addEventListener("submit", async event => {
       password
     });
 
-  button.disabled = false;
-  button.textContent = "Daxil ol";
+  if (button) {
+    button.disabled = false;
+    button.textContent = "Daxil ol";
+  }
 
   if (error) {
     console.error(error);
@@ -134,17 +132,16 @@ $("loginForm")?.addEventListener("submit", async event => {
     return;
   }
 
-  if (data.session) {
+  if (data?.session) {
     currentUser = data.user;
-
     showApp();
-    showMessage("");
-
+    showMessage("", "success");
     await loadAll();
   }
-});
+}
 
-$("logoutBtn")?.addEventListener("click", async () => {
+async function logout() {
+
   await supabaseClient.auth.signOut();
 
   currentUser = null;
@@ -152,10 +149,14 @@ $("logoutBtn")?.addEventListener("click", async () => {
   showLogin();
 
   $("loginForm")?.reset();
-});
+}
+
+/* =========================================================
+   AUTH STATE
+   ========================================================= */
 
 supabaseClient.auth.onAuthStateChange(
-  async (event, session) => {
+  async (_event, session) => {
 
     if (session) {
       currentUser = session.user;
@@ -167,72 +168,6 @@ supabaseClient.auth.onAuthStateChange(
 
   }
 );
-
-/* =========================================================
-   NAVIGATION
-   ========================================================= */
-
-const pageTitles = {
-  dashboard: "Dashboard",
-  products: "Məhsullar",
-  sales: "Satışlar",
-  customers: "Müştərilər",
-  inventory: "Anbar",
-  expenses: "Xərclər",
-  reports: "Hesabatlar",
-  settings: "Parametrlər"
-};
-
-function openPage(page) {
-
-  document.querySelectorAll(".content-page")
-    .forEach(el =>
-      el.classList.remove("active-page")
-    );
-
-  document.querySelectorAll(".nav-item")
-    .forEach(el =>
-      el.classList.remove("active")
-    );
-
-  const section = $(`${page}Page`);
-
-  if (section) {
-    section.classList.add("active-page");
-  }
-
-  const nav =
-    document.querySelector(
-      `.nav-item[data-page="${page}"]`
-    );
-
-  if (nav) {
-    nav.classList.add("active");
-  }
-
-  if ($("pageTitle")) {
-    $("pageTitle").textContent =
-      pageTitles[page] || "Dashboard";
-  }
-}
-
-document.querySelectorAll(".nav-item")
-  .forEach(button => {
-
-    button.addEventListener("click", () => {
-      openPage(button.dataset.page);
-    });
-
-  });
-
-document.querySelectorAll("[data-page-action]")
-  .forEach(button => {
-
-    button.addEventListener("click", () => {
-      openPage(button.dataset.pageAction);
-    });
-
-  });
 
 /* =========================================================
    LOAD ALL
@@ -269,23 +204,17 @@ async function loadProducts() {
   if (error) {
     console.error("Products:", error);
     products = [];
-  } else {
-    products = data || [];
+    return;
   }
 
+  products = data || [];
+
   renderProducts();
-  populateCategoryFilter();
+  populateProductCategoryFilter();
 }
 
-function productName(product) {
-  return (
-    product.name ||
-    product.model ||
-    "Məhsul"
-  );
-}
+function productPurchasePrice(product) {
 
-function purchasePrice(product) {
   return Number(
     product.purchase_price ??
     product.buy_price ??
@@ -294,17 +223,21 @@ function purchasePrice(product) {
   );
 }
 
-function sellingPrice(product) {
+function productSalePrice(product) {
+
   return Number(
     product.sale_price ??
     product.selling_price ??
+    product.sell_price ??
     0
   );
 }
 
 function productStock(product) {
+
   return Number(
-    product.stock ?? 1
+    product.stock ??
+    1
   );
 }
 
@@ -327,79 +260,89 @@ function renderProducts() {
     return;
   }
 
-  table.innerHTML =
-    products.map(product => {
+  table.innerHTML = products.map(product => {
 
-      const stock =
-        productStock(product);
+    const purchase =
+      productPurchasePrice(product);
 
-      const status =
-        product.status === "sold" ||
-        stock <= 0
-          ? "Satılıb"
-          : "Aktiv";
+    const sale =
+      productSalePrice(product);
 
-      return `
-        <tr>
+    const stock =
+      productStock(product);
 
-          <td>
-            <strong>
-              ${esc(productName(product))}
-            </strong>
+    const sold =
+      product.status === "sold" ||
+      stock <= 0;
 
-            <small>
-              ${esc(product.brand || "")}
-            </small>
-          </td>
+    return `
+      <tr>
 
-          <td>
-            ${esc(product.category || "-")}
-          </td>
-
-          <td>
-            ${esc(
-              product.imei ||
-              product.serial_number ||
-              product.serial ||
-              "-"
+        <td>
+          <strong>
+            ${escapeHTML(
+              product.name ||
+              product.model ||
+              "Məhsul"
             )}
-          </td>
+          </strong>
 
-          <td>
-            ${money(purchasePrice(product))}
-          </td>
+          <small>
+            ${escapeHTML(product.brand || "")}
+          </small>
+        </td>
 
-          <td>
-            <strong>
-              ${money(sellingPrice(product))}
-            </strong>
-          </td>
+        <td>
+          ${escapeHTML(
+            product.category || "-"
+          )}
+        </td>
 
-          <td>
-            ${stock}
-          </td>
+        <td>
+          ${escapeHTML(
+            product.imei ||
+            product.serial_number ||
+            product.serial ||
+            "-"
+          )}
+        </td>
 
-          <td>
-            <span class="status-badge">
-              ${status}
-            </span>
-          </td>
+        <td>
+          ${money(purchase)}
+        </td>
 
-          <td>
-            <button
-              class="text-btn"
-              onclick="deleteProduct('${product.id}')">
-              Sil
-            </button>
-          </td>
+        <td>
+          <strong>
+            ${money(sale)}
+          </strong>
+        </td>
 
-        </tr>
-      `;
+        <td>
+          ${stock}
+        </td>
 
-    }).join("");
+        <td>
+          <span class="status-badge">
+            ${sold ? "Satılıb" : "Aktiv"}
+          </span>
+        </td>
+
+        <td>
+          <button
+            class="text-btn"
+            onclick="deleteProduct('${product.id}')"
+          >
+            Sil
+          </button>
+        </td>
+
+      </tr>
+    `;
+
+  }).join("");
 }
 
-function populateCategoryFilter() {
+function populateProductCategoryFilter() {
 
   const select =
     $("productCategoryFilter");
@@ -419,58 +362,51 @@ function populateCategoryFilter() {
     </option>
 
     ${categories.map(category => `
-      <option value="${esc(category)}">
-        ${esc(category)}
+      <option value="${escapeHTML(category)}">
+        ${escapeHTML(category)}
       </option>
     `).join("")}
   `;
 }
 
-async function addProduct(formData) {
+async function addProduct(data) {
 
-  const payload = {
-
-    name:
-      formData.name?.trim(),
-
-    brand:
-      formData.brand?.trim() || null,
-
-    model:
-      formData.model?.trim() || null,
-
-    category:
-      formData.category || "Notebook",
+  const product = {
+    name: data.name?.trim(),
+    brand: data.brand?.trim() || null,
+    model: data.model?.trim() || null,
+    category: data.category || "Digər",
 
     imei:
-      formData.imei?.trim() || null,
+      data.imei?.trim() ||
+      null,
 
     purchase_price:
-      Number(formData.purchase_price || 0),
+      Number(data.purchase_price || 0),
 
     sale_price:
-      Number(formData.sale_price || 0),
+      Number(data.sale_price || 0),
 
     stock:
-      Number(formData.stock || 1),
+      Number(data.stock || 1),
 
-    status:
-      "active",
+    status: "active",
 
     notes:
-      formData.notes?.trim() || null
+      data.notes?.trim() ||
+      null
   };
 
   const { error } =
     await supabaseClient
       .from("products")
-      .insert(payload);
+      .insert(product);
 
   if (error) {
 
     console.error(error);
 
-    toast(
+    showToast(
       "Məhsul əlavə edilmədi: " +
       error.message
     );
@@ -478,12 +414,13 @@ async function addProduct(formData) {
     return false;
   }
 
-  toast("Məhsul uğurla əlavə edildi.");
+  showToast("Məhsul uğurla əlavə edildi");
 
   await loadProducts();
 
   updateDashboard();
   updateInventory();
+  updateReports();
 
   return true;
 }
@@ -492,7 +429,9 @@ async function deleteProduct(id) {
 
   if (!confirm(
     "Bu məhsulu silmək istəyirsiniz?"
-  )) return;
+  )) {
+    return;
+  }
 
   const { error } =
     await supabaseClient
@@ -502,7 +441,7 @@ async function deleteProduct(id) {
 
   if (error) {
 
-    toast(
+    showToast(
       "Məhsul silinmədi: " +
       error.message
     );
@@ -510,12 +449,13 @@ async function deleteProduct(id) {
     return;
   }
 
-  toast("Məhsul silindi.");
+  showToast("Məhsul silindi");
 
   await loadProducts();
 
   updateDashboard();
   updateInventory();
+  updateReports();
 }
 
 /* =========================================================
@@ -538,11 +478,10 @@ async function loadCustomers() {
 
     customers = [];
 
-  } else {
-
-    customers = data || [];
-
+    return;
   }
+
+  customers = data || [];
 
   renderCustomers();
 }
@@ -552,8 +491,9 @@ function customerName(customer) {
   return (
     customer.full_name ||
     customer.name ||
-    `${customer.first_name || ""} ${customer.last_name || ""}`
-  ).trim() || "Müştəri";
+    `${customer.first_name || ""} ${customer.last_name || ""}`.trim() ||
+    "Müştəri"
+  );
 }
 
 function renderCustomers() {
@@ -577,91 +517,108 @@ function renderCustomers() {
   }
 
   table.innerHTML =
-    customers.map(customer => `
+    customers.map(customer => {
 
-      <tr>
+      return `
+        <tr>
 
-        <td>
-          <strong>
-            ${esc(customerName(customer))}
-          </strong>
-        </td>
+          <td>
+            <strong>
+              ${escapeHTML(
+                customerName(customer)
+              )}
+            </strong>
+          </td>
 
-        <td>
-          ${esc(customer.phone || "-")}
-        </td>
+          <td>
+            ${escapeHTML(
+              customer.phone || "-"
+            )}
+          </td>
 
-        <td>
-          ${esc(customer.email || "-")}
-        </td>
+          <td>
+            ${escapeHTML(
+              customer.email || "-"
+            )}
+          </td>
 
-        <td>
-          ${esc(customer.address || "-")}
-        </td>
+          <td>
+            ${escapeHTML(
+              customer.address || "-"
+            )}
+          </td>
 
-        <td>
-          ${
-            customer.created_at
+          <td>
+            ${
+              customer.created_at
               ? new Date(
                   customer.created_at
                 ).toLocaleDateString("az-AZ")
               : "-"
-          }
-        </td>
+            }
+          </td>
 
-        <td></td>
+          <td></td>
 
-      </tr>
+        </tr>
+      `;
 
-    `).join("");
+    }).join("");
 }
 
-async function addCustomer(formData) {
+async function addCustomer(data) {
 
   const fullName =
-    (
-      formData.full_name ||
-      formData.name ||
-      ""
-    ).trim();
+    data.name?.trim();
 
   if (!fullName) {
 
-    toast(
+    showToast(
       "Ad Soyad daxil edilməlidir."
     );
 
     return false;
   }
 
-  const payload = {
+  /*
+    VACİB:
+    customers cədvəlində full_name NOT NULL olduğu
+    üçün həm full_name, həm də name göndərilir.
+  */
 
-    full_name:
-      fullName,
+  const customer = {
+
+    full_name: fullName,
+
+    name: fullName,
 
     phone:
-      formData.phone?.trim() || null,
+      data.phone?.trim() ||
+      null,
 
     email:
-      formData.email?.trim() || null,
+      data.email?.trim() ||
+      null,
 
     address:
-      formData.address?.trim() || null,
+      data.address?.trim() ||
+      null,
 
     notes:
-      formData.notes?.trim() || null
+      data.notes?.trim() ||
+      null
   };
 
   const { error } =
     await supabaseClient
       .from("customers")
-      .insert(payload);
+      .insert(customer);
 
   if (error) {
 
     console.error(error);
 
-    toast(
+    showToast(
       "Müştəri əlavə edilmədi: " +
       error.message
     );
@@ -669,8 +626,8 @@ async function addCustomer(formData) {
     return false;
   }
 
-  toast(
-    "Müştəri uğurla əlavə edildi."
+  showToast(
+    "Müştəri uğurla əlavə edildi"
   );
 
   await loadCustomers();
@@ -698,17 +655,16 @@ async function loadSales() {
 
     sales = [];
 
-  } else {
-
-    sales = data || [];
-
+    return;
   }
+
+  sales = data || [];
 
   renderSales();
   renderRecentSales();
 }
 
-function saleProduct(sale) {
+function getSaleProduct(sale) {
 
   return products.find(
     product =>
@@ -717,7 +673,7 @@ function saleProduct(sale) {
   );
 }
 
-function saleCustomer(sale) {
+function getSaleCustomer(sale) {
 
   return customers.find(
     customer =>
@@ -740,12 +696,12 @@ function saleAmount(sale) {
 function salePurchase(sale) {
 
   const product =
-    saleProduct(sale);
+    getSaleProduct(sale);
 
   return Number(
     sale.purchase_price ??
     sale.cost_price ??
-    product?.purchase_price ??
+    productPurchasePrice(product || {}) ??
     0
   );
 }
@@ -760,10 +716,6 @@ function saleProfit(sale) {
     )
   );
 }
-
-/* =========================================================
-   PREMIUM SALES TABLE
-   ========================================================= */
 
 function renderSales() {
 
@@ -789,21 +741,21 @@ function renderSales() {
     sales.map((sale, index) => {
 
       const product =
-        saleProduct(sale);
+        getSaleProduct(sale);
 
       const customer =
-        saleCustomer(sale);
-
-      const amount =
-        saleAmount(sale);
+        getSaleCustomer(sale);
 
       const purchase =
         salePurchase(sale);
 
+      const salePrice =
+        saleAmount(sale);
+
       const profit =
         saleProfit(sale);
 
-      const saleNumber =
+      const number =
         sale.sale_number ||
         `SAT-${String(
           sales.length - index
@@ -811,36 +763,25 @@ function renderSales() {
 
       const date =
         sale.created_at
-          ? new Date(
-              sale.created_at
-            ).toLocaleDateString("az-AZ")
-          : "-";
+        ? new Date(
+            sale.created_at
+          ).toLocaleDateString("az-AZ")
+        : "-";
 
       return `
-
         <tr>
 
           <td>
             <strong>
-              ${esc(saleNumber)}
+              ${escapeHTML(number)}
             </strong>
           </td>
 
           <td>
-            ${esc(
-              product
-                ? productName(product)
-                : sale.product_name ||
-                  "Məhsul"
-            )}
-          </td>
-
-          <td>
-            ${esc(
-              customer
-                ? customerName(customer)
-                : sale.customer_name ||
-                  "Müştəri"
+            ${escapeHTML(
+              customerName(
+                customer || {}
+              )
             )}
           </td>
 
@@ -850,7 +791,7 @@ function renderSales() {
 
           <td>
             <strong>
-              ${money(amount)}
+              ${money(salePrice)}
             </strong>
           </td>
 
@@ -861,7 +802,7 @@ function renderSales() {
           </td>
 
           <td>
-            ${esc(
+            ${escapeHTML(
               sale.payment_method ||
               sale.payment ||
               "Nağd"
@@ -872,8 +813,15 @@ function renderSales() {
             ${date}
           </td>
 
-        </tr>
+          <td>
+            ${escapeHTML(
+              product?.name ||
+              sale.product_name ||
+              "-"
+            )}
+          </td>
 
+        </tr>
       `;
 
     }).join("");
@@ -906,56 +854,55 @@ function renderRecentSales() {
     recent.map(sale => {
 
       const product =
-        saleProduct(sale);
+        getSaleProduct(sale);
 
       const customer =
-        saleCustomer(sale);
+        getSaleCustomer(sale);
+
+      const amount =
+        saleAmount(sale);
+
+      const date =
+        sale.created_at
+        ? new Date(
+            sale.created_at
+          ).toLocaleDateString("az-AZ")
+        : "-";
 
       return `
         <tr>
 
           <td>
-            ${esc(
-              product
-                ? productName(product)
-                : sale.product_name ||
-                  "-"
+            ${escapeHTML(
+              product?.name ||
+              sale.product_name ||
+              "-"
             )}
           </td>
 
           <td>
-            ${esc(
-              customer
-                ? customerName(customer)
-                : sale.customer_name ||
-                  "-"
+            ${escapeHTML(
+              customerName(
+                customer || {}
+              )
             )}
           </td>
 
           <td>
             <strong>
-              ${money(saleAmount(sale))}
+              ${money(amount)}
             </strong>
           </td>
 
           <td>
-            ${esc(
+            ${escapeHTML(
               sale.payment_method ||
-              sale.payment ||
               "Nağd"
             )}
           </td>
 
           <td>
-            ${
-              sale.created_at
-                ? new Date(
-                    sale.created_at
-                  ).toLocaleDateString(
-                    "az-AZ"
-                  )
-                : "-"
-            }
+            ${date}
           </td>
 
         </tr>
@@ -964,25 +911,17 @@ function renderRecentSales() {
     }).join("");
 }
 
-/* =========================================================
-   ADD SALE
-   ========================================================= */
-
-async function addSale(formData) {
+async function addSale(data) {
 
   const productId =
-    String(
-      formData.product_id || ""
-    ).trim();
+    data.product_id?.trim();
 
   const customerId =
-    String(
-      formData.customer_id || ""
-    ).trim();
+    data.customer_id?.trim();
 
   if (!productId) {
 
-    toast(
+    showToast(
       "Məhsul seçilməlidir."
     );
 
@@ -991,7 +930,7 @@ async function addSale(formData) {
 
   if (!customerId) {
 
-    toast(
+    showToast(
       "Müştəri seçilməlidir."
     );
 
@@ -1002,46 +941,46 @@ async function addSale(formData) {
     products.find(
       p =>
         String(p.id) ===
-        productId
-    );
-
-  const customer =
-    customers.find(
-      c =>
-        String(c.id) ===
-        customerId
+        String(productId)
     );
 
   if (!product) {
 
-    toast(
+    showToast(
       "Seçilmiş məhsul tapılmadı."
     );
 
     return false;
   }
 
+  const customer =
+    customers.find(
+      c =>
+        String(c.id) ===
+        String(customerId)
+    );
+
   if (!customer) {
 
-    toast(
+    showToast(
       "Seçilmiş müştəri tapılmadı."
     );
 
     return false;
   }
 
-  const purchase =
-    purchasePrice(product);
+  const purchasePrice =
+    productPurchasePrice(product);
 
-  const price =
+  const salePrice =
     Number(
-      formData.sale_price ||
-      sellingPrice(product)
+      data.sale_price ||
+      productSalePrice(product)
     );
 
-  if (price <= 0) {
+  if (salePrice <= 0) {
 
-    toast(
+    showToast(
       "Satış qiyməti düzgün daxil edilməlidir."
     );
 
@@ -1049,14 +988,15 @@ async function addSale(formData) {
   }
 
   const profit =
-    price - purchase;
+    salePrice - purchasePrice;
 
   const saleNumber =
-    `SAT-${Date.now()
+    "SAT-" +
+    Date.now()
       .toString()
-      .slice(-8)}`;
+      .slice(-8);
 
-  const payload = {
+  const sale = {
 
     sale_number:
       saleNumber,
@@ -1068,39 +1008,39 @@ async function addSale(formData) {
       customerId,
 
     purchase_price:
-      purchase,
+      purchasePrice,
 
     sale_price:
-      price,
+      salePrice,
 
     amount:
-      price,
+      salePrice,
+
+    total_amount:
+      salePrice,
 
     profit:
       profit,
 
     payment_method:
-      formData.payment_method ||
+      data.payment_method ||
       "Nağd",
 
     notes:
-      formData.notes?.trim() ||
+      data.notes?.trim() ||
       null
   };
 
   const { error } =
     await supabaseClient
       .from("sales")
-      .insert(payload);
+      .insert(sale);
 
   if (error) {
 
-    console.error(
-      "SALE ERROR:",
-      error
-    );
+    console.error(error);
 
-    toast(
+    showToast(
       "Satış yaradılmadı: " +
       error.message
     );
@@ -1108,7 +1048,9 @@ async function addSale(formData) {
     return false;
   }
 
-  /* Məhsulu avtomatik satılmış et */
+  /*
+    Məhsul satıldı.
+  */
 
   const { error: productError } =
     await supabaseClient
@@ -1122,13 +1064,13 @@ async function addSale(formData) {
   if (productError) {
 
     console.error(
-      "PRODUCT UPDATE:",
+      "Məhsul status xətası:",
       productError
     );
   }
 
-  toast(
-    "Satış uğurla tamamlandı."
+  showToast(
+    `Satış tamamlandı — ${money(salePrice)}`
   );
 
   await loadAll();
@@ -1152,18 +1094,14 @@ async function loadExpenses() {
 
   if (error) {
 
-    console.error(
-      "Expenses:",
-      error
-    );
+    console.error("Expenses:", error);
 
     expenses = [];
 
-  } else {
-
-    expenses = data || [];
-
+    return;
   }
+
+  expenses = data || [];
 
   renderExpenses();
 }
@@ -1189,84 +1127,90 @@ function renderExpenses() {
   }
 
   table.innerHTML =
-    expenses.map(expense => `
+    expenses.map(expense => {
 
-      <tr>
+      return `
+        <tr>
 
-        <td>
-          ${esc(
-            expense.name ||
-            expense.title ||
-            "-"
-          )}
-        </td>
+          <td>
+            ${escapeHTML(
+              expense.name ||
+              expense.title ||
+              "-"
+            )}
+          </td>
 
-        <td>
-          ${esc(
-            expense.category ||
-            "-"
-          )}
-        </td>
+          <td>
+            ${escapeHTML(
+              expense.category ||
+              "-"
+            )}
+          </td>
 
-        <td>
-          <strong>
-            ${money(expense.amount)}
-          </strong>
-        </td>
+          <td>
+            <strong>
+              ${money(expense.amount)}
+            </strong>
+          </td>
 
-        <td>
-          ${
-            expense.created_at
+          <td>
+            ${
+              expense.created_at
               ? new Date(
                   expense.created_at
-                ).toLocaleDateString(
-                  "az-AZ"
-                )
+                ).toLocaleDateString("az-AZ")
               : "-"
-          }
-        </td>
+            }
+          </td>
 
-        <td>
-          ${esc(
-            expense.notes || "-"
-          )}
-        </td>
+          <td>
+            ${escapeHTML(
+              expense.notes || "-"
+            )}
+          </td>
 
-        <td></td>
+          <td></td>
 
-      </tr>
+        </tr>
+      `;
 
-    `).join("");
+    }).join("");
 }
 
-async function addExpense(formData) {
+async function addExpense(data) {
 
-  const payload = {
+  const expense = {
 
     name:
-      formData.name?.trim() ||
-      formData.title?.trim(),
+      data.name?.trim() ||
+      data.title?.trim(),
+
+    title:
+      data.name?.trim() ||
+      data.title?.trim(),
 
     category:
-      formData.category ||
+      data.category ||
       "Digər",
 
     amount:
-      Number(formData.amount || 0),
+      Number(data.amount || 0),
 
     notes:
-      formData.notes?.trim() ||
+      data.notes?.trim() ||
       null
   };
 
   const { error } =
     await supabaseClient
       .from("expenses")
-      .insert(payload);
+      .insert(expense);
 
   if (error) {
 
-    toast(
+    console.error(error);
+
+    showToast(
       "Xərc əlavə edilmədi: " +
       error.message
     );
@@ -1274,8 +1218,8 @@ async function addExpense(formData) {
     return false;
   }
 
-  toast(
-    "Xərc uğurla əlavə edildi."
+  showToast(
+    "Xərc uğurla əlavə edildi"
   );
 
   await loadExpenses();
@@ -1291,7 +1235,7 @@ async function addExpense(formData) {
 
 function updateDashboard() {
 
-  const available =
+  const active =
     products.filter(
       p =>
         p.status !== "sold" &&
@@ -1299,18 +1243,18 @@ function updateDashboard() {
     );
 
   const inventoryValue =
-    available.reduce(
-      (sum, product) =>
+    active.reduce(
+      (sum, p) =>
         sum +
-        purchasePrice(product) *
-        productStock(product),
+        productPurchasePrice(p) *
+        productStock(p),
       0
     );
 
   const now =
     new Date();
 
-  const monthlySales =
+  const monthly =
     sales.filter(sale => {
 
       if (!sale.created_at)
@@ -1327,18 +1271,17 @@ function updateDashboard() {
         date.getFullYear() ===
           now.getFullYear()
       );
-
     });
 
   const revenue =
-    monthlySales.reduce(
+    monthly.reduce(
       (sum, sale) =>
         sum + saleAmount(sale),
       0
     );
 
   const profit =
-    monthlySales.reduce(
+    monthly.reduce(
       (sum, sale) =>
         sum + saleProfit(sale),
       0
@@ -1362,7 +1305,7 @@ function updateDashboard() {
 
   if ($("stockAvailable"))
     $("stockAvailable").textContent =
-      available.length;
+      active.length;
 
   if ($("stockSold"))
     $("stockSold").textContent =
@@ -1374,10 +1317,12 @@ function updateDashboard() {
 
   if ($("stockCritical"))
     $("stockCritical").textContent =
-      available.filter(
+      active.filter(
         p =>
           productStock(p) <= 1
       ).length;
+
+  renderRecentSales();
 }
 
 /* =========================================================
@@ -1408,10 +1353,10 @@ function updateInventory() {
 
   const value =
     available.reduce(
-      (sum, product) =>
+      (sum, p) =>
         sum +
-        purchasePrice(product) *
-        productStock(product),
+        productPurchasePrice(p) *
+        productStock(p),
       0
     );
 
@@ -1448,24 +1393,28 @@ function updateInventory() {
   }
 
   list.innerHTML =
-    available.map(product => `
+    available.map(product => {
 
-      <div class="stock-row">
+      return `
+        <div class="stock-row">
 
-        <span>
-          ${esc(
-            productName(product)
-          )}
-        </span>
+          <span>
+            ${escapeHTML(
+              product.name ||
+              product.model ||
+              "Məhsul"
+            )}
+          </span>
 
-        <strong>
-          ${productStock(product)}
-          ədəd
-        </strong>
+          <strong>
+            ${productStock(product)}
+            ədəd
+          </strong>
 
-      </div>
+        </div>
+      `;
 
-    `).join("");
+    }).join("");
 }
 
 /* =========================================================
@@ -1481,7 +1430,7 @@ function updateReports() {
       0
     );
 
-  const expensesTotal =
+  const expenseTotal =
     expenses.reduce(
       (sum, expense) =>
         sum +
@@ -1500,7 +1449,7 @@ function updateReports() {
 
   const netProfit =
     grossProfit -
-    expensesTotal;
+    expenseTotal;
 
   if ($("reportRevenue"))
     $("reportRevenue").textContent =
@@ -1508,7 +1457,7 @@ function updateReports() {
 
   if ($("reportExpenses"))
     $("reportExpenses").textContent =
-      money(expensesTotal);
+      money(expenseTotal);
 
   if ($("reportProfit"))
     $("reportProfit").textContent =
@@ -1521,7 +1470,8 @@ function updateReports() {
   const categoryReport =
     $("categoryReport");
 
-  if (!categoryReport) return;
+  if (!categoryReport)
+    return;
 
   const map = {};
 
@@ -1533,13 +1483,12 @@ function updateReports() {
 
     map[category] =
       (map[category] || 0) + 1;
-
   });
 
-  const entries =
+  const categories =
     Object.entries(map);
 
-  if (!entries.length) {
+  if (!categories.length) {
 
     categoryReport.innerHTML =
       "Məlumat yoxdur";
@@ -1548,13 +1497,12 @@ function updateReports() {
   }
 
   categoryReport.innerHTML =
-    entries.map(
+    categories.map(
       ([category, count]) => `
-
         <div class="stock-row">
 
           <span>
-            ${esc(category)}
+            ${escapeHTML(category)}
           </span>
 
           <strong>
@@ -1562,9 +1510,65 @@ function updateReports() {
           </strong>
 
         </div>
-
       `
     ).join("");
+}
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+const pageTitles = {
+
+  dashboard: "Dashboard",
+  products: "Məhsullar",
+  sales: "Satışlar",
+  customers: "Müştərilər",
+  inventory: "Anbar",
+  expenses: "Xərclər",
+  reports: "Hesabatlar",
+  settings: "Parametrlər"
+
+};
+
+function openPage(pageName) {
+
+  document
+    .querySelectorAll(".content-page")
+    .forEach(page =>
+      page.classList.remove(
+        "active-page"
+      )
+    );
+
+  document
+    .querySelectorAll(".nav-item")
+    .forEach(item =>
+      item.classList.remove(
+        "active"
+      )
+    );
+
+  const target =
+    $(`${pageName}Page`);
+
+  const nav =
+    document.querySelector(
+      `.nav-item[data-page="${pageName}"]`
+    );
+
+  if (target)
+    target.classList.add(
+      "active-page"
+    );
+
+  if (nav)
+    nav.classList.add("active");
+
+  if ($("pageTitle"))
+    $("pageTitle").textContent =
+      pageTitles[pageName] ||
+      pageName;
 }
 
 /* =========================================================
@@ -1590,38 +1594,19 @@ function openModal(
       html;
 
   $("modalOverlay")
-    ?.classList.remove("hidden");
+    ?.classList
+    .remove("hidden");
 }
 
 function closeModal() {
 
   $("modalOverlay")
-    ?.classList.add("hidden");
+    ?.classList
+    .add("hidden");
 
   if ($("modalBody"))
     $("modalBody").innerHTML = "";
 }
-
-$("closeModalBtn")
-  ?.addEventListener(
-    "click",
-    closeModal
-  );
-
-$("modalOverlay")
-  ?.addEventListener(
-    "click",
-    event => {
-
-      if (
-        event.target ===
-        $("modalOverlay")
-      ) {
-        closeModal();
-      }
-
-    }
-  );
 
 /* =========================================================
    PRODUCT MODAL
@@ -1633,7 +1618,6 @@ function openProductModal() {
     "Yeni məhsul",
     "Məhsul məlumatlarını daxil edin.",
     `
-
       <form
         id="productModalForm"
         class="form-grid"
@@ -1661,6 +1645,7 @@ function openProductModal() {
           <label>Kateqoriya</label>
 
           <select name="category">
+
             <option value="Notebook">
               Notebook
             </option>
@@ -1672,6 +1657,7 @@ function openProductModal() {
             <option value="Digər">
               Digər
             </option>
+
           </select>
         </div>
 
@@ -1724,19 +1710,18 @@ function openProductModal() {
           <textarea name="notes"></textarea>
         </div>
 
-        <div style="grid-column:1/-1">
-
+        <div
+          style="grid-column:1/-1"
+        >
           <button
             type="submit"
             class="primary-btn"
           >
             Məhsulu yadda saxla
           </button>
-
         </div>
 
       </form>
-
     `
   );
 
@@ -1774,7 +1759,6 @@ function openCustomerModal() {
     "Yeni müştəri",
     "Müştəri məlumatlarını daxil edin.",
     `
-
       <form
         id="customerModalForm"
         class="form-grid"
@@ -1787,9 +1771,9 @@ function openCustomerModal() {
           <label>Ad Soyad</label>
 
           <input
-            name="full_name"
+            name="name"
             required
-            placeholder="Müştərinin ad və soyadı"
+            placeholder="Müştərinin adı və soyadı"
           >
         </div>
 
@@ -1825,19 +1809,18 @@ function openCustomerModal() {
           <textarea name="notes"></textarea>
         </div>
 
-        <div style="grid-column:1/-1">
-
+        <div
+          style="grid-column:1/-1"
+        >
           <button
             type="submit"
             class="primary-btn"
           >
             Müştərini yadda saxla
           </button>
-
         </div>
 
       </form>
-
     `
   );
 
@@ -1873,16 +1856,33 @@ function openSaleModal() {
 
   const available =
     products.filter(
-      p =>
-        p.status !== "sold" &&
-        productStock(p) > 0
+      product =>
+        product.status !== "sold" &&
+        productStock(product) > 0
     );
+
+  if (!available.length) {
+
+    showToast(
+      "Satış üçün anbarda məhsul yoxdur."
+    );
+
+    return;
+  }
+
+  if (!customers.length) {
+
+    showToast(
+      "Əvvəlcə müştəri əlavə edin."
+    );
+
+    return;
+  }
 
   openModal(
     "Yeni satış",
-    "Məhsulu və müştərini seçin, satış qiymətini təsdiqləyin.",
+    "Məhsulu, müştərini və real satış qiymətini seçin.",
     `
-
       <form
         id="saleModalForm"
         class="form-grid"
@@ -1907,14 +1907,19 @@ function openSaleModal() {
 
             ${available.map(product => `
 
-              <option
-                value="${esc(product.id)}"
-              >
-                ${esc(productName(product))}
-                —
-                ${money(sellingPrice(product))}
-                —
-                Stok: ${productStock(product)}
+              <option value="${product.id}">
+
+                ${escapeHTML(
+                  product.name ||
+                  product.model ||
+                  "Məhsul"
+                )}
+
+                — Satış:
+                ${money(
+                  productSalePrice(product)
+                )}
+
               </option>
 
             `).join("")}
@@ -1932,7 +1937,6 @@ function openSaleModal() {
 
           <select
             name="customer_id"
-            id="saleCustomerSelect"
             required
           >
 
@@ -1942,10 +1946,12 @@ function openSaleModal() {
 
             ${customers.map(customer => `
 
-              <option
-                value="${esc(customer.id)}"
-              >
-                ${esc(customerName(customer))}
+              <option value="${customer.id}">
+
+                ${escapeHTML(
+                  customerName(customer)
+                )}
+
               </option>
 
             `).join("")}
@@ -1959,7 +1965,7 @@ function openSaleModal() {
           <label>Alış qiyməti</label>
 
           <input
-            id="salePurchasePreview"
+            id="salePurchaseDisplay"
             type="text"
             readonly
             value="0.00 ₼"
@@ -1969,33 +1975,25 @@ function openSaleModal() {
 
         <div class="form-group">
 
-          <label>Satış qiyməti</label>
+          <label>
+            Satış qiyməti
+          </label>
 
           <input
+            id="salePriceInput"
+            name="sale_price"
             type="number"
             step="0.01"
             min="0"
-            name="sale_price"
-            id="salePriceInput"
             required
           >
 
         </div>
 
-        <div class="form-group">
-
-          <label>Mənfəət</label>
-
-          <input
-            id="saleProfitPreview"
-            type="text"
-            readonly
-            value="0.00 ₼"
-          >
-
-        </div>
-
-        <div class="form-group">
+        <div
+          class="form-group"
+          style="grid-column:1/-1"
+        >
 
           <label>Ödəniş üsulu</label>
 
@@ -2028,18 +2026,12 @@ function openSaleModal() {
 
           <label>Qeyd</label>
 
-          <textarea
-            name="notes"
-          ></textarea>
+          <textarea name="notes"></textarea>
 
         </div>
 
         <div
-          style="
-            grid-column:1/-1;
-            display:flex;
-            justify-content:flex-end;
-          "
+          style="grid-column:1/-1"
         >
 
           <button
@@ -2052,7 +2044,6 @@ function openSaleModal() {
         </div>
 
       </form>
-
     `
   );
 
@@ -2062,79 +2053,50 @@ function openSaleModal() {
   const priceInput =
     $("salePriceInput");
 
-  const purchasePreview =
-    $("salePurchasePreview");
+  const purchaseDisplay =
+    $("salePurchaseDisplay");
 
-  const profitPreview =
-    $("saleProfitPreview");
-
-  function updateSalePreview() {
+  function updateSalePrice() {
 
     const product =
       products.find(
         p =>
           String(p.id) ===
-          String(productSelect?.value)
+          String(productSelect.value)
       );
 
     if (!product) {
 
-      if (purchasePreview)
-        purchasePreview.value =
-          "0.00 ₼";
+      if (priceInput)
+        priceInput.value = "";
 
-      if (profitPreview)
-        profitPreview.value =
+      if (purchaseDisplay)
+        purchaseDisplay.value =
           "0.00 ₼";
 
       return;
     }
 
     const purchase =
-      purchasePrice(product);
+      productPurchasePrice(product);
 
-    const price =
-      Number(
-        priceInput?.value ||
-        sellingPrice(product)
-      );
+    const sale =
+      productSalePrice(product);
 
-    if (purchasePreview)
-      purchasePreview.value =
+    if (purchaseDisplay)
+      purchaseDisplay.value =
         money(purchase);
 
-    if (profitPreview)
-      profitPreview.value =
-        money(price - purchase);
+    if (priceInput)
+      priceInput.value =
+        sale.toFixed(2);
   }
 
-  productSelect?.addEventListener(
-    "change",
-    () => {
-
-      const product =
-        products.find(
-          p =>
-            String(p.id) ===
-            String(productSelect.value)
-        );
-
-      if (product && priceInput) {
-
-        priceInput.value =
-          sellingPrice(product);
-
-      }
-
-      updateSalePreview();
-
-    }
-  );
-
-  priceInput?.addEventListener(
-    "input",
-    updateSalePreview
-  );
+  productSelect
+    ?.addEventListener(
+      "change",
+      updateSalePrice
+    );
 
   $("saleModalForm")
     ?.addEventListener(
@@ -2158,7 +2120,6 @@ function openSaleModal() {
 
       }
     );
-
 }
 
 /* =========================================================
@@ -2171,19 +2132,20 @@ function openExpenseModal() {
     "Yeni xərc",
     "Xərc məlumatlarını daxil edin.",
     `
-
       <form
         id="expenseModalForm"
         class="form-grid"
       >
 
         <div class="form-group">
+
           <label>Xərc adı</label>
 
           <input
             name="name"
             required
           >
+
         </div>
 
         <div class="form-group">
@@ -2236,11 +2198,14 @@ function openExpenseModal() {
         >
 
           <label>Qeyd</label>
+
           <input name="notes">
 
         </div>
 
-        <div style="grid-column:1/-1">
+        <div
+          style="grid-column:1/-1"
+        >
 
           <button
             type="submit"
@@ -2252,7 +2217,6 @@ function openExpenseModal() {
         </div>
 
       </form>
-
     `
   );
 
@@ -2284,266 +2248,260 @@ function openExpenseModal() {
    SEARCH
    ========================================================= */
 
-$("productSearch")
-  ?.addEventListener(
-    "input",
-    event => {
+function setupSearch() {
 
-      const query =
-        event.target.value
-          .toLowerCase()
-          .trim();
+  $("productSearch")
+    ?.addEventListener(
+      "input",
+      event => {
 
-      document
-        .querySelectorAll(
-          "#productsTable tr"
-        )
-        .forEach(row => {
+        const query =
+          event.target.value
+            .toLowerCase()
+            .trim();
 
-          row.style.display =
-            row.textContent
-              .toLowerCase()
-              .includes(query)
-              ? ""
-              : "none";
-
-        });
-
-    }
-  );
-
-$("customerSearch")
-  ?.addEventListener(
-    "input",
-    event => {
-
-      const query =
-        event.target.value
-          .toLowerCase()
-          .trim();
-
-      document
-        .querySelectorAll(
-          "#customersTable tr"
-        )
-        .forEach(row => {
-
-          row.style.display =
-            row.textContent
-              .toLowerCase()
-              .includes(query)
-              ? ""
-              : "none";
-
-        });
-
-    }
-  );
-
-$("productCategoryFilter")
-  ?.addEventListener(
-    "change",
-    event => {
-
-      const category =
-        event.target.value;
-
-      document
-        .querySelectorAll(
-          "#productsTable tr"
-        )
-        .forEach(row => {
-
-          if (!category) {
-            row.style.display = "";
-            return;
-          }
-
-          row.style.display =
-            row.textContent
-              .includes(category)
-              ? ""
-              : "none";
-
-        });
-
-    }
-  );
-
-$("productStatusFilter")
-  ?.addEventListener(
-    "change",
-    event => {
-
-      const status =
-        event.target.value;
-
-      document
-        .querySelectorAll(
-          "#productsTable tr"
-        )
-        .forEach(row => {
-
-          if (!status) {
-            row.style.display = "";
-            return;
-          }
-
-          const text =
-            row.textContent;
-
-          if (status === "sold") {
+        document
+          .querySelectorAll(
+            "#productsTable tr"
+          )
+          .forEach(row => {
 
             row.style.display =
-              text.includes("Satılıb")
+              row.textContent
+                .toLowerCase()
+                .includes(query)
                 ? ""
                 : "none";
 
-          } else {
+          });
 
-            row.style.display =
-              text.includes("Aktiv")
-                ? ""
-                : "none";
-
-          }
-
-        });
-
-    }
-  );
-
-/* =========================================================
-   BUTTONS
-   ========================================================= */
-
-$("addProductBtn")
-  ?.addEventListener(
-    "click",
-    openProductModal
-  );
-
-$("addCustomerBtn")
-  ?.addEventListener(
-    "click",
-    openCustomerModal
-  );
-
-$("newSaleBtn")
-  ?.addEventListener(
-    "click",
-    openSaleModal
-  );
-
-$("addExpenseBtn")
-  ?.addEventListener(
-    "click",
-    openExpenseModal
-  );
-
-$("refreshReportsBtn")
-  ?.addEventListener(
-    "click",
-    async () => {
-
-      await loadAll();
-
-      toast(
-        "Hesabatlar yeniləndi."
-      );
-
-    }
-  );
-
-/* =========================================================
-   SETTINGS
-   ========================================================= */
-
-$("saveSettingsBtn")
-  ?.addEventListener(
-    "click",
-    () => {
-
-      const settings = {
-
-        companyName:
-          $("companyName")?.value || "",
-
-        companyEmail:
-          $("companyEmail")?.value || "",
-
-        companyPhone:
-          $("companyPhone")?.value || "",
-
-        companyAddress:
-          $("companyAddress")?.value || ""
-
-      };
-
-      localStorage.setItem(
-        "oncomp_settings",
-        JSON.stringify(settings)
-      );
-
-      toast(
-        "Parametrlər yadda saxlanıldı."
-      );
-
-    }
-  );
-
-function loadSettings() {
-
-  try {
-
-    const settings =
-      JSON.parse(
-        localStorage.getItem(
-          "oncomp_settings"
-        ) || "{}"
-      );
-
-    if ($("companyName"))
-      $("companyName").value =
-        settings.companyName ||
-        "ONCOMP";
-
-    if ($("companyEmail"))
-      $("companyEmail").value =
-        settings.companyEmail ||
-        "";
-
-    if ($("companyPhone"))
-      $("companyPhone").value =
-        settings.companyPhone ||
-        "";
-
-    if ($("companyAddress"))
-      $("companyAddress").value =
-        settings.companyAddress ||
-        "";
-
-  } catch (error) {
-
-    console.error(
-      "Settings:",
-      error
+      }
     );
 
-  }
+  $("customerSearch")
+    ?.addEventListener(
+      "input",
+      event => {
+
+        const query =
+          event.target.value
+            .toLowerCase()
+            .trim();
+
+        document
+          .querySelectorAll(
+            "#customersTable tr"
+          )
+          .forEach(row => {
+
+            row.style.display =
+              row.textContent
+                .toLowerCase()
+                .includes(query)
+                ? ""
+                : "none";
+
+          });
+
+      }
+    );
+
+  $("productCategoryFilter")
+    ?.addEventListener(
+      "change",
+      event => {
+
+        const category =
+          event.target.value;
+
+        document
+          .querySelectorAll(
+            "#productsTable tr"
+          )
+          .forEach(row => {
+
+            if (!category) {
+              row.style.display = "";
+              return;
+            }
+
+            row.style.display =
+              row.textContent
+                .includes(category)
+                ? ""
+                : "none";
+
+          });
+
+      }
+    );
+
+  $("productStatusFilter")
+    ?.addEventListener(
+      "change",
+      event => {
+
+        const status =
+          event.target.value;
+
+        document
+          .querySelectorAll(
+            "#productsTable tr"
+          )
+          .forEach(row => {
+
+            if (!status) {
+              row.style.display = "";
+              return;
+            }
+
+            const text =
+              row.textContent
+                .toLowerCase();
+
+            if (
+              status === "sold"
+            ) {
+              row.style.display =
+                text.includes("satılıb")
+                ? ""
+                : "none";
+            }
+
+            if (
+              status === "active"
+            ) {
+              row.style.display =
+                text.includes("aktiv")
+                ? ""
+                : "none";
+            }
+
+          });
+
+      }
+    );
 }
 
 /* =========================================================
-   INITIAL
+   EVENTS
    ========================================================= */
 
 document.addEventListener(
   "DOMContentLoaded",
   async () => {
 
-    openPage("dashboard");
+    /* LOGIN */
 
-    loadSettings();
+    $("loginForm")
+      ?.addEventListener(
+        "submit",
+        async event => {
+
+          event.preventDefault();
+
+          await login(
+            $("loginEmail")
+              ?.value
+              .trim(),
+
+            $("loginPassword")
+              ?.value
+          );
+
+        }
+      );
+
+    /* LOGOUT */
+
+    $("logoutBtn")
+      ?.addEventListener(
+        "click",
+        logout
+      );
+
+    /* NAVIGATION */
+
+    document
+      .querySelectorAll(".nav-item")
+      .forEach(item => {
+
+        item.addEventListener(
+          "click",
+          () =>
+            openPage(
+              item.dataset.page
+            )
+        );
+
+      });
+
+    document
+      .querySelectorAll(
+        "[data-page-action]"
+      )
+      .forEach(button => {
+
+        button.addEventListener(
+          "click",
+          () =>
+            openPage(
+              button.dataset.pageAction
+            )
+        );
+
+      });
+
+    /* MODALS */
+
+    $("addProductBtn")
+      ?.addEventListener(
+        "click",
+        openProductModal
+      );
+
+    $("addCustomerBtn")
+      ?.addEventListener(
+        "click",
+        openCustomerModal
+      );
+
+    $("newSaleBtn")
+      ?.addEventListener(
+        "click",
+        openSaleModal
+      );
+
+    $("addExpenseBtn")
+      ?.addEventListener(
+        "click",
+        openExpenseModal
+      );
+
+    $("closeModalBtn")
+      ?.addEventListener(
+        "click",
+        closeModal
+      );
+
+    $("modalOverlay")
+      ?.addEventListener(
+        "click",
+        event => {
+
+          if (
+            event.target ===
+            $("modalOverlay")
+          ) {
+            closeModal();
+          }
+
+        }
+      );
+
+    setupSearch();
+
+    openPage("dashboard");
 
     await checkSession();
 
@@ -2551,24 +2509,11 @@ document.addEventListener(
 );
 
 /* =========================================================
-   GLOBAL FUNCTIONS
+   GLOBAL
    ========================================================= */
-
-window.openPage =
-  openPage;
 
 window.deleteProduct =
   deleteProduct;
 
-window.openProductModal =
-  openProductModal;
-
-window.openCustomerModal =
-  openCustomerModal;
-
-window.openSaleModal =
-  openSaleModal;
-
-window.openExpenseModal =
-  openExpenseModal;
-```
+window.openPage =
+  openPage;
