@@ -56,59 +56,135 @@ function showToast(message) {
    ========================================================= */
 
 async function checkSession() {
-  const { data } = await supabaseClient.auth.getSession();
+  try {
+    const { data, error } = await supabaseClient.auth.getSession();
 
-  if (data?.session) {
-    currentUser = data.session.user;
-    showApp();
-    await loadAll();
-  } else {
+    if (error) {
+      console.error("Session error:", error);
+      showLogin();
+      return;
+    }
+
+    if (data && data.session) {
+      currentUser = data.session.user;
+      showApp();
+      await loadAll();
+    } else {
+      showLogin();
+    }
+  } catch (err) {
+    console.error(err);
     showLogin();
   }
 }
 
 function showLogin() {
-  $("loginPage")?.classList.remove("hidden");
-  $("appPage")?.classList.add("hidden");
+  const loginPage = $("loginPage");
+  const appPage = $("appPage");
+
+  if (loginPage) {
+    loginPage.classList.remove("hidden");
+  }
+
+  if (appPage) {
+    appPage.classList.add("hidden");
+  }
 }
 
 function showApp() {
-  $("loginPage")?.classList.add("hidden");
-  $("appPage")?.classList.remove("hidden");
+  const loginPage = $("loginPage");
+  const appPage = $("appPage");
+
+  if (loginPage) {
+    loginPage.classList.add("hidden");
+  }
+
+  if (appPage) {
+    appPage.classList.remove("hidden");
+  }
 }
 
 async function login(email, password) {
   const message = $("loginMessage");
 
+  email = String(email || "").trim();
+  password = String(password || "");
+
+  if (!email || !password) {
+    if (message) {
+      message.textContent = "E-poçt və şifrə daxil edin.";
+    }
+    return;
+  }
+
   if (message) {
     message.textContent = "Giriş edilir...";
   }
 
-  const { data, error } = await supabaseClient.auth.signInWithPassword({
-    email,
-    password
-  });
+  try {
+    const { data, error } =
+      await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
 
-  if (error) {
-    if (message) {
-      message.textContent = error.message;
+    if (error) {
+      console.error("LOGIN ERROR:", error);
+
+      if (message) {
+        if (
+          error.message.toLowerCase().includes("invalid login")
+        ) {
+          message.textContent =
+            "E-poçt və ya şifrə yanlışdır.";
+        } else if (
+          error.message.toLowerCase().includes("email not confirmed")
+        ) {
+          message.textContent =
+            "E-poçt təsdiqlənməyib. Supabase Auth bölməsindən istifadəçini təsdiqləyin.";
+        } else {
+          message.textContent =
+            "Giriş xətası: " + error.message;
+        }
+      }
+
+      return;
     }
 
-    return;
+    if (!data || !data.user || !data.session) {
+      if (message) {
+        message.textContent =
+          "İstifadəçi sessiyası yaradıla bilmədi.";
+      }
+      return;
+    }
+
+    currentUser = data.user;
+
+    if (message) {
+      message.textContent = "";
+    }
+
+    showApp();
+
+    await loadAll();
+
+  } catch (err) {
+    console.error("LOGIN EXCEPTION:", err);
+
+    if (message) {
+      message.textContent =
+        "Sistem xətası baş verdi.";
+    }
   }
-
-  currentUser = data.user;
-
-  if (message) {
-    message.textContent = "";
-  }
-
-  showApp();
-  await loadAll();
 }
 
 async function logout() {
-  await supabaseClient.auth.signOut();
+  try {
+    await supabaseClient.auth.signOut();
+  } catch (err) {
+    console.error("Logout error:", err);
+  }
 
   currentUser = null;
   showLogin();
