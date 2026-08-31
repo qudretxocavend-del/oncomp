@@ -1,4 +1,4 @@
-```javascript
+
 /*
 =========================================================
    ONCOMP — Elektron Uçot Sistemi
@@ -3882,4 +3882,4 @@ window.editSale =
 
 window.deleteSale =
   deleteSale;
-```
+
