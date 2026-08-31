@@ -3063,3 +3063,1715 @@ window.editExpense =
 
 window.deleteExpense =
   deleteExpense;
+/* =========================================================
+   ONCOMP — PREMIUM REPORT SYSTEM + EXPENSE EDIT/DELETE
+   AUTH HİSSƏSİNƏ TOXUNMUR
+   ========================================================= */
+
+(function () {
+
+  /* =======================================================
+     DATE HELPERS
+     ======================================================= */
+
+  function reportDate(value) {
+    if (!value) return null;
+
+    const d = new Date(
+      value.length === 10
+        ? value + "T00:00:00"
+        : value
+    );
+
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  function reportDateText(value) {
+    const d = reportDate(value);
+
+    if (!d) return "-";
+
+    return d.toLocaleDateString("az-AZ");
+  }
+
+  function reportMoney(value) {
+    return Number(value || 0).toLocaleString("az-AZ", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }) + " ₼";
+  }
+
+  function reportToday() {
+    const d = new Date();
+
+    return [
+      d.getFullYear(),
+      String(d.getMonth() + 1).padStart(2, "0"),
+      String(d.getDate()).padStart(2, "0")
+    ].join("-");
+  }
+
+  /* =======================================================
+     EXPENSE EDIT
+     ======================================================= */
+
+  window.editExpense = function (id) {
+
+    const expense = expenses.find(
+      e => String(e.id) === String(id)
+    );
+
+    if (!expense) {
+      showToast("Xərc tapılmadı.");
+      return;
+    }
+
+    openModal(
+      "Xərci redaktə et",
+      "Xərc məlumatlarını dəyişdirin və yadda saxlayın.",
+      `
+        <form id="editExpenseForm" class="form-grid">
+
+          <div class="form-group">
+            <label>Xərc adı</label>
+            <input
+              name="name"
+              value="${escapeHTML(
+                expense.name ||
+                expense.title ||
+                ""
+              )}"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Kateqoriya</label>
+
+            <select name="category">
+
+              <option value="İcarə"
+                ${expense.category === "İcarə" ? "selected" : ""}>
+                İcarə
+              </option>
+
+              <option value="Kommunal"
+                ${expense.category === "Kommunal" ? "selected" : ""}>
+                Kommunal
+              </option>
+
+              <option value="Nəqliyyat"
+                ${expense.category === "Nəqliyyat" ? "selected" : ""}>
+                Nəqliyyat
+              </option>
+
+              <option value="Əmək haqqı"
+                ${expense.category === "Əmək haqqı" ? "selected" : ""}>
+                Əmək haqqı
+              </option>
+
+              <option value="Digər"
+                ${expense.category === "Digər" ? "selected" : ""}>
+                Digər
+              </option>
+
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Məbləğ</label>
+
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              name="amount"
+              value="${Number(
+                expense.amount || 0
+              ).toFixed(2)}"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Xərc tarixi</label>
+
+            <input
+              type="date"
+              name="expense_date"
+              min="2000-01-01"
+              max="2100-12-31"
+              value="${
+                expense.expense_date ||
+                reportToday()
+              }"
+              required
+            >
+          </div>
+
+          <div
+            class="form-group"
+            style="grid-column:1/-1"
+          >
+            <label>Qeyd</label>
+
+            <textarea name="notes">${
+              escapeHTML(
+                expense.notes || ""
+              )
+            }</textarea>
+          </div>
+
+          <div
+            style="
+              grid-column:1/-1;
+              display:flex;
+              gap:10px;
+              justify-content:flex-end;
+            "
+          >
+
+            <button
+              type="button"
+              class="secondary-btn"
+              onclick="closeModal()"
+            >
+              Ləğv et
+            </button>
+
+            <button
+              type="submit"
+              class="primary-btn"
+            >
+              Dəyişiklikləri yadda saxla
+            </button>
+
+          </div>
+
+        </form>
+      `
+    );
+
+    $("editExpenseForm")?.addEventListener(
+      "submit",
+      async function (event) {
+
+        event.preventDefault();
+
+        const data = Object.fromEntries(
+          new FormData(event.target).entries()
+        );
+
+        const {
+          error
+        } = await supabaseClient
+          .from("expenses")
+          .update({
+            name: data.name,
+            category: data.category || null,
+            amount: Number(data.amount || 0),
+            expense_date:
+              data.expense_date || reportToday(),
+            notes: data.notes || null
+          })
+          .eq("id", id);
+
+        if (error) {
+
+          console.error(error);
+
+          showToast(
+            "Xərc yenilənmədi: " +
+            error.message
+          );
+
+          return;
+        }
+
+        showToast(
+          "Xərc uğurla yeniləndi."
+        );
+
+        closeModal();
+
+        await loadExpenses();
+
+        updateDashboard();
+
+        updateReports();
+      }
+    );
+  };
+
+  /* =======================================================
+     EXPENSE DELETE
+     ======================================================= */
+
+  window.deleteExpense = async function (id) {
+
+    const expense = expenses.find(
+      e => String(e.id) === String(id)
+    );
+
+    if (!expense) {
+      showToast("Xərc tapılmadı.");
+      return;
+    }
+
+    const name =
+      expense.name ||
+      expense.title ||
+      "bu xərc";
+
+    const ok = confirm(
+      `"${name}" xərcini silmək istəyirsiniz?`
+    );
+
+    if (!ok) return;
+
+    const {
+      error
+    } = await supabaseClient
+      .from("expenses")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+
+      console.error(error);
+
+      showToast(
+        "Xərc silinmədi: " +
+        error.message
+      );
+
+      return;
+    }
+
+    showToast(
+      "Xərc uğurla silindi."
+    );
+
+    await loadExpenses();
+
+    updateDashboard();
+
+    updateReports();
+  };
+
+  /* =======================================================
+     PREMIUM EXPENSE TABLE
+     ======================================================= */
+
+  window.renderExpenses = function () {
+
+    const table = $("expensesTable");
+
+    if (!table) return;
+
+    if (!expenses.length) {
+
+      table.innerHTML = `
+        <tr>
+          <td colspan="7" class="empty-state">
+            Hələ heç bir xərc əlavə edilməyib
+          </td>
+        </tr>
+      `;
+
+      return;
+    }
+
+    table.innerHTML = expenses.map(expense => {
+
+      const date =
+        expense.expense_date ||
+        expense.created_at;
+
+      return `
+        <tr>
+
+          <td>
+            <strong>
+              ${escapeHTML(
+                expense.name ||
+                expense.title ||
+                "Xərc"
+              )}
+            </strong>
+          </td>
+
+          <td>
+            <span class="status-badge">
+              ${escapeHTML(
+                expense.category ||
+                "Digər"
+              )}
+            </span>
+          </td>
+
+          <td>
+            <strong>
+              ${reportMoney(
+                expense.amount
+              )}
+            </strong>
+          </td>
+
+          <td>
+            ${reportDateText(date)}
+          </td>
+
+          <td>
+            ${escapeHTML(
+              expense.notes ||
+              "-"
+            )}
+          </td>
+
+          <td>
+            <div
+              style="
+                display:flex;
+                gap:8px;
+                align-items:center;
+              "
+            >
+
+              <button
+                type="button"
+                class="text-btn"
+                onclick="editExpense('${expense.id}')"
+              >
+                Redaktə
+              </button>
+
+              <button
+                type="button"
+                class="text-btn"
+                onclick="deleteExpense('${expense.id}')"
+              >
+                Sil
+              </button>
+
+            </div>
+          </td>
+
+        </tr>
+      `;
+
+    }).join("");
+  };
+
+  /* =======================================================
+     PREMIUM REPORT PAGE
+     ======================================================= */
+
+  function createPremiumReports() {
+
+    const page = $("reportsPage");
+
+    if (!page) return;
+
+    page.innerHTML = `
+      <div class="premium-report-wrapper">
+
+        <div
+          style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:20px;
+            margin-bottom:24px;
+            flex-wrap:wrap;
+          "
+        >
+
+          <div>
+            <h2 style="margin:0 0 6px;">
+              Maliyyə hesabatları
+            </h2>
+
+            <p style="margin:0;opacity:.65;">
+              OnComp üzrə satış, xərc və mənfəət analitikası
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="primary-btn"
+            id="printReportBtn"
+          >
+            Hesabatı çap et
+          </button>
+
+        </div>
+
+
+        <!-- PERIOD -->
+
+        <div
+          class="report-filter-card"
+          style="
+            padding:20px;
+            margin-bottom:24px;
+            border-radius:16px;
+          "
+        >
+
+          <div
+            style="
+              display:grid;
+              grid-template-columns:
+                repeat(auto-fit,minmax(170px,1fr));
+              gap:15px;
+              align-items:end;
+            "
+          >
+
+            <div class="form-group">
+
+              <label>
+                Hesabat dövrü
+              </label>
+
+              <select id="reportPeriod">
+
+                <option value="daily">
+                  Gündəlik
+                </option>
+
+                <option value="weekly">
+                  Həftəlik
+                </option>
+
+                <option
+                  value="monthly"
+                  selected
+                >
+                  Aylıq
+                </option>
+
+                <option value="yearly">
+                  İllik
+                </option>
+
+                <option value="custom">
+                  Xüsusi tarix
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div
+              class="form-group"
+              id="reportStartGroup"
+              style="display:none;"
+            >
+
+              <label>
+                Başlanğıc tarixi
+              </label>
+
+              <input
+                type="date"
+                id="reportStartDate"
+                min="2000-01-01"
+                max="2100-12-31"
+              >
+
+            </div>
+
+
+            <div
+              class="form-group"
+              id="reportEndGroup"
+              style="display:none;"
+            >
+
+              <label>
+                Son tarix
+              </label>
+
+              <input
+                type="date"
+                id="reportEndDate"
+                min="2000-01-01"
+                max="2100-12-31"
+              >
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>
+                İl
+              </label>
+
+              <select id="reportYear">
+                ${Array.from(
+                  { length: 101 },
+                  (_, i) => {
+                    const year = 2000 + i;
+                    return `
+                      <option value="${year}">
+                        ${year}
+                      </option>
+                    `;
+                  }
+                ).join("")}
+              </select>
+
+            </div>
+
+
+            <div
+              class="form-group"
+              id="reportMonthGroup"
+            >
+
+              <label>
+                Ay
+              </label>
+
+              <select id="reportMonth">
+
+                <option value="0">
+                  Yanvar
+                </option>
+
+                <option value="1">
+                  Fevral
+                </option>
+
+                <option value="2">
+                  Mart
+                </option>
+
+                <option value="3">
+                  Aprel
+                </option>
+
+                <option value="4">
+                  May
+                </option>
+
+                <option value="5">
+                  İyun
+                </option>
+
+                <option value="6">
+                  İyul
+                </option>
+
+                <option value="7">
+                  Avqust
+                </option>
+
+                <option value="8">
+                  Sentyabr
+                </option>
+
+                <option value="9">
+                  Oktyabr
+                </option>
+
+                <option value="10">
+                  Noyabr
+                </option>
+
+                <option value="11">
+                  Dekabr
+                </option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- SUMMARY -->
+
+        <div
+          id="reportSummaryCards"
+          style="
+            display:grid;
+            grid-template-columns:
+              repeat(auto-fit,minmax(190px,1fr));
+            gap:16px;
+            margin-bottom:28px;
+          "
+        ></div>
+
+
+        <!-- TABLE -->
+
+        <div
+          class="report-table-card"
+          style="
+            padding:20px;
+            border-radius:16px;
+            margin-bottom:24px;
+          "
+        >
+
+          <div
+            style="
+              display:flex;
+              justify-content:space-between;
+              align-items:center;
+              margin-bottom:18px;
+            "
+          >
+
+            <div>
+              <h3 style="margin:0;">
+                Əməliyyat hesabatı
+              </h3>
+
+              <small
+                id="reportPeriodText"
+                style="opacity:.6;"
+              ></small>
+            </div>
+
+          </div>
+
+          <div style="overflow-x:auto;">
+
+            <table
+              style="
+                width:100%;
+                border-collapse:collapse;
+              "
+            >
+
+              <thead>
+
+                <tr>
+
+                  <th>Tarix</th>
+                  <th>Növ</th>
+                  <th>Əməliyyat</th>
+                  <th>Məbləğ</th>
+                  <th>Mənfəət</th>
+                  <th>Kateqoriya</th>
+
+                </tr>
+
+              </thead>
+
+              <tbody id="premiumReportTable">
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+
+        <!-- ANALYTICS -->
+
+        <div
+          style="
+            display:grid;
+            grid-template-columns:
+              repeat(auto-fit,minmax(280px,1fr));
+            gap:20px;
+          "
+        >
+
+          <div
+            class="report-table-card"
+            style="
+              padding:20px;
+              border-radius:16px;
+            "
+          >
+
+            <h3>
+              Kateqoriya üzrə satış
+            </h3>
+
+            <div id="reportCategorySales"></div>
+
+          </div>
+
+
+          <div
+            class="report-table-card"
+            style="
+              padding:20px;
+              border-radius:16px;
+            "
+          >
+
+            <h3>
+              Ödəniş üsulları
+            </h3>
+
+            <div id="reportPaymentSales"></div>
+
+          </div>
+
+
+          <div
+            class="report-table-card"
+            style="
+              padding:20px;
+              border-radius:16px;
+            "
+          >
+
+            <h3>
+              Xərclər üzrə kateqoriyalar
+            </h3>
+
+            <div id="reportExpenseCategories"></div>
+
+          </div>
+
+        </div>
+
+      </div>
+    `;
+
+    const now = new Date();
+
+    $("reportYear").value =
+      String(now.getFullYear());
+
+    $("reportMonth").value =
+      String(now.getMonth());
+
+    $("reportStartDate").value =
+      `${now.getFullYear()}-01-01`;
+
+    $("reportEndDate").value =
+      reportToday();
+
+
+    $("reportPeriod")?.addEventListener(
+      "change",
+      function () {
+
+        const custom =
+          this.value === "custom";
+
+        $("reportStartGroup").style.display =
+          custom ? "" : "none";
+
+        $("reportEndGroup").style.display =
+          custom ? "" : "none";
+
+        $("reportYear").parentElement.style.display =
+          custom ? "none" : "";
+
+        $("reportMonthGroup").style.display =
+          (
+            this.value === "monthly"
+            || this.value === "daily"
+            || this.value === "weekly"
+          )
+            ? ""
+            : "none";
+
+        updatePremiumReports();
+      }
+    );
+
+
+    $("reportYear")?.addEventListener(
+      "change",
+      updatePremiumReports
+    );
+
+    $("reportMonth")?.addEventListener(
+      "change",
+      updatePremiumReports
+    );
+
+    $("reportStartDate")?.addEventListener(
+      "change",
+      updatePremiumReports
+    );
+
+    $("reportEndDate")?.addEventListener(
+      "change",
+      updatePremiumReports
+    );
+
+
+    $("printReportBtn")?.addEventListener(
+      "click",
+      () => {
+
+        window.print();
+
+      }
+    );
+
+    updatePremiumReports();
+  }
+
+
+  /* =======================================================
+     GET REPORT RANGE
+     ======================================================= */
+
+  function getPremiumReportRange() {
+
+    const period =
+      $("reportPeriod")?.value ||
+      "monthly";
+
+    const now = new Date();
+
+    let start;
+    let end;
+
+    if (period === "daily") {
+
+      const year =
+        Number(
+          $("reportYear")?.value ||
+          now.getFullYear()
+        );
+
+      const month =
+        Number(
+          $("reportMonth")?.value ??
+          now.getMonth()
+        );
+
+      const day =
+        now.getDate();
+
+      start = new Date(
+        year,
+        month,
+        day
+      );
+
+      end = new Date(
+        year,
+        month,
+        day + 1
+      );
+
+    }
+
+    else if (period === "weekly") {
+
+      start =
+        getWeekStartPremium(now);
+
+      end =
+        new Date(start);
+
+      end.setDate(
+        end.getDate() + 7
+      );
+
+    }
+
+    else if (period === "monthly") {
+
+      const year =
+        Number(
+          $("reportYear")?.value ||
+          now.getFullYear()
+        );
+
+      const month =
+        Number(
+          $("reportMonth")?.value ??
+          now.getMonth()
+        );
+
+      start = new Date(
+        year,
+        month,
+        1
+      );
+
+      end = new Date(
+        year,
+        month + 1,
+        1
+      );
+
+    }
+
+    else if (period === "yearly") {
+
+      const year =
+        Number(
+          $("reportYear")?.value ||
+          now.getFullYear()
+        );
+
+      start = new Date(
+        year,
+        0,
+        1
+      );
+
+      end = new Date(
+        year + 1,
+        0,
+        1
+      );
+
+    }
+
+    else {
+
+      const startValue =
+        $("reportStartDate")?.value;
+
+      const endValue =
+        $("reportEndDate")?.value;
+
+      start =
+        reportDate(
+          startValue
+        ) ||
+        new Date(2000, 0, 1);
+
+      end =
+        reportDate(
+          endValue
+        ) ||
+        new Date(2100, 11, 31);
+
+      end.setDate(
+        end.getDate() + 1
+      );
+
+    }
+
+    return {
+      start,
+      end,
+      period
+    };
+  }
+
+
+  function getWeekStartPremium(date) {
+
+    const d =
+      new Date(date);
+
+    const day =
+      d.getDay();
+
+    const diff =
+      day === 0
+        ? -6
+        : 1 - day;
+
+    d.setDate(
+      d.getDate() + diff
+    );
+
+    d.setHours(
+      0,
+      0,
+      0,
+      0
+    );
+
+    return d;
+  }
+
+
+  /* =======================================================
+     PREMIUM REPORT CALCULATION
+     ======================================================= */
+
+  window.updatePremiumReports = function () {
+
+    if (!$("premiumReportTable")) {
+      createPremiumReports();
+      return;
+    }
+
+    const {
+      start,
+      end,
+      period
+    } = getPremiumReportRange();
+
+
+    const filteredSales =
+      sales.filter(sale => {
+
+        const d =
+          reportDate(
+            sale.sale_date ||
+            sale.created_at
+          );
+
+        return (
+          d &&
+          d >= start &&
+          d < end
+        );
+
+      });
+
+
+    const filteredExpenses =
+      expenses.filter(expense => {
+
+        const d =
+          reportDate(
+            expense.expense_date ||
+            expense.created_at
+          );
+
+        return (
+          d &&
+          d >= start &&
+          d < end
+        );
+
+      });
+
+
+    /* SALES */
+
+    const revenue =
+      filteredSales.reduce(
+        (sum, sale) =>
+          sum +
+          Number(
+            sale.sale_price ??
+            sale.total_amount ??
+            sale.amount ??
+            0
+          ),
+        0
+      );
+
+
+    const cost =
+      filteredSales.reduce(
+        (sum, sale) =>
+          sum +
+          Number(
+            sale.purchase_price ??
+            getSaleProduct(sale)?.purchase_price ??
+            0
+          ),
+        0
+      );
+
+
+    const grossProfit =
+      filteredSales.reduce(
+        (sum, sale) =>
+          sum +
+          Number(
+            sale.profit ??
+            (
+              Number(
+                sale.sale_price ??
+                sale.total_amount ??
+                0
+              ) -
+              Number(
+                sale.purchase_price ??
+                getSaleProduct(sale)?.purchase_price ??
+                0
+              )
+            )
+          ),
+        0
+      );
+
+
+    const expenseTotal =
+      filteredExpenses.reduce(
+        (sum, expense) =>
+          sum +
+          Number(
+            expense.amount || 0
+          ),
+        0
+      );
+
+
+    const netProfit =
+      grossProfit -
+      expenseTotal;
+
+
+    /* =====================================================
+       CARDS
+       ===================================================== */
+
+    $("reportSummaryCards").innerHTML = `
+
+      <div class="report-stat-card">
+        <small>Satış gəliri</small>
+        <strong>
+          ${reportMoney(revenue)}
+        </strong>
+      </div>
+
+      <div class="report-stat-card">
+        <small>Alış maya dəyəri</small>
+        <strong>
+          ${reportMoney(cost)}
+        </strong>
+      </div>
+
+      <div class="report-stat-card">
+        <small>Ümumi mənfəət</small>
+        <strong>
+          ${reportMoney(grossProfit)}
+        </strong>
+      </div>
+
+      <div class="report-stat-card">
+        <small>Xərclər</small>
+        <strong>
+          ${reportMoney(expenseTotal)}
+        </strong>
+      </div>
+
+      <div class="report-stat-card">
+        <small>Xalis mənfəət</small>
+        <strong>
+          ${reportMoney(netProfit)}
+        </strong>
+      </div>
+
+      <div class="report-stat-card">
+        <small>Satış sayı</small>
+        <strong>
+          ${filteredSales.length}
+        </strong>
+      </div>
+
+      <div class="report-stat-card">
+        <small>Xərc sayı</small>
+        <strong>
+          ${filteredExpenses.length}
+        </strong>
+      </div>
+
+    `;
+
+
+    /* =====================================================
+       PERIOD TEXT
+       ===================================================== */
+
+    let periodText = "";
+
+    if (period === "daily") {
+      periodText =
+        "Bugünün hesabatı";
+    }
+
+    else if (period === "weekly") {
+      periodText =
+        "Cari həftənin hesabatı";
+    }
+
+    else if (period === "monthly") {
+      periodText =
+        "Seçilmiş ayın hesabatı";
+    }
+
+    else if (period === "yearly") {
+      periodText =
+        "Seçilmiş ilin hesabatı";
+    }
+
+    else {
+      periodText =
+        `${reportDateText(
+          $("reportStartDate")?.value
+        )} — ${reportDateText(
+          $("reportEndDate")?.value
+        )}`;
+    }
+
+    $("reportPeriodText").textContent =
+      periodText;
+
+
+    /* =====================================================
+       OPERATION TABLE
+       ===================================================== */
+
+    const rows = [];
+
+    filteredSales.forEach(sale => {
+
+      const product =
+        getSaleProduct(sale);
+
+      const salePrice =
+        Number(
+          sale.sale_price ??
+          sale.total_amount ??
+          sale.amount ??
+          0
+        );
+
+      const purchase =
+        Number(
+          sale.purchase_price ??
+          product?.purchase_price ??
+          0
+        );
+
+      const profit =
+        Number(
+          sale.profit ??
+          salePrice - purchase
+        );
+
+      rows.push({
+
+        date:
+          sale.sale_date ||
+          sale.created_at,
+
+        type:
+          "Satış",
+
+        operation:
+          product?.name ||
+          sale.product_name ||
+          "Məhsul",
+
+        amount:
+          salePrice,
+
+        profit:
+          profit,
+
+        category:
+          product?.category ||
+          "Digər"
+
+      });
+
+    });
+
+
+    filteredExpenses.forEach(expense => {
+
+      rows.push({
+
+        date:
+          expense.expense_date ||
+          expense.created_at,
+
+        type:
+          "Xərc",
+
+        operation:
+          expense.name ||
+          expense.title ||
+          "Xərc",
+
+        amount:
+          Number(
+            expense.amount || 0
+          ),
+
+        profit:
+          -Number(
+            expense.amount || 0
+          ),
+
+        category:
+          expense.category ||
+          "Digər"
+
+      });
+
+    });
+
+
+    rows.sort(
+      (a, b) =>
+        new Date(b.date) -
+        new Date(a.date)
+    );
+
+
+    if (!rows.length) {
+
+      $("premiumReportTable").innerHTML = `
+        <tr>
+          <td
+            colspan="6"
+            class="empty-state"
+          >
+            Seçilmiş dövr üzrə məlumat yoxdur
+          </td>
+        </tr>
+      `;
+
+    }
+
+    else {
+
+      $("premiumReportTable").innerHTML =
+        rows.map(row => `
+
+          <tr>
+
+            <td>
+              ${reportDateText(
+                row.date
+              )}
+            </td>
+
+            <td>
+              <span class="status-badge">
+                ${row.type}
+              </span>
+            </td>
+
+            <td>
+              <strong>
+                ${escapeHTML(
+                  row.operation
+                )}
+              </strong>
+            </td>
+
+            <td>
+              ${reportMoney(
+                row.amount
+              )}
+            </td>
+
+            <td>
+              ${reportMoney(
+                row.profit
+              )}
+            </td>
+
+            <td>
+              ${escapeHTML(
+                row.category
+              )}
+            </td>
+
+          </tr>
+
+        `).join("");
+
+    }
+
+
+    /* =====================================================
+       CATEGORY SALES
+       ===================================================== */
+
+    const categoryMap = {};
+
+    filteredSales.forEach(sale => {
+
+      const product =
+        getSaleProduct(sale);
+
+      const category =
+        product?.category ||
+        "Digər";
+
+      const amount =
+        Number(
+          sale.sale_price ??
+          sale.total_amount ??
+          sale.amount ??
+          0
+        );
+
+      if (!categoryMap[category]) {
+        categoryMap[category] = {
+          amount: 0,
+          count: 0
+        };
+      }
+
+      categoryMap[category].amount +=
+        amount;
+
+      categoryMap[category].count++;
+    });
+
+
+    const categoryEntries =
+      Object.entries(
+        categoryMap
+      );
+
+
+    if (!categoryEntries.length) {
+
+      $("reportCategorySales").innerHTML =
+        `<div class="empty-state">
+          Məlumat yoxdur
+        </div>`;
+
+    }
+
+    else {
+
+      $("reportCategorySales").innerHTML =
+        categoryEntries.map(
+          ([category, data]) => `
+
+            <div
+              class="stock-row"
+              style="
+                display:flex;
+                justify-content:space-between;
+                padding:12px 0;
+              "
+            >
+
+              <span>
+                ${escapeHTML(
+                  category
+                )}
+
+                <small>
+                  (${data.count} satış)
+                </small>
+              </span>
+
+              <strong>
+                ${reportMoney(
+                  data.amount
+                )}
+              </strong>
+
+            </div>
+
+          `
+        ).join("");
+
+    }
+
+
+    /* =====================================================
+       PAYMENT METHODS
+       ===================================================== */
+
+    const paymentMap = {};
+
+    filteredSales.forEach(sale => {
+
+      const payment =
+        sale.payment_method ||
+        sale.payment ||
+        "Nağd";
+
+      const amount =
+        Number(
+          sale.sale_price ??
+          sale.total_amount ??
+          sale.amount ??
+          0
+        );
+
+      paymentMap[payment] =
+        (paymentMap[payment] || 0) +
+        amount;
+
+    });
+
+
+    const paymentEntries =
+      Object.entries(
+        paymentMap
+      );
+
+
+    if (!paymentEntries.length) {
+
+      $("reportPaymentSales").innerHTML =
+        `<div class="empty-state">
+          Məlumat yoxdur
+        </div>`;
+
+    }
+
+    else {
+
+      $("reportPaymentSales").innerHTML =
+        paymentEntries.map(
+          ([payment, amount]) => `
+
+            <div
+              class="stock-row"
+              style="
+                display:flex;
+                justify-content:space-between;
+                padding:12px 0;
+              "
+            >
+
+              <span>
+                ${escapeHTML(
+                  payment
+                )}
+              </span>
+
+              <strong>
+                ${reportMoney(
+                  amount
+                )}
+              </strong>
+
+            </div>
+
+          `
+        ).join("");
+
+    }
+
+
+    /* =====================================================
+       EXPENSE CATEGORIES
+       ===================================================== */
+
+    const expenseMap = {};
+
+    filteredExpenses.forEach(expense => {
+
+      const category =
+        expense.category ||
+        "Digər";
+
+      expenseMap[category] =
+        (
+          expenseMap[category] ||
+          0
+        ) +
+        Number(
+          expense.amount || 0
+        );
+
+    });
+
+
+    const expenseEntries =
+      Object.entries(
+        expenseMap
+      );
+
+
+    if (!expenseEntries.length) {
+
+      $("reportExpenseCategories").innerHTML =
+        `<div class="empty-state">
+          Xərc yoxdur
+        </div>`;
+
+    }
+
+    else {
+
+      $("reportExpenseCategories").innerHTML =
+        expenseEntries.map(
+          ([category, amount]) => `
+
+            <div
+              class="stock-row"
+              style="
+                display:flex;
+                justify-content:space-between;
+                padding:12px 0;
+              "
+            >
+
+              <span>
+                ${escapeHTML(
+                  category
+                )}
+              </span>
+
+              <strong>
+                ${reportMoney(
+                  amount
+                )}
+              </strong>
+
+            </div>
+
+          `
+        ).join("");
+
+    }
+
+  };
+
+
+  /* =======================================================
+     OVERRIDE EXISTING REPORT FUNCTION
+     ======================================================= */
+
+  window.updateReports = function () {
+
+    if (!$("reportsPage")) return;
+
+    if (!$("premiumReportTable")) {
+      createPremiumReports();
+      return;
+    }
+
+    updatePremiumReports();
+
+  };
+
+
+  /* =======================================================
+     INITIALIZE
+     ======================================================= */
+
+  if (
+    document.readyState ===
+    "loading"
+  ) {
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+
+        createPremiumReports();
+
+      }
+    );
+
+  }
+
+  else {
+
+    createPremiumReports();
+
+  }
+
+
+})();
