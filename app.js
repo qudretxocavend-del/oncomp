@@ -68,6 +68,7 @@ function showToast(message) {
 /*
 =========================================================
    AUTH
+   ONCOMP — STABIL GİRİŞ SİSTEMİ
 =========================================================
 */
 
@@ -78,13 +79,23 @@ const loginMessage = $("loginMessage");
 const logoutBtn = $("logoutBtn");
 
 function showLogin() {
-  loginPage?.classList.remove("hidden");
-  appPage?.classList.add("hidden");
+  if (loginPage) {
+    loginPage.classList.remove("hidden");
+  }
+
+  if (appPage) {
+    appPage.classList.add("hidden");
+  }
 }
 
 function showApp() {
-  loginPage?.classList.add("hidden");
-  appPage?.classList.remove("hidden");
+  if (loginPage) {
+    loginPage.classList.add("hidden");
+  }
+
+  if (appPage) {
+    appPage.classList.remove("hidden");
+  }
 }
 
 function showMessage(message, type = "error") {
@@ -94,81 +105,179 @@ function showMessage(message, type = "error") {
   loginMessage.className = type;
 }
 
+/*
+---------------------------------------------------------
+   SESSION YOXLAMASI
+---------------------------------------------------------
+*/
+
 async function checkSession() {
-  const { data, error } =
-    await supabaseClient.auth.getSession();
+  try {
+    const { data, error } =
+      await supabaseClient.auth.getSession();
 
-  if (error) {
-    console.error(error);
-    showLogin();
-    return;
-  }
+    if (error) {
+      console.error(
+        "Session xətası:",
+        error
+      );
 
-  if (data.session) {
-    showApp();
-    await loadAll();
-  } else {
+      showLogin();
+      return;
+    }
+
+    if (data && data.session) {
+      showApp();
+
+      await loadAll();
+
+    } else {
+      showLogin();
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Session yoxlanarkən xəta:",
+      error
+    );
+
     showLogin();
   }
 }
 
-loginForm?.addEventListener("submit", async event => {
-  event.preventDefault();
+/*
+---------------------------------------------------------
+   LOGIN
+---------------------------------------------------------
+*/
 
-  const email = $("loginEmail")?.value.trim();
-  const password = $("loginPassword")?.value;
+loginForm?.addEventListener(
+  "submit",
+  async event => {
 
-  if (!email || !password) {
-    showMessage("E-poçt və şifrə daxil edin.");
-    return;
+    event.preventDefault();
+
+    const email =
+      $("loginEmail")?.value.trim();
+
+    const password =
+      $("loginPassword")?.value;
+
+    if (!email || !password) {
+
+      showMessage(
+        "E-poçt və şifrə daxil edin."
+      );
+
+      return;
+    }
+
+    const button =
+      loginForm.querySelector("button");
+
+    if (button) {
+      button.disabled = true;
+      button.textContent =
+        "Daxil olunur...";
+    }
+
+    showMessage("");
+
+    try {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient.auth
+          .signInWithPassword({
+            email,
+            password
+          });
+
+      if (error) {
+
+        console.error(
+          "Login xətası:",
+          error
+        );
+
+        showMessage(
+          "E-poçt və ya şifrə yanlışdır."
+        );
+
+        return;
+      }
+
+      if (!data?.session) {
+
+        showMessage(
+          "Giriş mümkün olmadı."
+        );
+
+        return;
+      }
+
+      /*
+        UĞURLU GİRİŞ
+        Emailə yönləndirmə yoxdur.
+        Email təsdiqi ilə bağlı heç bir
+        əlavə əməliyyat yoxdur.
+      */
+
+      showApp();
+
+      showMessage(
+        "Uğurla daxil oldunuz.",
+        "success"
+      );
+
+      await loadAll();
+
+    } catch (error) {
+
+      console.error(
+        "Giriş zamanı xəta:",
+        error
+      );
+
+      showMessage(
+        "Giriş zamanı xəta baş verdi."
+      );
+
+    } finally {
+
+      if (button) {
+        button.disabled = false;
+        button.textContent =
+          "Daxil ol";
+      }
+    }
   }
+);
 
-  const button = loginForm.querySelector("button");
-
-  if (button) {
-    button.disabled = true;
-    button.textContent = "Daxil olunur...";
-  }
-
-  showMessage("");
-
-  const { data, error } =
-    await supabaseClient.auth.signInWithPassword({
-      email,
-      password
-    });
-
-  if (button) {
-    button.disabled = false;
-    button.textContent = "Daxil ol";
-  }
-
-  if (error) {
-    console.error(error);
-
-    showMessage(
-      "E-poçt və ya şifrə yanlışdır."
-    );
-
-    return;
-  }
-
-  if (data.session) {
-    showApp();
-
-    showMessage(
-      "Uğurla daxil oldunuz.",
-      "success"
-    );
-
-    await loadAll();
-  }
-});
+/*
+---------------------------------------------------------
+   LOGOUT
+---------------------------------------------------------
+*/
 
 logoutBtn?.addEventListener(
   "click",
   async () => {
-    await supabaseClient.auth.signOut();
+
+    try {
+
+      await supabaseClient.auth.signOut();
+
+    } catch (error) {
+
+      console.error(
+        "Çıxış xətası:",
+        error
+      );
+    }
 
     showLogin();
 
@@ -176,13 +285,21 @@ logoutBtn?.addEventListener(
   }
 );
 
+/*
+---------------------------------------------------------
+   AUTH STATE
+---------------------------------------------------------
+*/
+
 supabaseClient.auth.onAuthStateChange(
-  async (_event, session) => {
+  (_event, session) => {
+
     if (session) {
       showApp();
     } else {
       showLogin();
     }
+
   }
 );
 
