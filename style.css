@@ -1,2782 +1,1825 @@
-```css
-/* =========================================================
-   ONCOMP — PREMIUM LIGHT DESIGN
-   White / Silver / Deep Navy
-   ========================================================= */
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
-:root {
-  --bg: #f4f7fb;
-  --surface: #ffffff;
-  --surface-2: #f8fafc;
-  --surface-3: #eef2f7;
-
-  --navy: #172554;
-  --navy-2: #1e3a8a;
-  --blue: #3155c7;
-
-  --text: #172033;
-  --text-2: #4b5568;
-  --muted: #7b8494;
-
-  --border: #e4e9f0;
-  --border-2: #d7dee8;
-
-  --green: #15966a;
-  --red: #dc4050;
-  --orange: #d58b16;
-
-  --shadow-sm:
-    0 4px 15px rgba(25, 42, 70, .06);
-
-  --shadow:
-    0 12px 35px rgba(25, 42, 70, .09);
-
-  --shadow-lg:
-    0 25px 70px rgba(25, 42, 70, .13);
-
-  --radius: 18px;
-  --transition: .25s ease;
-}
-
-/* =========================================================
-   RESET
-   ========================================================= */
-
-* {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-
-  min-height: 100vh;
-
-  font-family:
-    Inter,
-    Arial,
-    sans-serif;
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  color: var(--text);
+  <title>ONCOMP — Premium Elektron Uçot Sistemi</title>
 
-  background:
-    radial-gradient(
-      circle at 80% 0%,
-      rgba(49, 85, 199, .07),
-      transparent 25%
-    ),
-    radial-gradient(
-      circle at 0% 100%,
-      rgba(30, 58, 138, .045),
-      transparent 28%
-    ),
-    var(--bg);
+  <link rel="stylesheet" href="style.css">
 
-  -webkit-font-smoothing: antialiased;
-}
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
 
-/* =========================================================
-   SCROLLBAR
-   ========================================================= */
+<body>
 
-::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
-}
+  <!-- =========================================================
+       LOGIN
+  ========================================================== -->
 
-::-webkit-scrollbar-track {
-  background: #edf1f6;
-}
+  <section id="loginPage" class="login-page">
 
-::-webkit-scrollbar-thumb {
-  background: #c6ceda;
-  border-radius: 20px;
-}
+    <div class="login-background">
 
-::-webkit-scrollbar-thumb:hover {
-  background: #aab5c5;
-}
+      <div class="orb orb-one"></div>
+      <div class="orb orb-two"></div>
+      <div class="orb orb-three"></div>
 
-/* =========================================================
-   LOGIN
-   ========================================================= */
+      <div class="floating-device device-laptop">
+        <div class="laptop-screen">
+          <div class="screen-camera"></div>
+          <div class="screen-content">
+            <span>ONCOMP</span>
+            <strong>BUSINESS</strong>
+          </div>
+        </div>
+        <div class="laptop-base"></div>
+      </div>
 
-#loginPage {
-  min-height: 100vh;
+      <div class="floating-device device-tablet">
+        <div class="tablet-screen">
+          <span>OC</span>
+        </div>
+      </div>
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    </div>
 
-  padding: 30px;
 
-  background:
-    radial-gradient(
-      circle at 15% 20%,
-      rgba(49, 85, 199, .10),
-      transparent 25%
-    ),
-    radial-gradient(
-      circle at 85% 80%,
-      rgba(23, 37, 84, .08),
-      transparent 25%
-    ),
-    #f4f7fb;
-}
+    <div class="login-card">
 
-.login-container,
-.login-box {
-  width: min(440px, 100%);
-}
+      <div class="login-logo-area">
 
-.login-box {
-  position: relative;
+        <div class="brand-icon premium-logo">
+          OC
+        </div>
 
-  padding: 42px;
+        <div>
+          <h1>ONCOMP</h1>
+          <span>Elektron Uçot Sistemi</span>
+        </div>
 
-  background: rgba(255,255,255,.92);
+      </div>
 
-  border: 1px solid rgba(255,255,255,.8);
 
-  border-radius: 28px;
+      <div class="login-title">
 
-  box-shadow:
-    0 30px 80px rgba(30, 58, 138, .14),
-    0 4px 15px rgba(20, 35, 60, .05);
+        <div class="welcome-badge">
+          <span class="pulse-dot"></span>
+          Premium Business System
+        </div>
 
-  backdrop-filter: blur(20px);
-}
+        <h2>Xoş gəlmisiniz</h2>
 
-.login-box::before {
-  content: "";
+        <p>
+          Biznesinizi daha ağıllı, daha sürətli və daha peşəkar idarə edin.
+        </p>
 
-  position: absolute;
+      </div>
 
-  width: 100px;
-  height: 100px;
 
-  top: -40px;
-  right: -40px;
+      <form id="loginForm">
 
-  border-radius: 50%;
+        <div class="input-group">
 
-  background:
-    radial-gradient(
-      circle,
-      rgba(49,85,199,.15),
-      transparent 70%
-    );
+          <label>E-poçt</label>
 
-  pointer-events: none;
-}
+          <div class="input-wrapper">
+            <span class="input-icon">✉</span>
 
-.login-box h1,
-.login-box h2 {
-  margin-top: 0;
+            <input
+              type="email"
+              id="loginEmail"
+              placeholder="E-poçt ünvanınız"
+              required
+            >
+          </div>
 
-  color: var(--navy);
+        </div>
 
-  letter-spacing: -.04em;
-}
 
-.login-box p {
-  color: var(--muted);
+        <div class="input-group">
 
-  line-height: 1.6;
-}
+          <label>Şifrə</label>
 
-/* =========================================================
-   LOGO
-   ========================================================= */
+          <div class="input-wrapper">
 
-.logo,
-.brand-logo {
-  display: flex;
+            <span class="input-icon">⌑</span>
 
-  align-items: center;
+            <input
+              type="password"
+              id="loginPassword"
+              placeholder="Şifrəniz"
+              required
+            >
 
-  gap: 12px;
-}
+          </div>
 
-.logo-mark,
-.brand-mark {
-  width: 48px;
-  height: 48px;
+        </div>
 
-  display: flex;
 
-  align-items: center;
-  justify-content: center;
+        <button type="submit" class="login-btn">
 
-  border-radius: 14px;
+          <span>Daxil ol</span>
 
-  color: white;
+          <span class="button-arrow">→</span>
 
-  background:
-    linear-gradient(
-      145deg,
-      #1e3a8a,
-      #3155c7
-    );
+        </button>
 
-  font-size: 16px;
+      </form>
 
-  font-weight: 800;
 
-  box-shadow:
-    0 10px 25px rgba(30,58,138,.22),
-    inset 0 1px 0 rgba(255,255,255,.35);
-}
+      <div id="loginMessage"></div>
 
-/* =========================================================
-   INPUTS
-   ========================================================= */
 
-input,
-select,
-textarea {
-  width: 100%;
+      <div class="connection-status">
 
-  min-height: 46px;
+        <span class="status-dot"></span>
 
-  padding: 12px 14px;
+        <div>
+          <strong>Sistem aktivdir</strong>
+          <span>Supabase bağlantısı təhlükəsizdir</span>
+        </div>
 
-  border: 1px solid var(--border-2);
+      </div>
 
-  border-radius: 12px;
+    </div>
 
-  outline: none;
+  </section>
 
-  color: var(--text);
 
-  background: #fff;
 
-  font: inherit;
+  <!-- =========================================================
+       APPLICATION
+  ========================================================== -->
 
-  transition:
-    border-color var(--transition),
-    box-shadow var(--transition),
-    transform var(--transition);
-}
+  <section id="appPage" class="app-page hidden">
 
-textarea {
-  min-height: 105px;
 
-  resize: vertical;
-}
+    <!-- SIDEBAR -->
 
-input::placeholder,
-textarea::placeholder {
-  color: #a1a9b6;
-}
+    <aside class="sidebar">
 
-input:hover,
-select:hover,
-textarea:hover {
-  border-color: #bdc7d5;
-}
+      <div class="sidebar-top">
 
-input:focus,
-select:focus,
-textarea:focus {
-  border-color: #6b83d5;
+        <div class="sidebar-brand">
 
-  box-shadow:
-    0 0 0 4px rgba(49,85,199,.08);
-}
+          <div class="brand-icon small premium-logo">
+            OC
+          </div>
 
-label {
-  display: block;
+          <div class="brand-text">
+            <strong>ONCOMP</strong>
+            <small>Business OS</small>
+          </div>
 
-  margin-bottom: 8px;
+        </div>
 
-  color: #344054;
 
-  font-size: 13px;
+        <div class="sidebar-label">
+          İDARƏETMƏ
+        </div>
 
-  font-weight: 700;
-}
 
-/* =========================================================
-   BUTTONS
-   ========================================================= */
+        <nav class="main-nav">
 
-button {
-  font: inherit;
-}
+          <button class="nav-item active" data-page="dashboard">
+            <span class="nav-icon">⌂</span>
+            <label>Dashboard</label>
+          </button>
 
-.primary-btn,
-button.primary-btn {
-  min-height: 46px;
 
-  padding: 0 20px;
+          <button class="nav-item" data-page="products">
+            <span class="nav-icon">▣</span>
+            <label>Məhsullar</label>
+          </button>
 
-  border: 0;
 
-  border-radius: 12px;
+          <button class="nav-item" data-page="sales">
+            <span class="nav-icon">↗</span>
+            <label>Satışlar</label>
+          </button>
 
-  cursor: pointer;
 
-  color: #fff;
+          <button class="nav-item" data-page="customers">
+            <span class="nav-icon">♙</span>
+            <label>Müştərilər</label>
+          </button>
 
-  background:
-    linear-gradient(
-      135deg,
-      #172554,
-      #3155c7
-    );
 
-  font-weight: 700;
+          <button class="nav-item" data-page="inventory">
+            <span class="nav-icon">▤</span>
+            <label>Anbar</label>
+          </button>
 
-  box-shadow:
-    0 9px 22px rgba(30,58,138,.20);
 
-  transition:
-    transform var(--transition),
-    box-shadow var(--transition);
-}
+          <div class="sidebar-label second">
+            MALİYYƏ
+          </div>
 
-.primary-btn:hover {
-  transform: translateY(-2px);
 
-  box-shadow:
-    0 14px 30px rgba(30,58,138,.25);
-}
+          <button class="nav-item" data-page="expenses">
+            <span class="nav-icon">₼</span>
+            <label>Xərclər</label>
+          </button>
 
-.primary-btn:active {
-  transform: translateY(0);
-}
 
-.text-btn {
-  padding: 6px 8px;
+          <button class="nav-item" data-page="reports">
+            <span class="nav-icon">◒</span>
+            <label>Hesabatlar</label>
+          </button>
 
-  border: 0;
 
-  color: var(--navy-2);
+          <div class="sidebar-label second">
+            SİSTEM
+          </div>
 
-  background: transparent;
 
-  cursor: pointer;
+          <button class="nav-item" data-page="settings">
+            <span class="nav-icon">⚙</span>
+            <label>Parametrlər</label>
+          </button>
 
-  font-weight: 700;
-}
+        </nav>
 
-.text-btn:hover {
-  color: var(--blue);
+      </div>
 
-  text-decoration: underline;
-}
 
-/* =========================================================
-   APP
-   ========================================================= */
+      <div class="sidebar-bottom">
 
-#appPage {
-  min-height: 100vh;
+        <div class="sidebar-system-card">
 
-  display: grid;
+          <div class="system-icon">
+            ✦
+          </div>
 
-  grid-template-columns: 255px 1fr;
-}
+          <div>
+            <strong>Sistem aktivdir</strong>
+            <small>Real-time bağlantı</small>
+          </div>
 
-/* =========================================================
-   SIDEBAR
-   ========================================================= */
+          <span class="online-dot"></span>
 
-.sidebar {
-  position: sticky;
+        </div>
 
-  top: 0;
 
-  height: 100vh;
+        <button id="logoutBtn" class="logout-btn">
 
-  padding: 22px 15px;
+          <span>⇥</span>
+          Çıxış
 
-  background:
-    rgba(255,255,255,.96);
+        </button>
 
-  border-right: 1px solid var(--border);
+      </div>
 
-  box-shadow:
-    8px 0 30px rgba(30,58,138,.035);
+    </aside>
 
-  z-index: 20;
-}
 
-.sidebar-header {
-  padding:
-    5px 10px 28px;
-}
 
-.sidebar-nav {
-  display: flex;
+    <!-- MAIN -->
 
-  flex-direction: column;
+    <main class="main-content">
 
-  gap: 5px;
-}
 
-.nav-item {
-  position: relative;
+      <!-- TOPBAR -->
 
-  display: flex;
+      <header class="topbar">
 
-  align-items: center;
+        <div class="page-heading">
 
-  gap: 12px;
+          <div class="breadcrumb">
+            ONCOMP <span>/</span> İdarəetmə
+          </div>
 
-  width: 100%;
+          <h1 id="pageTitle">
+            Dashboard
+          </h1>
 
-  padding: 13px 14px;
+          <span id="pageEyebrow">
+            Elektron Uçot Sistemi
+          </span>
 
-  border: 1px solid transparent;
+        </div>
 
-  border-radius: 12px;
 
-  color: #667085;
+        <div class="topbar-actions">
 
-  background: transparent;
+          <button class="icon-btn notification-btn" title="Bildirişlər">
 
-  cursor: pointer;
+            ♢
 
-  transition:
-    background var(--transition),
-    color var(--transition),
-    transform var(--transition);
-}
+            <span class="notification-dot"></span>
 
-.nav-item:hover {
-  color: var(--navy);
+          </button>
 
-  background:
-    #f2f5fa;
 
-  transform: translateX(2px);
-}
+          <div class="admin-profile">
 
-.nav-item.active {
-  color: #fff;
+            <div class="avatar">
+              A
+            </div>
 
-  background:
-    linear-gradient(
-      135deg,
-      #172554,
-      #3155c7
-    );
+            <div class="admin-info">
 
-  box-shadow:
-    0 9px 22px rgba(30,58,138,.18);
-}
+              <strong id="adminName">
+                Admin
+              </strong>
 
-.nav-item.active::before {
-  content: "";
+              <small>
+                Administrator
+              </small>
 
-  position: absolute;
+            </div>
 
-  left: -15px;
+            <span class="profile-arrow">
+              ⌄
+            </span>
 
-  width: 3px;
-  height: 25px;
+          </div>
 
-  border-radius: 0 5px 5px 0;
+        </div>
 
-  background: #3155c7;
-}
+      </header>
 
-/* =========================================================
-   MAIN
-   ========================================================= */
 
-.main-content {
-  min-width: 0;
 
-  padding: 28px 32px 50px;
+      <!-- =====================================================
+           DASHBOARD
+      ====================================================== -->
 
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,.35),
-      transparent 45%
-    );
-}
+      <section
+        id="dashboardPage"
+        class="content-page active-page"
+      >
 
-/* =========================================================
-   TOP BAR
-   ========================================================= */
 
-.topbar,
-.header,
-.page-header {
-  display: flex;
+        <!-- HERO -->
 
-  align-items: center;
+        <div class="dashboard-hero">
 
-  justify-content: space-between;
+          <div class="hero-copy">
 
-  gap: 20px;
+            <div class="hero-badge">
+              <span></span>
+              ONCOMP PREMIUM 2.0
+            </div>
 
-  margin-bottom: 26px;
-}
+            <h2>
+              Biznesinizə
+              <strong>nəzarət edin.</strong>
+            </h2>
 
-.page-title,
-.topbar h1,
-.page-header h1 {
-  margin: 0;
+            <p>
+              Satış, məhsul, müştəri və maliyyə göstəriciləriniz
+              artıq bir ekranda.
+            </p>
 
-  color: var(--navy);
+            <div class="hero-actions">
 
-  font-size: 28px;
+              <button
+                class="primary-btn hero-btn"
+                data-page-action="products"
+              >
+                <span>+</span>
+                Məhsul əlavə et
+              </button>
 
-  letter-spacing: -.045em;
-}
+              <button
+                class="secondary-btn"
+                data-page-action="sales"
+              >
+                Satışlara bax →
+              </button>
 
-.page-subtitle {
-  margin-top: 6px;
+            </div>
 
-  color: var(--muted);
+          </div>
 
-  font-size: 14px;
-}
 
-/* =========================================================
-   CONTENT
-   ========================================================= */
+          <!-- 3D PRODUCT VISUAL -->
 
-.content-page {
-  display: none;
+          <div class="hero-visual">
 
-  animation:
-    pageIn .3s ease;
-}
+            <div class="visual-glow"></div>
 
-.content-page.active-page {
-  display: block;
-}
+            <div class="product-scene">
 
-@keyframes pageIn {
+              <div class="scene-tablet">
 
-  from {
-    opacity: 0;
+                <div class="tablet-frame">
 
-    transform:
-      translateY(8px);
-  }
+                  <div class="tablet-camera"></div>
 
-  to {
-    opacity: 1;
+                  <div class="tablet-display">
 
-    transform:
-      translateY(0);
-  }
+                    <div class="display-logo">
+                      OC
+                    </div>
 
-}
+                    <div class="display-line"></div>
 
-/* =========================================================
-   STAT CARDS
-   ========================================================= */
+                    <span>
+                      ONCOMP
+                    </span>
 
-.stats-grid,
-.dashboard-grid {
-  display: grid;
+                  </div>
 
-  grid-template-columns:
-    repeat(4, minmax(0, 1fr));
+                </div>
 
-  gap: 18px;
+              </div>
 
-  margin-bottom: 22px;
-}
 
-.stat-card,
-.card,
-.panel {
-  position: relative;
+              <div class="scene-laptop">
 
-  background:
-    rgba(255,255,255,.94);
+                <div class="laptop-display">
 
-  border:
-    1px solid var(--border);
+                  <div class="camera"></div>
 
-  border-radius:
-    var(--radius);
+                  <div class="dashboard-mini">
 
-  box-shadow:
-    var(--shadow-sm);
+                    <div class="mini-top"></div>
 
-  overflow: hidden;
+                    <div class="mini-cards">
 
-  transition:
-    transform var(--transition),
-    box-shadow var(--transition),
-    border-color var(--transition);
-}
+                      <i></i>
+                      <i></i>
+                      <i></i>
 
-.stat-card {
-  min-height: 145px;
+                    </div>
 
-  padding: 22px;
-}
+                    <div class="mini-chart">
+                      <b></b>
+                      <b></b>
+                      <b></b>
+                      <b></b>
+                      <b></b>
+                    </div>
 
-.stat-card::after {
-  content: "";
+                  </div>
 
-  position: absolute;
+                </div>
 
-  right: -40px;
+                <div class="laptop-keyboard"></div>
 
-  bottom: -45px;
+              </div>
 
-  width: 130px;
+            </div>
 
-  height: 130px;
+          </div>
 
-  border-radius: 50%;
+        </div>
 
-  background:
-    radial-gradient(
-      circle,
-      rgba(49,85,199,.10),
-      transparent 70%
-    );
-}
 
-.stat-card:hover {
-  transform:
-    translateY(-5px);
 
-  border-color:
-    #d1d9e6;
+        <!-- STATISTICS -->
 
-  box-shadow:
-    var(--shadow);
-}
+        <div class="section-heading">
 
-.stat-label {
-  color: var(--muted);
+          <div>
+            <span>ÜMUMİ GÖSTƏRİCİLƏR</span>
+            <h3>Bugünkü vəziyyət</h3>
+          </div>
 
-  font-size: 13px;
+          <div class="live-indicator">
+            <span></span>
+            Live data
+          </div>
 
-  font-weight: 600;
-}
+        </div>
 
-.stat-value {
-  margin-top: 12px;
 
-  color: var(--navy);
+        <div class="stats-grid premium-stats">
 
-  font-size: 29px;
 
-  font-weight: 800;
+          <div class="stat-card">
 
-  letter-spacing: -.05em;
-}
+            <div class="stat-top">
 
-/* =========================================================
-   PREMIUM HERO
-   ========================================================= */
+              <div class="stat-icon">
+                ▣
+              </div>
 
-.dashboard-hero {
-  position: relative;
+              <span class="stat-trend positive">
+                ↑ Aktiv
+              </span>
 
-  min-height: 260px;
+            </div>
 
-  display: grid;
+            <span class="stat-label">
+              Ümumi məhsullar
+            </span>
 
-  grid-template-columns: 1fr 310px;
+            <strong id="statProducts">
+              0
+            </strong>
 
-  align-items: center;
+            <div class="stat-footer">
+              Sistemdəki bütün məhsullar
+            </div>
 
-  gap: 30px;
+          </div>
 
-  margin-bottom: 22px;
 
-  padding: 34px;
+          <div class="stat-card">
 
-  border:
-    1px solid var(--border);
+            <div class="stat-top">
 
-  border-radius: 24px;
+              <div class="stat-icon money">
+                ₼
+              </div>
 
-  overflow: hidden;
+              <span class="stat-trend">
+                Anbar
+              </span>
 
-  background:
-    linear-gradient(
-      135deg,
-      #ffffff,
-      #f2f5fa
-    );
+            </div>
 
-  box-shadow:
-    var(--shadow);
-}
+            <span class="stat-label">
+              Anbar dəyəri
+            </span>
 
-.dashboard-hero::before {
-  content: "";
+            <strong id="statInventory">
+              0 ₼
+            </strong>
 
-  position: absolute;
+            <div class="stat-footer">
+              Mövcud məhsulların ümumi dəyəri
+            </div>
 
-  width: 280px;
-  height: 280px;
+          </div>
 
-  right: -100px;
-  top: -100px;
 
-  border-radius: 50%;
+          <div class="stat-card highlight">
 
-  background:
-    radial-gradient(
-      circle,
-      rgba(49,85,199,.13),
-      transparent 70%
-    );
-}
+            <div class="stat-top">
 
-.dashboard-hero h1 {
-  position: relative;
+              <div class="stat-icon sale">
+                ↗
+              </div>
 
-  margin: 0;
+              <span class="stat-trend positive">
+                ↑ Bu ay
+              </span>
 
-  color: var(--navy);
+            </div>
 
-  font-size:
-    clamp(28px, 4vw, 46px);
+            <span class="stat-label">
+              Bu ay satış
+            </span>
 
-  line-height: 1;
+            <strong id="statSales">
+              0 ₼
+            </strong>
 
-  letter-spacing: -.06em;
-}
+            <div class="stat-footer">
+              Cari ayın satış dövriyyəsi
+            </div>
 
-.dashboard-hero p {
-  position: relative;
+          </div>
 
-  max-width: 570px;
 
-  margin: 15px 0 0;
+          <div class="stat-card">
 
-  color: var(--text-2);
+            <div class="stat-top">
 
-  line-height: 1.7;
-}
+              <div class="stat-icon profit">
+                ◆
+              </div>
 
-/* =========================================================
-   3D LAPTOP
-   ========================================================= */
+              <span class="stat-trend positive">
+                Mənfəət
+              </span>
 
-.product-visual {
-  position: relative;
+            </div>
 
-  min-height: 230px;
+            <span class="stat-label">
+              Bu ay mənfəət
+            </span>
 
-  display: flex;
+            <strong id="statProfit">
+              0 ₼
+            </strong>
 
-  align-items: center;
+            <div class="stat-footer">
+              Cari ay üzrə xalis mənfəət
+            </div>
 
-  justify-content: center;
+          </div>
 
-  perspective: 1100px;
-}
+        </div>
 
-.laptop-3d {
-  position: relative;
 
-  width: 185px;
 
-  height: 115px;
+        <!-- ANALYTICS -->
 
-  transform:
-    rotateX(12deg)
-    rotateY(-18deg)
-    rotateZ(-2deg);
+        <div class="dashboard-grid premium-dashboard-grid">
 
-  transform-style: preserve-3d;
 
-  animation:
-    laptopFloat 5s ease-in-out infinite;
-}
+          <div class="panel large-panel analytics-panel">
 
-.laptop-screen {
-  position: absolute;
+            <div class="panel-header">
 
-  width: 185px;
+              <div>
 
-  height: 115px;
+                <span class="panel-eyebrow">
+                  ANALİTİKA
+                </span>
 
-  border: 6px solid #c4cad3;
+                <h3>
+                  Aylıq satışlar
+                </h3>
 
-  border-radius:
-    11px 11px 5px 5px;
+                <p>
+                  Satış performansınızın dinamikası
+                </p>
 
-  background:
-    linear-gradient(
-      135deg,
-      #f7f9fc,
-      #cbd3df
-    );
+              </div>
 
-  box-shadow:
-    18px 25px 35px
-    rgba(23,37,84,.18);
 
-  transform:
-    translateZ(18px);
+              <select id="salesPeriod">
 
-  overflow: hidden;
-}
+                <option>
+                  Son 7 gün
+                </option>
 
-.laptop-screen::before {
-  content: "";
+                <option selected>
+                  Bu ay
+                </option>
 
-  position: absolute;
+                <option>
+                  Bu il
+                </option>
 
-  inset: 12px;
+              </select>
 
-  border-radius: 5px;
+            </div>
 
-  background:
-    linear-gradient(
-      135deg,
-      #172554,
-      #3155c7
-    );
 
-  opacity: .92;
-}
+            <div class="chart-wrapper">
 
-.laptop-screen::after {
-  content: "ONCOMP";
+              <div class="chart-y-axis">
+                <span>100%</span>
+                <span>75%</span>
+                <span>50%</span>
+                <span>25%</span>
+                <span>0%</span>
+              </div>
 
-  position: absolute;
+              <div
+                id="salesChart"
+                class="chart-area"
+              >
 
-  inset: 0;
+                <div class="empty-chart">
 
-  display: flex;
+                  <div class="empty-chart-icon">
+                    ↗
+                  </div>
 
-  align-items: center;
+                  <strong>
+                    Satış məlumatları burada görünəcək
+                  </strong>
 
-  justify-content: center;
+                  <span>
+                    Satışlar artdıqca qrafik avtomatik yenilənəcək.
+                  </span>
 
-  color: rgba(255,255,255,.95);
+                </div>
 
-  font-size: 16px;
+              </div>
 
-  font-weight: 800;
+            </div>
 
-  letter-spacing: .15em;
-}
+          </div>
 
-.laptop-base {
-  position: absolute;
 
-  left: -20px;
 
-  top: 112px;
+          <!-- STOCK -->
 
-  width: 225px;
+          <div class="panel stock-panel">
 
-  height: 20px;
+            <div class="panel-header">
 
-  border-radius:
-    4px 4px 14px 14px;
+              <div>
 
-  background:
-    linear-gradient(
-      180deg,
-      #e4e8ee,
-      #aab2be
-    );
+                <span class="panel-eyebrow">
+                  ANBAR
+                </span>
 
-  transform:
-    rotateX(70deg)
-    translateZ(-8px);
+                <h3>
+                  Anbar vəziyyəti
+                </h3>
 
-  box-shadow:
-    18px 22px 28px
-    rgba(23,37,84,.18);
-}
+                <p>
+                  Məhsul stokları
+                </p>
 
-@keyframes laptopFloat {
+              </div>
 
-  0%,100% {
-    transform:
-      translateY(0)
-      rotateX(12deg)
-      rotateY(-18deg)
-      rotateZ(-2deg);
-  }
+              <div class="panel-more">
+                •••
+              </div>
 
-  50% {
-    transform:
-      translateY(-11px)
-      rotateX(15deg)
-      rotateY(-13deg)
-      rotateZ(0deg);
-  }
+            </div>
 
-}
 
-/* =========================================================
-   TABLET
-   ========================================================= */
+            <div class="stock-ring">
 
-.tablet-3d {
-  width: 130px;
+              <div class="ring-inner">
 
-  height: 178px;
+                <strong id="stockAvailable">
+                  0
+                </strong>
 
-  border:
-    7px solid #c7cdd6;
+                <span>
+                  məhsul
+                </span>
 
-  border-radius: 19px;
+              </div>
 
-  background:
-    linear-gradient(
-      145deg,
-      #ffffff,
-      #cbd3de
-    );
+            </div>
 
-  transform:
-    rotateY(-18deg)
-    rotateX(8deg)
-    rotateZ(3deg);
 
-  box-shadow:
-    22px 28px 40px
-    rgba(23,37,84,.18);
+            <div
+              id="stockSummary"
+              class="stock-summary"
+            >
 
-  animation:
-    tabletFloat 4.5s ease-in-out infinite;
-}
+              <div class="stock-row">
 
-.tablet-3d::before {
-  content: "";
+                <div>
+                  <i class="stock-dot available"></i>
+                  <span>Mövcud məhsullar</span>
+                </div>
 
-  display: block;
+                <strong id="stockAvailableText">
+                  0
+                </strong>
 
-  margin: 9px;
+              </div>
 
-  height: 145px;
 
-  border-radius: 10px;
+              <div class="stock-row warning">
 
-  background:
-    linear-gradient(
-      145deg,
-      #eef3ff,
-      #d7e0f6
-    );
-}
+                <div>
+                  <i class="stock-dot critical"></i>
+                  <span>Kritik stok</span>
+                </div>
 
-.tablet-3d::after {
-  content: "";
+                <strong id="stockCritical">
+                  0
+                </strong>
 
-  position: absolute;
+              </div>
 
-  bottom: 5px;
 
-  left: 50%;
+              <div class="stock-row">
 
-  transform:
-    translateX(-50%);
+                <div>
+                  <i class="stock-dot sold"></i>
+                  <span>Satılmış məhsullar</span>
+                </div>
 
-  width: 7px;
+                <strong id="stockSold">
+                  0
+                </strong>
 
-  height: 7px;
+              </div>
 
-  border-radius: 50%;
+            </div>
 
-  background: #687386;
-}
+          </div>
 
-@keyframes tabletFloat {
+        </div>
 
-  0%,100% {
-    transform:
-      translateY(0)
-      rotateY(-18deg)
-      rotateX(8deg)
-      rotateZ(3deg);
-  }
 
-  50% {
-    transform:
-      translateY(-10px)
-      rotateY(-12deg)
-      rotateX(10deg)
-      rotateZ(5deg);
-  }
 
-}
+        <!-- RECENT SALES -->
 
-/* =========================================================
-   TABLES
-   ========================================================= */
+        <div class="panel recent-sales-panel">
 
-.table-container,
-.table-wrapper {
-  width: 100%;
+          <div class="panel-header">
 
-  overflow-x: auto;
+            <div>
 
-  border:
-    1px solid var(--border);
+              <span class="panel-eyebrow">
+                ƏMƏLİYYATLAR
+              </span>
 
-  border-radius: 16px;
+              <h3>
+                Son satışlar
+              </h3>
 
-  background:
-    #fff;
+              <p>
+                Sistemdəki son satış əməliyyatları
+              </p>
 
-  box-shadow:
-    var(--shadow-sm);
-}
+            </div>
 
-table {
-  width: 100%;
 
-  min-width: 720px;
+            <button
+              class="text-btn"
+              data-page-action="sales"
+            >
+              Hamısına bax →
+            </button>
 
-  border-collapse:
-    collapse;
-}
+          </div>
 
-thead {
-  background:
-    #f6f8fb;
-}
 
-th {
-  padding: 15px 16px;
+          <div class="table-wrapper">
 
-  text-align: left;
+            <table>
 
-  color: #667085;
+              <thead>
 
-  font-size: 11px;
+                <tr>
+                  <th>Məhsul</th>
+                  <th>Müştəri</th>
+                  <th>Məbləğ</th>
+                  <th>Ödəniş</th>
+                  <th>Tarix</th>
+                </tr>
 
-  text-transform: uppercase;
+              </thead>
 
-  letter-spacing: .07em;
 
-  font-weight: 700;
-}
+              <tbody id="recentSalesTable">
 
-td {
-  padding: 16px;
+                <tr>
 
-  border-top:
-    1px solid #edf0f4;
+                  <td
+                    colspan="5"
+                    class="empty-state"
+                  >
 
-  color: #344054;
+                    <div class="empty-icon">
+                      ↗
+                    </div>
 
-  font-size: 13px;
-}
+                    <strong>
+                      Hələ satış yoxdur
+                    </strong>
 
-tbody tr {
-  transition:
-    background var(--transition);
-}
+                    <span>
+                      İlk satış əməliyyatınızı əlavə edin.
+                    </span>
 
-tbody tr:hover {
-  background:
-    #f8faff;
-}
+                  </td>
 
-td strong {
-  color: var(--navy);
+                </tr>
 
-  font-weight: 700;
-}
+              </tbody>
 
-td small {
-  display: block;
+            </table>
 
-  margin-top: 4px;
+          </div>
 
-  color: var(--muted);
-}
+        </div>
 
-/* =========================================================
-   STATUS
-   ========================================================= */
+      </section>
 
-.status-badge {
-  display: inline-flex;
 
-  align-items: center;
 
-  gap: 7px;
+      <!-- =====================================================
+           PRODUCTS
+      ====================================================== -->
 
-  padding: 6px 10px;
+      <section
+        id="productsPage"
+        class="content-page"
+      >
 
-  border:
-    1px solid #e1e6ed;
+        <div class="page-toolbar">
 
-  border-radius: 999px;
+          <div>
 
-  color: #475467;
+            <div class="page-kicker">
+              INVENTORY MANAGEMENT
+            </div>
 
-  background:
-    #f7f9fb;
+            <h2>
+              Məhsullar
+            </h2>
 
-  font-size: 11px;
+            <p>
+              Notebook və planşetlərin uçotu
+            </p>
 
-  font-weight: 700;
-}
+          </div>
 
-.status-badge::before {
-  content: "";
 
-  width: 6px;
+          <button
+            id="addProductBtn"
+            class="primary-btn"
+          >
+            + Yeni məhsul
+          </button>
 
-  height: 6px;
+        </div>
 
-  border-radius: 50%;
 
-  background:
-    var(--green);
-}
+        <div class="filter-bar premium-filter">
 
-/* =========================================================
-   FORMS
-   ========================================================= */
+          <div class="search-box">
 
-.form-grid {
-  display: grid;
+            <span>⌕</span>
 
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
+            <input
+              type="search"
+              id="productSearch"
+              placeholder="Məhsul, marka və ya model axtar..."
+            >
 
-  gap: 17px;
-}
+          </div>
 
-.form-group {
-  min-width: 0;
-}
 
-/* =========================================================
-   MODAL
-   ========================================================= */
+          <select id="productCategoryFilter">
 
-#modalOverlay {
-  position: fixed;
+            <option value="">
+              Bütün kateqoriyalar
+            </option>
 
-  inset: 0;
+          </select>
 
-  z-index: 1000;
 
-  display: flex;
+          <select id="productStatusFilter">
 
-  align-items: center;
+            <option value="">
+              Bütün statuslar
+            </option>
 
-  justify-content: center;
+            <option value="active">
+              Aktiv
+            </option>
 
-  padding: 25px;
+            <option value="sold">
+              Satılıb
+            </option>
 
-  background:
-    rgba(23,37,84,.25);
+          </select>
 
-  backdrop-filter:
-    blur(8px);
-}
+        </div>
 
-#modalOverlay.hidden {
-  display: none;
-}
 
-.modal,
-.modal-content {
-  width:
-    min(720px, 100%);
+        <div class="panel">
 
-  max-height:
-    90vh;
+          <div class="table-wrapper">
 
-  overflow-y: auto;
+            <table>
 
-  border:
-    1px solid #e0e5ec;
+              <thead>
 
-  border-radius: 24px;
+                <tr>
+                  <th>Məhsul</th>
+                  <th>Kateqoriya</th>
+                  <th>Seriya / IMEI</th>
+                  <th>Alış</th>
+                  <th>Satış</th>
+                  <th>Stok</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
 
-  background:
-    #fff;
+              </thead>
 
-  box-shadow:
-    0 35px 100px
-    rgba(23,37,84,.20);
 
-  animation:
-    modalIn .28s ease;
-}
+              <tbody id="productsTable">
 
-@keyframes modalIn {
+                <tr>
 
-  from {
-    opacity: 0;
+                  <td
+                    colspan="8"
+                    class="empty-state"
+                  >
+                    Məhsul yoxdur
+                  </td>
 
-    transform:
-      translateY(15px)
-      scale(.98);
-  }
+                </tr>
 
-  to {
-    opacity: 1;
+              </tbody>
 
-    transform:
-      translateY(0)
-      scale(1);
-  }
+            </table>
 
-}
+          </div>
 
-.modal-header {
-  display: flex;
+        </div>
 
-  align-items: center;
+      </section>
 
-  justify-content: space-between;
 
-  padding: 22px 24px;
 
-  border-bottom:
-    1px solid var(--border);
-}
+      <!-- =====================================================
+           SALES
+      ====================================================== -->
 
-.modal-header h2,
-#modalTitle {
-  margin: 0;
+      <section
+        id="salesPage"
+        class="content-page"
+      >
 
-  color: var(--navy);
+        <div class="page-toolbar">
 
-  font-size: 20px;
+          <div>
 
-  letter-spacing: -.03em;
-}
+            <div class="page-kicker">
+              SALES MANAGEMENT
+            </div>
 
-.modal-body,
-#modalBody {
-  padding: 24px;
-}
+            <h2>
+              Satışlar
+            </h2>
 
-.close-btn,
-#closeModalBtn {
-  width: 36px;
+            <p>
+              Bütün satış əməliyyatları
+            </p>
 
-  height: 36px;
+          </div>
 
-  display: flex;
 
-  align-items: center;
+          <button
+            id="newSaleBtn"
+            class="primary-btn"
+          >
+            + Yeni satış
+          </button>
 
-  justify-content: center;
+        </div>
 
-  border:
-    1px solid var(--border);
 
-  border-radius: 10px;
+        <div class="panel">
 
-  color: #667085;
+          <div class="table-wrapper">
 
-  background:
-    #f7f9fb;
+            <table>
 
-  cursor: pointer;
-}
+              <thead>
 
-.close-btn:hover,
-#closeModalBtn:hover {
-  color: var(--navy);
+                <tr>
+                  <th>Satış №</th>
+                  <th>Müştəri</th>
+                  <th>Məbləğ</th>
+                  <th>Mənfəət</th>
+                  <th>Ödəniş</th>
+                  <th>Tarix</th>
+                </tr>
 
-  background:
-    #eef2f7;
-}
+              </thead>
 
-/* =========================================================
-   TOOLBAR
-   ========================================================= */
 
-.toolbar,
-.page-actions {
-  display: flex;
+              <tbody id="salesTable">
 
-  align-items: center;
+                <tr>
 
-  gap: 12px;
+                  <td
+                    colspan="6"
+                    class="empty-state"
+                  >
+                    Hələ satış yoxdur
+                  </td>
 
-  flex-wrap: wrap;
+                </tr>
 
-  margin-bottom: 18px;
-}
+              </tbody>
 
-.search-box {
-  flex: 1;
+            </table>
 
-  min-width: 220px;
-}
+          </div>
 
-/* =========================================================
-   REPORTS
-   ========================================================= */
+        </div>
 
-.report-cards {
-  display: grid;
+      </section>
 
-  grid-template-columns:
-    repeat(4, minmax(0, 1fr));
 
-  gap: 18px;
 
-  margin-bottom: 22px;
-}
+      <!-- =====================================================
+           CUSTOMERS
+      ====================================================== -->
 
-.report-card {
-  padding: 22px;
+      <section
+        id="customersPage"
+        class="content-page"
+      >
 
-  border:
-    1px solid var(--border);
+        <div class="page-toolbar">
 
-  border-radius: 18px;
+          <div>
 
-  background:
-    #fff;
+            <div class="page-kicker">
+              CUSTOMER MANAGEMENT
+            </div>
 
-  box-shadow:
-    var(--shadow-sm);
+            <h2>
+              Müştərilər
+            </h2>
 
-  transition:
-    transform var(--transition),
-    box-shadow var(--transition);
-}
+            <p>
+              Müştəri bazası və satış tarixçəsi
+            </p>
 
-.report-card:hover {
-  transform:
-    translateY(-4px);
+          </div>
 
-  box-shadow:
-    var(--shadow);
-}
 
-.report-card .label {
-  color: var(--muted);
+          <button
+            id="addCustomerBtn"
+            class="primary-btn"
+          >
+            + Yeni müştəri
+          </button>
 
-  font-size: 12px;
+        </div>
 
-  font-weight: 600;
-}
 
-.report-card .value {
-  margin-top: 9px;
+        <div class="filter-bar premium-filter">
 
-  color: var(--navy);
+          <div class="search-box">
 
-  font-size: 25px;
+            <span>⌕</span>
 
-  font-weight: 800;
-}
+            <input
+              type="search"
+              id="customerSearch"
+              placeholder="Müştəri adı və ya telefon axtar..."
+            >
 
-/* =========================================================
-   STOCK
-   ========================================================= */
+          </div>
 
-.stock-row {
-  display: flex;
+        </div>
 
-  align-items: center;
 
-  justify-content: space-between;
+        <div class="panel">
 
-  gap: 15px;
+          <div class="table-wrapper">
 
-  padding: 14px 0;
+            <table>
 
-  border-bottom:
-    1px solid var(--border);
-}
+              <thead>
 
-.stock-row:last-child {
-  border-bottom: 0;
-}
+                <tr>
+                  <th>Ad Soyad</th>
+                  <th>Telefon</th>
+                  <th>E-poçt</th>
+                  <th>Ünvan</th>
+                  <th>Qeydiyyat</th>
+                  <th></th>
+                </tr>
 
-.stock-row span {
-  color: #475467;
+              </thead>
 
-  font-size: 13px;
-}
 
-.stock-row strong {
-  color: var(--navy);
-}
+              <tbody id="customersTable">
 
-/* =========================================================
-   EMPTY
-   ========================================================= */
+                <tr>
 
-.empty-state {
-  padding: 45px 20px !important;
+                  <td
+                    colspan="6"
+                    class="empty-state"
+                  >
+                    Müştəri yoxdur
+                  </td>
 
-  text-align: center;
+                </tr>
 
-  color: #98a2b3 !important;
+              </tbody>
 
-  font-size: 13px;
-}
+            </table>
 
-/* =========================================================
-   TOAST
-   ========================================================= */
+          </div>
 
-#toast {
-  position: fixed;
+        </div>
 
-  right: 25px;
+      </section>
 
-  bottom: 25px;
 
-  z-index: 2000;
 
-  min-width: 280px;
+      <!-- =====================================================
+           INVENTORY
+      ====================================================== -->
 
-  padding: 15px 18px;
+      <section
+        id="inventoryPage"
+        class="content-page"
+      >
 
-  border:
-    1px solid #dce2eb;
+        <div class="page-toolbar">
 
-  border-radius: 14px;
+          <div>
 
-  color: #172033;
+            <div class="page-kicker">
+              INVENTORY
+            </div>
 
-  background:
-    rgba(255,255,255,.97);
+            <h2>
+              Anbar
+            </h2>
 
-  box-shadow:
-    0 18px 45px
-    rgba(23,37,84,.16);
+            <p>
+              Məhsul ehtiyatlarının vəziyyəti
+            </p>
 
-  animation:
-    toastIn .3s ease;
-}
+          </div>
 
-#toast.hidden {
-  display: none;
-}
+        </div>
 
-@keyframes toastIn {
 
-  from {
-    opacity: 0;
+        <div class="stats-grid">
 
-    transform:
-      translateY(12px);
-  }
+          <div class="stat-card">
 
-  to {
-    opacity: 1;
+            <div class="stat-icon">
+              ▤
+            </div>
 
-    transform:
-      translateY(0);
-  }
+            <span>
+              Anbarda
+            </span>
 
-}
+            <strong id="inventoryAvailable">
+              0
+            </strong>
 
-/* =========================================================
-   CARDS
-   ========================================================= */
+          </div>
 
-.card,
-.panel {
-  padding: 22px;
-}
 
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
+          <div class="stat-card">
 
-@media (max-width: 1200px) {
+            <div class="stat-icon">
+              !
+            </div>
 
-  .stats-grid,
-  .dashboard-grid,
-  .report-cards {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-  }
+            <span>
+              Kritik stok
+            </span>
 
-}
+            <strong id="inventoryCritical">
+              0
+            </strong>
 
-@media (max-width: 850px) {
+          </div>
 
-  #appPage {
-    display: block;
-  }
 
-  .sidebar {
-    position: relative;
+          <div class="stat-card">
 
-    width: 100%;
+            <div class="stat-icon">
+              ✓
+            </div>
 
-    height: auto;
+            <span>
+              Satılıb
+            </span>
 
-    padding: 12px;
+            <strong id="inventorySold">
+              0
+            </strong>
 
-    border-right: 0;
+          </div>
 
-    border-bottom:
-      1px solid var(--border);
-  }
 
-  .sidebar-nav {
-    flex-direction: row;
+          <div class="stat-card">
 
-    overflow-x: auto;
-  }
+            <div class="stat-icon money">
+              ₼
+            </div>
 
-  .nav-item {
-    min-width:
-      max-content;
-  }
+            <span>
+              Anbar dəyəri
+            </span>
 
-  .nav-item.active::before {
-    display: none;
-  }
+            <strong id="inventoryValue">
+              0 ₼
+            </strong>
 
-  .main-content {
-    padding:
-      22px 16px 40px;
-  }
+          </div>
 
-  .dashboard-hero {
-    grid-template-columns: 1fr;
-  }
+        </div>
 
-  .product-visual {
-    min-height: 180px;
-  }
 
-}
+        <div class="panel">
 
-@media (max-width: 600px) {
+          <div class="panel-header">
 
-  .stats-grid,
-  .dashboard-grid,
-  .report-cards,
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
+            <div>
 
-  .topbar,
-  .header,
-  .page-header {
-    align-items: flex-start;
+              <h3>
+                Anbar məhsulları
+              </h3>
 
-    flex-direction: column;
-  }
+              <p>
+                Mövcud məhsullar
+              </p>
 
-  .login-box {
-    padding: 28px 22px;
-  }
+            </div>
 
-  .dashboard-hero {
-    padding: 24px;
-  }
+          </div>
 
-  .dashboard-hero h1 {
-    font-size: 32px;
-  }
 
-  .stat-value {
-    font-size: 25px;
-  }
+          <div
+            id="inventoryList"
+            class="inventory-list"
+          >
 
-}
+            <div class="empty-state">
+              Anbarda məhsul yoxdur
+            </div>
 
-/* =========================================================
-   HIDDEN
-   ========================================================= */
+          </div>
 
-.hidden {
-  display: none !important;
-}
+        </div>
 
-/* =========================================================
-   SELECTION
-   ========================================================= */
+      </section>
 
-::selection {
-  color: #fff;
 
-  background: #3155c7;
-}
-```
-/* =========================================================
-   ONCOMP PREMIUM UI — 3D GLASS / MODERN BUSINESS DESIGN
-   Mövcud index.html ilə uyğunlaşdırılıb
-   ========================================================= */
 
-:root {
-  --bg: #f4f7fb;
-  --surface: rgba(255, 255, 255, 0.88);
-  --surface-solid: #ffffff;
-  --text: #172033;
-  --muted: #718096;
-  --border: #e7ebf2;
-  --primary: #2563eb;
-  --primary-dark: #1d4ed8;
-  --success: #16a34a;
-  --danger: #dc2626;
-  --shadow: 0 12px 35px rgba(15, 23, 42, 0.08);
-  --shadow-hover: 0 20px 45px rgba(15, 23, 42, 0.13);
-  --radius: 18px;
-}
+      <!-- =====================================================
+           EXPENSES
+      ====================================================== -->
 
-/* ================= GLOBAL ================= */
+      <section
+        id="expensesPage"
+        class="content-page"
+      >
 
-* {
-  box-sizing: border-box;
-}
+        <div class="page-toolbar">
 
-html {
-  scroll-behavior: smooth;
-}
+          <div>
 
-body {
-  margin: 0;
-  background:
-    radial-gradient(circle at 90% 0%, rgba(37, 99, 235, 0.07), transparent 28%),
-    radial-gradient(circle at 0% 100%, rgba(59, 130, 246, 0.05), transparent 25%),
-    #f4f7fb;
-  color: var(--text);
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Arial,
-    sans-serif;
-}
+            <div class="page-kicker">
+              FINANCE
+            </div>
 
-/* ================= LOGIN ================= */
+            <h2>
+              Xərclər
+            </h2>
 
-.login-page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 30px;
-  position: relative;
-  overflow: hidden;
+            <p>
+              Şirkətin xərc uçotu
+            </p>
 
-  background:
-    radial-gradient(circle at 15% 20%, rgba(37, 99, 235, .13), transparent 25%),
-    radial-gradient(circle at 85% 80%, rgba(14, 165, 233, .10), transparent 25%),
-    linear-gradient(135deg, #f8fafc, #eef3f9);
-}
+          </div>
 
-/* Dekorativ 3D dairələr */
 
-.login-page::before,
-.login-page::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  filter: blur(1px);
-}
+          <button
+            id="addExpenseBtn"
+            class="primary-btn"
+          >
+            + Yeni xərc
+          </button>
 
-.login-page::before {
-  width: 420px;
-  height: 420px;
-  top: -180px;
-  right: -100px;
-  background:
-    radial-gradient(circle at 35% 30%, #fff, rgba(37, 99, 235, .10) 35%, rgba(37, 99, 235, .02) 70%);
-  box-shadow:
-    inset -25px -25px 55px rgba(37, 99, 235, .08),
-    20px 30px 70px rgba(37, 99, 235, .08);
-}
+        </div>
 
-.login-page::after {
-  width: 300px;
-  height: 300px;
-  bottom: -150px;
-  left: -100px;
-  background:
-    radial-gradient(circle at 35% 30%, #fff, rgba(59, 130, 246, .09) 40%, transparent 70%);
-}
 
-.login-card {
-  width: min(460px, 100%);
-  position: relative;
-  z-index: 2;
+        <div class="panel">
 
-  padding: 38px;
-  border: 1px solid rgba(255,255,255,.9);
-  border-radius: 28px;
+          <div class="table-wrapper">
 
-  background: rgba(255,255,255,.82);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
+            <table>
 
-  box-shadow:
-    0 30px 80px rgba(15, 23, 42, .12),
-    inset 0 1px 0 rgba(255,255,255,.95);
-}
+              <thead>
 
-/* ================= BRAND ================= */
+                <tr>
+                  <th>Xərc</th>
+                  <th>Kateqoriya</th>
+                  <th>Məbləğ</th>
+                  <th>Tarix</th>
+                  <th>Qeyd</th>
+                  <th></th>
+                </tr>
 
-.brand,
-.sidebar-brand {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-}
+              </thead>
 
-.brand-icon {
-  width: 54px;
-  height: 54px;
-  border-radius: 16px;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+              <tbody id="expensesTable">
 
-  color: white;
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: -1px;
+                <tr>
 
-  background:
-    linear-gradient(145deg, #3b82f6, #1d4ed8);
+                  <td
+                    colspan="6"
+                    class="empty-state"
+                  >
+                    Xərc yoxdur
+                  </td>
 
-  box-shadow:
-    0 10px 22px rgba(37,99,235,.25),
-    inset 1px 1px 2px rgba(255,255,255,.4),
-    inset -3px -4px 8px rgba(0,0,0,.12);
+                </tr>
 
-  transform: perspective(300px) rotateX(3deg);
-}
+              </tbody>
 
-.brand h1 {
-  margin: 0;
-  font-size: 24px;
-  letter-spacing: -0.7px;
-}
+            </table>
 
-.brand span {
-  color: var(--muted);
-  font-size: 12px;
-}
+          </div>
 
-/* ================= LOGIN TITLE ================= */
+        </div>
 
-.login-title {
-  margin: 38px 0 25px;
-}
+      </section>
 
-.login-title h2 {
-  margin: 0 0 8px;
-  font-size: 28px;
-  letter-spacing: -0.8px;
-}
 
-.login-title p {
-  margin: 0;
-  color: var(--muted);
-  line-height: 1.6;
-  font-size: 14px;
-}
 
-/* ================= INPUTS ================= */
+      <!-- =====================================================
+           REPORTS
+      ====================================================== -->
 
-label {
-  display: block;
-  margin: 0 0 8px;
-  color: #374151;
-  font-size: 13px;
-  font-weight: 600;
-}
+      <section
+        id="reportsPage"
+        class="content-page"
+      >
 
-input,
-select {
-  width: 100%;
-  height: 46px;
-  padding: 0 14px;
+        <div class="page-toolbar">
 
-  border: 1px solid var(--border);
-  border-radius: 12px;
+          <div>
 
-  outline: none;
-  background: rgba(255,255,255,.9);
-  color: var(--text);
+            <div class="page-kicker">
+              BUSINESS ANALYTICS
+            </div>
 
-  transition:
-    border .2s ease,
-    box-shadow .2s ease,
-    transform .2s ease;
-}
+            <h2>
+              Hesabatlar
+            </h2>
 
-input:focus,
-select:focus {
-  border-color: rgba(37,99,235,.45);
-  box-shadow: 0 0 0 4px rgba(37,99,235,.08);
-}
+            <p>
+              Satış, gəlir, xərc və mənfəət analitikası
+            </p>
 
-/* ================= BUTTONS ================= */
+          </div>
 
-button {
-  font-family: inherit;
-}
 
-.primary-btn,
-.login-btn {
-  border: 0;
-  cursor: pointer;
-  color: white;
-  font-weight: 700;
+          <button
+            id="refreshReportsBtn"
+            class="secondary-btn"
+          >
+            ↻ Yenilə
+          </button>
 
-  background:
-    linear-gradient(135deg, #3b82f6, #1d4ed8);
+        </div>
 
-  box-shadow:
-    0 9px 20px rgba(37,99,235,.20),
-    inset 0 1px 0 rgba(255,255,255,.25);
 
-  transition:
-    transform .2s ease,
-    box-shadow .2s ease,
-    filter .2s ease;
-}
+        <div class="stats-grid">
 
-.primary-btn:hover,
-.login-btn:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 14px 28px rgba(37,99,235,.25),
-    inset 0 1px 0 rgba(255,255,255,.3);
-  filter: brightness(1.03);
-}
+          <div class="stat-card">
 
-.primary-btn:active,
-.login-btn:active {
-  transform: translateY(0);
-}
+            <div class="stat-icon sale">
+              ↗
+            </div>
 
-.login-btn {
-  width: 100%;
-  height: 50px;
-  margin-top: 22px;
-  border-radius: 13px;
-  font-size: 14px;
-}
+            <span>
+              Ümumi gəlir
+            </span>
 
-/* ================= STATUS ================= */
+            <strong id="reportRevenue">
+              0 ₼
+            </strong>
 
-.connection-status,
-.system-status {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
+          </div>
 
-.connection-status {
-  justify-content: center;
-  margin-top: 22px;
-  color: #64748b;
-  font-size: 12px;
-}
 
-.status-dot {
-  width: 8px;
-  height: 8px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 0 5px rgba(34,197,94,.10);
-}
+          <div class="stat-card">
 
-/* =========================================================
-   APP
-   ========================================================= */
+            <div class="stat-icon money">
+              ₼
+            </div>
 
-.app-page {
-  min-height: 100vh;
-  display: flex;
-  background: #f4f7fb;
-}
+            <span>
+              Ümumi xərc
+            </span>
 
-/* ================= SIDEBAR ================= */
+            <strong id="reportExpenses">
+              0 ₼
+            </strong>
 
-.sidebar {
-  width: 250px;
-  min-width: 250px;
-  min-height: 100vh;
+          </div>
 
-  padding: 24px 16px;
 
-  background:
-    linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+          <div class="stat-card">
 
-  border-right: 1px solid #e8edf4;
+            <div class="stat-icon profit">
+              ◆
+            </div>
 
-  box-shadow: 10px 0 35px rgba(15,23,42,.035);
+            <span>
+              Ümumi mənfəət
+            </span>
 
-  display: flex;
-  flex-direction: column;
-}
+            <strong id="reportProfit">
+              0 ₼
+            </strong>
 
-.sidebar-brand {
-  padding: 4px 8px 28px;
-}
+          </div>
 
-.sidebar-brand strong {
-  display: block;
-  font-size: 16px;
-}
 
-.sidebar-brand small {
-  display: block;
-  margin-top: 3px;
-  color: var(--muted);
-  font-size: 11px;
-}
+          <div class="stat-card">
 
-.brand-icon.small {
-  width: 42px;
-  height: 42px;
-  border-radius: 13px;
-  font-size: 14px;
-}
+            <div class="stat-icon">
+              #
+            </div>
 
-/* ================= NAV ================= */
+            <span>
+              Satış sayı
+            </span>
 
-.main-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+            <strong id="reportSalesCount">
+              0
+            </strong>
 
-.nav-item {
-  width: 100%;
-  min-height: 45px;
+          </div>
 
-  padding: 0 13px;
+        </div>
 
-  display: flex;
-  align-items: center;
-  gap: 12px;
 
-  border: 0;
-  border-radius: 12px;
+        <div class="dashboard-grid">
 
-  background: transparent;
-  color: #64748b;
+          <div class="panel large-panel">
 
-  cursor: pointer;
-  text-align: left;
+            <div class="panel-header">
 
-  transition:
-    background .2s ease,
-    color .2s ease,
-    transform .2s ease;
-}
+              <div>
 
-.nav-item span {
-  width: 23px;
-  text-align: center;
-  font-size: 18px;
-}
+                <h3>
+                  Satış analitikası
+                </h3>
 
-.nav-item label {
-  margin: 0;
-  color: inherit;
-  font-size: 13px;
-  cursor: pointer;
-}
+                <p>
+                  Satış göstəricilərinin təhlili
+                </p>
 
-.nav-item:hover {
-  color: #2563eb;
-  background: #eff6ff;
-  transform: translateX(2px);
-}
+              </div>
 
-.nav-item.active {
-  color: #2563eb;
-  background:
-    linear-gradient(90deg, #eff6ff, #f8fbff);
+            </div>
 
-  box-shadow:
-    inset 3px 0 0 #2563eb,
-    0 5px 15px rgba(37,99,235,.05);
-}
 
-.nav-item.active label {
-  font-weight: 700;
-}
+            <div
+              id="reportChart"
+              class="chart-area"
+            >
+              Hesabat qrafiki
+            </div>
 
-/* ================= SIDEBAR BOTTOM ================= */
+          </div>
 
-.sidebar-bottom {
-  margin-top: auto;
-  padding-top: 25px;
-}
 
-.system-status {
-  padding: 13px;
-  margin-bottom: 12px;
+          <div class="panel">
 
-  border: 1px solid #e7edf4;
-  border-radius: 14px;
+            <div class="panel-header">
 
-  background: rgba(255,255,255,.7);
-}
+              <div>
 
-.system-status strong {
-  display: block;
-  font-size: 11px;
-}
+                <h3>
+                  Kateqoriyalar
+                </h3>
 
-.system-status small {
-  display: block;
-  margin-top: 3px;
-  color: var(--muted);
-  font-size: 10px;
-}
+                <p>
+                  Məhsul bölgüsü
+                </p>
 
-.logout-btn {
-  width: 100%;
-  height: 42px;
+              </div>
 
-  border: 1px solid #e7ebf2;
-  border-radius: 11px;
+            </div>
 
-  background: white;
-  color: #64748b;
 
-  cursor: pointer;
+            <div id="categoryReport">
+              Məlumat yoxdur
+            </div>
 
-  transition: .2s ease;
-}
+          </div>
 
-.logout-btn:hover {
-  color: #dc2626;
-  border-color: #fecaca;
-  background: #fff7f7;
-}
+        </div>
 
-/* =========================================================
-   MAIN CONTENT
-   ========================================================= */
+      </section>
 
-.main-content {
-  flex: 1;
-  min-width: 0;
-  padding: 0 32px 40px;
-}
 
-/* ================= TOPBAR ================= */
 
-.topbar {
-  min-height: 88px;
+      <!-- =====================================================
+           SETTINGS
+      ====================================================== -->
 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+      <section
+        id="settingsPage"
+        class="content-page"
+      >
 
-  border-bottom: 1px solid #e7ebf2;
-}
+        <div class="page-toolbar">
 
-.page-heading span,
-#pageEyebrow {
-  display: block;
-  margin-bottom: 3px;
+          <div>
 
-  color: #94a3b8;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1.3px;
-  text-transform: uppercase;
-}
+            <div class="page-kicker">
+              SYSTEM
+            </div>
 
-.page-heading h1 {
-  margin: 0;
-  font-size: 25px;
-  letter-spacing: -0.8px;
-}
+            <h2>
+              Parametrlər
+            </h2>
 
-.topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 17px;
-}
+            <p>
+              ONCOMP sistem ayarları
+            </p>
 
-.icon-btn {
-  width: 40px;
-  height: 40px;
+          </div>
 
-  border: 1px solid #e7ebf2;
-  border-radius: 12px;
+        </div>
 
-  background: white;
-  color: #64748b;
 
-  cursor: pointer;
-  box-shadow: 0 5px 15px rgba(15,23,42,.04);
-}
+        <div class="settings-grid">
 
-.admin-profile {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+          <div class="panel">
 
-.avatar {
-  width: 40px;
-  height: 40px;
+            <div class="panel-header">
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+              <div>
 
-  border-radius: 12px;
+                <h3>
+                  Şirkət məlumatları
+                </h3>
 
-  color: white;
-  font-weight: 800;
+                <p>
+                  Sistem daxilində istifadə olunan məlumatlar
+                </p>
 
-  background:
-    linear-gradient(145deg, #60a5fa, #2563eb);
+              </div>
 
-  box-shadow: 0 7px 18px rgba(37,99,235,.2);
-}
+            </div>
 
-.admin-profile strong {
-  display: block;
-  font-size: 12px;
-}
 
-.admin-profile small {
-  display: block;
-  margin-top: 2px;
-  color: var(--muted);
-  font-size: 10px;
-}
+            <div class="form-grid">
 
-/* ================= CONTENT ================= */
+              <div class="form-group">
 
-.content-page {
-  padding-top: 30px;
-}
+                <label>
+                  Şirkət adı
+                </label>
 
-.welcome-row,
-.page-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  margin-bottom: 22px;
-}
+                <input
+                  id="companyName"
+                  value="ONCOMP"
+                >
 
-.welcome-row h2,
-.page-toolbar h2 {
-  margin: 0 0 5px;
-  font-size: 22px;
-  letter-spacing: -.5px;
-}
+              </div>
 
-.welcome-row p,
-.page-toolbar p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 13px;
-}
 
-.primary-btn {
-  min-height: 42px;
-  padding: 0 17px;
-  border-radius: 11px;
-}
+              <div class="form-group">
 
-/* =========================================================
-   STAT CARDS — PREMIUM 3D
-   ========================================================= */
+                <label>
+                  E-poçt
+                </label>
 
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 20px;
-}
+                <input
+                  id="companyEmail"
+                  placeholder="info@oncomp.az"
+                >
 
-.stat-card {
-  min-height: 125px;
-  position: relative;
-  overflow: hidden;
+              </div>
 
-  padding: 20px;
 
-  display: flex;
-  align-items: center;
-  gap: 15px;
+              <div class="form-group">
 
-  border: 1px solid rgba(255,255,255,.9);
-  border-radius: 18px;
+                <label>
+                  Telefon
+                </label>
 
-  background:
-    linear-gradient(145deg, rgba(255,255,255,.95), rgba(248,250,252,.86));
+                <input
+                  id="companyPhone"
+                  placeholder="+994"
+                >
 
-  box-shadow:
-    0 12px 30px rgba(15,23,42,.06),
-    inset 0 1px 0 rgba(255,255,255,.9);
+              </div>
 
-  transition:
-    transform .25s ease,
-    box-shadow .25s ease;
-}
 
-.stat-card::after {
-  content: "";
-  position: absolute;
-  width: 90px;
-  height: 90px;
-  right: -30px;
-  bottom: -35px;
-  border-radius: 50%;
+              <div class="form-group">
 
-  background:
-    radial-gradient(circle, rgba(37,99,235,.12), transparent 68%);
-}
+                <label>
+                  Ünvan
+                </label>
 
-.stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-hover);
-}
+                <input
+                  id="companyAddress"
+                  placeholder="Azərbaycan"
+                >
 
-.stat-icon {
-  width: 48px;
-  height: 48px;
-  flex-shrink: 0;
+              </div>
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+            </div>
 
-  border-radius: 14px;
 
-  color: #2563eb;
-  font-size: 19px;
+            <button
+              id="saveSettingsBtn"
+              class="primary-btn"
+            >
+              Yadda saxla
+            </button>
 
-  background:
-    linear-gradient(145deg, #eff6ff, #dbeafe);
+          </div>
 
-  box-shadow:
-    inset 2px 2px 5px rgba(255,255,255,.9),
-    inset -2px -3px 6px rgba(37,99,235,.08);
-}
 
-.stat-card span {
-  display: block;
-  color: #7b8798;
-  font-size: 11px;
-  margin-bottom: 7px;
-}
 
-.stat-card strong {
-  display: block;
-  font-size: 22px;
-  letter-spacing: -.5px;
-}
+          <div class="panel">
 
-/* =========================================================
-   PANELS
-   ========================================================= */
+            <div class="panel-header">
 
-.panel {
-  margin-bottom: 20px;
-  padding: 21px;
+              <div>
 
-  border: 1px solid #e8edf3;
-  border-radius: 18px;
+                <h3>
+                  Sistem
+                </h3>
 
-  background: rgba(255,255,255,.91);
+                <p>
+                  Texniki vəziyyət
+                </p>
 
-  box-shadow:
-    0 10px 30px rgba(15,23,42,.045),
-    inset 0 1px 0 rgba(255,255,255,.9);
-}
+              </div>
 
-.panel:hover {
-  box-shadow:
-    0 15px 35px rgba(15,23,42,.065);
-}
+            </div>
 
-.panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-  margin-bottom: 18px;
-}
 
-.panel-header h3 {
-  margin: 0 0 4px;
-  font-size: 14px;
-}
+            <div class="system-info">
 
-.panel-header p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 11px;
-}
+              <div>
+                <span>Frontend</span>
+                <strong>ONCOMP</strong>
+              </div>
 
-.panel-header select {
-  width: auto;
-  min-width: 130px;
-  height: 36px;
-  font-size: 11px;
-}
+              <div>
+                <span>Database</span>
+                <strong>Supabase</strong>
+              </div>
 
-/* ================= DASHBOARD ================= */
+              <div>
+                <span>Status</span>
+                <strong class="online">Aktiv</strong>
+              </div>
 
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: 1.7fr 1fr;
-  gap: 20px;
-}
+            </div>
 
-.large-panel {
-  min-width: 0;
-}
+          </div>
 
-.chart-area {
-  min-height: 230px;
+        </div>
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+      </section>
 
-  border-radius: 14px;
+    </main>
 
-  background:
-    linear-gradient(
-      180deg,
-      #fbfdff,
-      #f7faff
-    );
+  </section>
 
-  border: 1px dashed #dce5f0;
 
-  color: #94a3b8;
-  font-size: 12px;
-}
 
-.empty-chart {
-  text-align: center;
-}
+  <!-- =========================================================
+       MODAL
+  ========================================================== -->
 
-/* ================= STOCK ================= */
+  <div
+    id="modalOverlay"
+    class="modal-overlay hidden"
+  >
 
-.stock-summary {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+    <div class="modal">
 
-.stock-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+      <div class="modal-header">
 
-  padding: 14px;
+        <div>
 
-  border-radius: 12px;
-  background: #f8fafc;
-}
+          <div class="modal-kicker">
+            ONCOMP
+          </div>
 
-.stock-row span {
-  color: #64748b;
-  font-size: 12px;
-}
+          <h2 id="modalTitle">
+            Yeni məlumat
+          </h2>
 
-.stock-row strong {
-  font-size: 14px;
-}
+          <p id="modalDescription">
+            Məlumatları daxil edin.
+          </p>
 
-.stock-row.warning {
-  background: #fffaf0;
-}
+        </div>
 
-.stock-row.warning strong {
-  color: #d97706;
-}
 
-/* =========================================================
-   TABLES
-   ========================================================= */
+        <button
+          id="closeModalBtn"
+          class="modal-close"
+        >
+          ×
+        </button>
 
-.table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-}
+      </div>
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
 
-thead tr {
-  border-bottom: 1px solid #e8edf3;
-}
+      <div id="modalBody"></div>
 
-th {
-  padding: 13px 12px;
-  color: #94a3b8;
+    </div>
 
-  font-size: 10px;
-  font-weight: 700;
+  </div>
 
-  text-align: left;
-  white-space: nowrap;
-}
 
-td {
-  padding: 15px 12px;
 
-  border-bottom: 1px solid #f0f3f7;
+  <!-- =========================================================
+       TOAST
+  ========================================================== -->
 
-  color: #475569;
-  font-size: 12px;
-}
+  <div
+    id="toast"
+    class="toast hidden"
+  >
 
-tbody tr {
-  transition: background .15s ease;
-}
+    <span id="toastMessage"></span>
 
-tbody tr:hover {
-  background: #f8fbff;
-}
+  </div>
 
-.empty-state {
-  padding: 40px 15px !important;
-  text-align: center;
-  color: #a0aec0;
-}
 
-/* =========================================================
-   FILTERS
-   ========================================================= */
 
-.filter-bar {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 18px;
-}
+  <script src="app.js"></script>
 
-.filter-bar input {
-  max-width: 360px;
-}
-
-.filter-bar select {
-  width: auto;
-  min-width: 170px;
-}
-
-/* =========================================================
-   TEXT BUTTONS
-   ========================================================= */
-
-.text-btn,
-.secondary-btn {
-  border: 0;
-  cursor: pointer;
-  color: #2563eb;
-  background: transparent;
-  font-weight: 700;
-  font-size: 12px;
-}
-
-.secondary-btn {
-  min-height: 40px;
-  padding: 0 15px;
-
-  border: 1px solid #e4eaf2;
-  border-radius: 11px;
-
-  background: white;
-}
-
-/* =========================================================
-   SETTINGS
-   ========================================================= */
-
-.settings-grid {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  gap: 20px;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 17px;
-  margin-bottom: 20px;
-}
-
-.form-group input {
-  margin-top: 0;
-}
-
-.system-info {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.system-info > div {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  padding: 14px;
-
-  border-radius: 12px;
-  background: #f8fafc;
-}
-
-.system-info span {
-  color: #64748b;
-  font-size: 12px;
-}
-
-.system-info strong {
-  font-size: 12px;
-}
-
-.system-info .online {
-  color: #16a34a;
-}
-
-/* =========================================================
-   MODAL — PREMIUM GLASS
-   ========================================================= */
-
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 999;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 20px;
-
-  background: rgba(15,23,42,.32);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.modal {
-  width: min(620px, 100%);
-  max-height: 90vh;
-  overflow-y: auto;
-
-  border: 1px solid rgba(255,255,255,.9);
-  border-radius: 22px;
-
-  background: rgba(255,255,255,.96);
-
-  box-shadow:
-    0 30px 90px rgba(15,23,42,.20);
-
-  animation: modalIn .25s ease;
-}
-
-@keyframes modalIn {
-  from {
-    opacity: 0;
-    transform: translateY(15px) scale(.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.modal-header {
-  padding: 22px;
-
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-
-  border-bottom: 1px solid #edf1f5;
-}
-
-.modal-header h2 {
-  margin: 0 0 5px;
-  font-size: 18px;
-}
-
-.modal-header p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 11px;
-}
-
-.modal-close {
-  width: 34px;
-  height: 34px;
-
-  border: 0;
-  border-radius: 10px;
-
-  background: #f1f5f9;
-  color: #64748b;
-
-  font-size: 20px;
-  cursor: pointer;
-}
-
-/* =========================================================
-   TOAST
-   ========================================================= */
-
-.toast {
-  position: fixed;
-  right: 25px;
-  bottom: 25px;
-  z-index: 2000;
-
-  min-width: 260px;
-
-  padding: 14px 17px;
-
-  border: 1px solid #e5eaf1;
-  border-radius: 13px;
-
-  background: white;
-
-  box-shadow:
-    0 20px 45px rgba(15,23,42,.13);
-
-  font-size: 12px;
-}
-
-/* =========================================================
-   HIDDEN
-   ========================================================= */
-
-.hidden {
-  display: none !important;
-}
-
-/* =========================================================
-   SCROLLBAR
-   ========================================================= */
-
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 20px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
-
-@media (max-width: 1100px) {
-
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .dashboard-grid,
-  .settings-grid {
-    grid-template-columns: 1fr;
-  }
-
-}
-
-@media (max-width: 800px) {
-
-  .sidebar {
-    width: 210px;
-    min-width: 210px;
-  }
-
-  .main-content {
-    padding: 0 20px 30px;
-  }
-
-}
-
-@media (max-width: 650px) {
-
-  .app-page {
-    display: block;
-  }
-
-  .sidebar {
-    width: 100%;
-    min-width: 0;
-    min-height: auto;
-    position: relative;
-  }
-
-  .main-nav {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .sidebar-bottom {
-    display: none;
-  }
-
-  .topbar {
-    min-height: 75px;
-  }
-
-  .admin-profile > div:last-child {
-    display: none;
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .welcome-row,
-  .page-toolbar {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .filter-bar {
-    flex-direction: column;
-  }
-
-  .filter-bar input,
-  .filter-bar select {
-    max-width: none;
-    width: 100%;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-}
+</body>
+</html>
