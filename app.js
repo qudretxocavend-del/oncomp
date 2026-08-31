@@ -1231,7 +1231,50 @@ function renderExpenses() {
 
 async function addExpense(formData) {
 
+  const expenseName =
+    formData.name?.trim() ||
+    formData.title?.trim() ||
+    "";
+
+  if (!expenseName) {
+    showToast("Xərc adı daxil edilməlidir.");
+    return false;
+  }
+
   const expense = {
+    title: expenseName,
+    name: expenseName,
+    category: formData.category || null,
+    amount: Number(formData.amount || 0),
+    notes: formData.notes || null
+  };
+
+  if (formData.expense_date) {
+    expense.expense_date = formData.expense_date;
+  }
+
+  const { error } = await supabaseClient
+    .from("expenses")
+    .insert(expense);
+
+  if (error) {
+    console.error(error);
+
+    showToast(
+      "Xərc əlavə edilmədi: " +
+      error.message
+    );
+
+    return false;
+  }
+
+  showToast("Xərc əlavə edildi");
+
+  await loadExpenses();
+  updateReports();
+
+  return true;
+}
 
     name:
       formData.name ||
