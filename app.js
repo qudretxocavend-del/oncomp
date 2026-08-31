@@ -1231,21 +1231,74 @@ function renderExpenses() {
 
 async function addExpense(formData) {
 
+  const expenseTitle =
+    String(
+      formData.title ||
+      formData.name ||
+      ""
+    ).trim();
+
+  if (!expenseTitle) {
+    showToast("Xərc adı daxil edilməlidir.");
+    return false;
+  }
+
   const expense = {
 
-    name:
-      formData.name ||
-      formData.title,
+    title: expenseTitle,
+
+    name: expenseTitle,
 
     category:
-      formData.category || null,
+      formData.category ||
+      "Digər",
 
     amount:
       Number(formData.amount || 0),
 
     notes:
-      formData.notes || null
+      formData.notes ||
+      null,
+
+    description:
+      formData.notes ||
+      null,
+
+    expense_date:
+      formData.expense_date ||
+      new Date().toISOString().slice(0, 10)
   };
+
+  const { error } =
+    await supabaseClient
+      .from("expenses")
+      .insert(expense);
+
+  if (error) {
+
+    console.error(
+      "XƏRC ƏLAVƏ XƏTASI:",
+      error
+    );
+
+    showToast(
+      "Xərc əlavə edilmədi: " +
+      error.message
+    );
+
+    return false;
+  }
+
+  showToast(
+    "Xərc uğurla əlavə edildi."
+  );
+
+  await loadExpenses();
+  updateDashboard();
+  updateReports();
+
+  return true;
+}
 
   if (formData.expense_date) {
     expense.expense_date =
