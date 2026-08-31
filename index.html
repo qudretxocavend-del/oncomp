@@ -1,750 +1,145 @@
-```html
 <!DOCTYPE html>
 <html lang="az">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ONCOMP — Elektron Uçot Sistemi</title>
+
+  <title>ONCOMP — Premium Elektron Uçot Sistemi</title>
 
   <link rel="stylesheet" href="style.css">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    /* =====================================================
-       ONCOMP PREMIUM VISUAL LAYER
-       Mövcud app.js / ID-lərə toxunmur
-    ===================================================== */
-
-    :root {
-      --premium-navy: #10233f;
-      --premium-blue: #2563eb;
-      --premium-light: #f5f8fc;
-      --premium-border: #e4eaf2;
-      --premium-text: #172033;
-      --premium-muted: #718096;
-      --premium-white: #ffffff;
-      --premium-shadow: 0 18px 45px rgba(15, 35, 65, .08);
-      --premium-radius: 20px;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      background:
-        radial-gradient(circle at 90% 0%, rgba(37,99,235,.06), transparent 30%),
-        linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-      color: var(--premium-text);
-    }
-
-    /* LOGIN */
-
-    .login-page {
-      background:
-        radial-gradient(circle at 15% 20%, rgba(37,99,235,.08), transparent 30%),
-        radial-gradient(circle at 85% 80%, rgba(16,35,63,.08), transparent 30%),
-        #f7f9fc !important;
-    }
-
-    .login-card {
-      border: 1px solid rgba(255,255,255,.9);
-      box-shadow:
-        0 30px 80px rgba(15,35,65,.12),
-        0 5px 20px rgba(15,35,65,.05);
-      border-radius: 28px !important;
-      background: rgba(255,255,255,.96) !important;
-      backdrop-filter: blur(20px);
-    }
-
-    .brand-icon {
-      background: linear-gradient(135deg, #10233f, #2563eb) !important;
-      box-shadow: 0 10px 25px rgba(37,99,235,.25);
-    }
-
-    .login-btn,
-    .primary-btn {
-      background: linear-gradient(135deg, #10233f, #2563eb) !important;
-      border: none !important;
-      box-shadow: 0 10px 25px rgba(37,99,235,.18);
-      transition: .25s ease;
-    }
-
-    .login-btn:hover,
-    .primary-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 15px 30px rgba(37,99,235,.25);
-    }
-
-    /* SIDEBAR */
-
-    .sidebar {
-      background: rgba(255,255,255,.96) !important;
-      border-right: 1px solid var(--premium-border) !important;
-      box-shadow: 10px 0 35px rgba(15,35,65,.035);
-    }
-
-    .sidebar-brand {
-      padding-bottom: 25px;
-      border-bottom: 1px solid #edf1f6;
-    }
-
-    .sidebar-brand strong {
-      color: var(--premium-navy);
-      letter-spacing: .8px;
-    }
-
-    .main-nav {
-      padding-top: 22px;
-    }
-
-    .nav-item {
-      border-radius: 13px !important;
-      margin: 4px 0;
-      transition: .2s ease;
-    }
-
-    .nav-item:hover {
-      background: #f1f5fb !important;
-      transform: translateX(2px);
-    }
-
-    .nav-item.active {
-      background: linear-gradient(
-        90deg,
-        rgba(37,99,235,.12),
-        rgba(37,99,235,.045)
-      ) !important;
-      color: #2563eb !important;
-      border-left: 3px solid #2563eb;
-    }
-
-    .sidebar-bottom {
-      border-top: 1px solid #edf1f6;
-    }
-
-    /* MAIN */
-
-    .main-content {
-      background: transparent !important;
-    }
-
-    .topbar {
-      background: rgba(255,255,255,.82) !important;
-      border-bottom: 1px solid var(--premium-border) !important;
-      backdrop-filter: blur(15px);
-    }
-
-    .page-heading h1 {
-      color: var(--premium-navy);
-      font-weight: 800;
-      letter-spacing: -.5px;
-    }
-
-    #pageEyebrow {
-      color: #2563eb !important;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-    }
-
-    /* PAGE HEADERS */
-
-    .welcome-row,
-    .page-toolbar {
-      margin-bottom: 25px;
-    }
-
-    .welcome-row h2,
-    .page-toolbar h2 {
-      color: var(--premium-navy);
-      font-size: 26px;
-      font-weight: 800;
-      letter-spacing: -.5px;
-    }
-
-    .welcome-row p,
-    .page-toolbar p {
-      color: var(--premium-muted);
-    }
-
-    /* STAT CARDS */
-
-    .stats-grid {
-      gap: 18px;
-    }
-
-    .stat-card {
-      position: relative;
-      overflow: hidden;
-      background: rgba(255,255,255,.96) !important;
-      border: 1px solid var(--premium-border) !important;
-      border-radius: var(--premium-radius) !important;
-      box-shadow: var(--premium-shadow);
-      transition: transform .25s ease, box-shadow .25s ease;
-    }
-
-    .stat-card::after {
-      content: "";
-      position: absolute;
-      width: 100px;
-      height: 100px;
-      right: -40px;
-      top: -40px;
-      border-radius: 50%;
-      background: rgba(37,99,235,.045);
-    }
-
-    .stat-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 22px 50px rgba(15,35,65,.12);
-    }
-
-    .stat-icon {
-      background: #eef4ff !important;
-      color: #2563eb !important;
-      border-radius: 14px !important;
-      font-weight: 800;
-    }
-
-    .stat-card strong {
-      color: var(--premium-navy);
-      font-size: 24px;
-    }
-
-    /* PANELS */
-
-    .panel {
-      background: rgba(255,255,255,.97) !important;
-      border: 1px solid var(--premium-border) !important;
-      border-radius: var(--premium-radius) !important;
-      box-shadow: var(--premium-shadow);
-      overflow: hidden;
-    }
-
-    .panel-header {
-      padding-bottom: 18px;
-      border-bottom: 1px solid #edf1f6;
-    }
-
-    .panel-header h3 {
-      color: var(--premium-navy);
-      font-weight: 750;
-    }
-
-    .panel-header p {
-      color: var(--premium-muted);
-    }
-
-    /* FILTER */
-
-    .filter-bar {
-      background: rgba(255,255,255,.85);
-      border: 1px solid var(--premium-border);
-      border-radius: 17px;
-      padding: 12px;
-      margin-bottom: 18px;
-      box-shadow: 0 8px 25px rgba(15,35,65,.035);
-    }
-
-    input,
-    select {
-      border: 1px solid #dfe6ef !important;
-      background: #fbfcfe !important;
-      border-radius: 11px !important;
-      color: var(--premium-text) !important;
-      transition: .2s ease;
-    }
-
-    input:focus,
-    select:focus {
-      outline: none !important;
-      border-color: #8bb2f7 !important;
-      box-shadow: 0 0 0 4px rgba(37,99,235,.08) !important;
-    }
-
-    /* TABLE */
-
-    .table-wrapper {
-      border-radius: 15px;
-    }
-
-    table {
-      border-collapse: separate;
-      border-spacing: 0;
-    }
-
-    thead th {
-      background: #f7f9fc !important;
-      color: #65748a !important;
-      font-size: 12px;
-      font-weight: 750;
-      letter-spacing: .5px;
-      text-transform: uppercase;
-      border-bottom: 1px solid #e7edf4;
-    }
-
-    tbody tr {
-      transition: .18s ease;
-    }
-
-    tbody tr:hover {
-      background: #f8faff !important;
-    }
-
-    tbody td {
-      border-bottom: 1px solid #edf1f6;
-    }
-
-    /* CHART */
-
-    .chart-area {
-      min-height: 260px;
-      border-radius: 16px;
-      background:
-        linear-gradient(
-          to bottom,
-          rgba(37,99,235,.025) 1px,
-          transparent 1px
-        );
-      background-size: 100% 45px;
-      position: relative;
-    }
-
-    .empty-chart {
-      color: #8794a7;
-    }
-
-    /* STOCK */
-
-    .stock-summary {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-
-    .stock-row {
-      padding: 15px 14px;
-      border-radius: 12px;
-      transition: .2s ease;
-    }
-
-    .stock-row:hover {
-      background: #f7f9fc;
-    }
-
-    .stock-row.warning {
-      background: #fff8ed !important;
-      color: #b86a00;
-    }
-
-    /* PROFILE */
-
-    .avatar {
-      background: linear-gradient(135deg, #10233f, #2563eb) !important;
-      box-shadow: 0 8px 20px rgba(37,99,235,.18);
-    }
-
-    /* ICON BUTTON */
-
-    .icon-btn {
-      background: #f5f8fc !important;
-      border: 1px solid #e5ebf2 !important;
-      border-radius: 12px !important;
-      transition: .2s ease;
-    }
-
-    .icon-btn:hover {
-      background: #eef4ff !important;
-      color: #2563eb !important;
-    }
-
-    /* SECONDARY */
-
-    .secondary-btn {
-      border: 1px solid #dbe3ed !important;
-      background: #fff !important;
-      color: var(--premium-navy) !important;
-      border-radius: 11px !important;
-    }
-
-    /* TEXT BUTTON */
-
-    .text-btn {
-      color: #2563eb !important;
-      font-weight: 700;
-    }
-
-    /* INVENTORY */
-
-    .inventory-list {
-      display: grid;
-      gap: 10px;
-    }
-
-    /* SETTINGS */
-
-    .settings-grid {
-      gap: 20px;
-    }
-
-    .system-info > div {
-      border-bottom: 1px solid #edf1f6;
-      padding: 15px 0;
-    }
-
-    .system-info strong {
-      color: var(--premium-navy);
-    }
-
-    .system-info .online {
-      color: #159447 !important;
-    }
-
-    /* MODAL */
-
-    .modal-overlay {
-      background: rgba(15,27,45,.38) !important;
-      backdrop-filter: blur(8px);
-    }
-
-    .modal {
-      background: #fff !important;
-      border: 1px solid #e4eaf2;
-      border-radius: 24px !important;
-      box-shadow: 0 35px 90px rgba(15,35,65,.22);
-    }
-
-    .modal-header {
-      border-bottom: 1px solid #edf1f6;
-    }
-
-    .modal-close {
-      background: #f4f6f9 !important;
-      border-radius: 10px !important;
-    }
-
-    /* TOAST */
-
-    .toast {
-      border-radius: 13px !important;
-      box-shadow: 0 15px 40px rgba(15,35,65,.18);
-    }
-
-    /* =====================================================
-       PREMIUM PRODUCT VISUAL
-    ===================================================== */
-
-    .oncomp-visual {
-      position: relative;
-      min-height: 250px;
-      margin: 25px 0;
-      padding: 25px;
-      border-radius: 24px;
-      overflow: hidden;
-      background:
-        radial-gradient(
-          circle at 85% 25%,
-          rgba(37,99,235,.13),
-          transparent 30%
-        ),
-        linear-gradient(135deg, #ffffff, #f3f7fc);
-      border: 1px solid #e4eaf2;
-      box-shadow: 0 18px 45px rgba(15,35,65,.07);
-    }
-
-    .oncomp-visual-title {
-      position: relative;
-      z-index: 3;
-      max-width: 360px;
-    }
-
-    .oncomp-visual-title span {
-      color: #2563eb;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 1.4px;
-      text-transform: uppercase;
-    }
-
-    .oncomp-visual-title h3 {
-      margin: 7px 0;
-      color: #10233f;
-      font-size: 25px;
-      line-height: 1.15;
-    }
-
-    .oncomp-visual-title p {
-      margin: 0;
-      color: #718096;
-      font-size: 13px;
-      line-height: 1.6;
-    }
-
-    /* NOTEBOOK */
-
-    .premium-laptop {
-      position: absolute;
-      right: 80px;
-      bottom: 22px;
-      width: 250px;
-      height: 145px;
-      transform: perspective(700px) rotateY(-12deg) rotateX(5deg);
-      z-index: 2;
-    }
-
-    .laptop-screen {
-      position: absolute;
-      left: 25px;
-      top: 0;
-      width: 200px;
-      height: 118px;
-      border: 7px solid #17263c;
-      border-bottom-width: 10px;
-      border-radius: 10px 10px 5px 5px;
-      background:
-        linear-gradient(135deg, #10233f, #2563eb);
-      box-shadow: 0 18px 35px rgba(15,35,65,.22);
-      overflow: hidden;
-    }
-
-    .laptop-screen::before {
-      content: "ONCOMP";
-      position: absolute;
-      left: 20px;
-      top: 22px;
-      color: rgba(255,255,255,.9);
-      font-size: 14px;
-      font-weight: 800;
-      letter-spacing: 2px;
-    }
-
-    .laptop-screen::after {
-      content: "Elektron Uçot";
-      position: absolute;
-      left: 20px;
-      top: 48px;
-      color: rgba(255,255,255,.65);
-      font-size: 9px;
-    }
-
-    .laptop-base {
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 250px;
-      height: 18px;
-      border-radius: 3px 3px 15px 15px;
-      background: linear-gradient(180deg, #d9e0e8, #aeb9c7);
-      box-shadow: 0 15px 25px rgba(15,35,65,.16);
-    }
-
-    .laptop-base::after {
-      content: "";
-      position: absolute;
-      width: 65px;
-      height: 4px;
-      left: 92px;
-      top: 5px;
-      border-radius: 10px;
-      background: #8c98a8;
-    }
-
-    /* TABLET */
-
-    .premium-tablet {
-      position: absolute;
-      right: 25px;
-      top: 35px;
-      width: 90px;
-      height: 135px;
-      padding: 6px;
-      border-radius: 13px;
-      background: #18283e;
-      transform: perspective(500px) rotateY(-16deg) rotateZ(6deg);
-      box-shadow: 0 20px 35px rgba(15,35,65,.2);
-      z-index: 3;
-    }
-
-    .tablet-screen {
-      width: 100%;
-      height: 100%;
-      border-radius: 9px;
-      background:
-        radial-gradient(
-          circle at 70% 25%,
-          rgba(255,255,255,.28),
-          transparent 20%
-        ),
-        linear-gradient(145deg, #1e3a68, #3b82f6);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .tablet-screen::before {
-      content: "ONCOMP";
-      position: absolute;
-      left: 10px;
-      top: 48px;
-      color: white;
-      font-size: 8px;
-      font-weight: 800;
-      letter-spacing: 1px;
-    }
-
-    /* FLOATING CARDS */
-
-    .visual-card {
-      position: absolute;
-      z-index: 5;
-      background: rgba(255,255,255,.92);
-      border: 1px solid rgba(224,231,240,.9);
-      border-radius: 13px;
-      padding: 9px 12px;
-      box-shadow: 0 12px 28px rgba(15,35,65,.1);
-      backdrop-filter: blur(10px);
-    }
-
-    .visual-card small {
-      display: block;
-      color: #7b8797;
-      font-size: 9px;
-    }
-
-    .visual-card strong {
-      display: block;
-      margin-top: 2px;
-      color: #10233f;
-      font-size: 13px;
-    }
-
-    .visual-card.one {
-      right: 275px;
-      bottom: 35px;
-    }
-
-    .visual-card.two {
-      right: 15px;
-      bottom: 20px;
-    }
-
-    /* MOBILE */
-
-    @media (max-width: 900px) {
-
-      .oncomp-visual {
-        min-height: 350px;
-      }
-
-      .premium-laptop {
-        right: 50px;
-        bottom: 25px;
-        transform: scale(.82);
-        transform-origin: right bottom;
-      }
-
-      .premium-tablet {
-        right: 12px;
-        top: 125px;
-        transform: scale(.82) rotateY(-16deg) rotateZ(6deg);
-      }
-
-      .visual-card.one {
-        right: auto;
-        left: 20px;
-        bottom: 25px;
-      }
-
-      .visual-card.two {
-        right: 10px;
-        bottom: 10px;
-      }
-    }
-
-    @media (max-width: 600px) {
-
-      .oncomp-visual {
-        min-height: 330px;
-        padding: 18px;
-      }
-
-      .oncomp-visual-title h3 {
-        font-size: 21px;
-      }
-
-      .premium-laptop {
-        right: 20px;
-        transform: scale(.65);
-      }
-
-      .premium-tablet {
-        right: 5px;
-        top: 130px;
-        transform: scale(.65) rotateY(-16deg) rotateZ(6deg);
-      }
-
-      .visual-card.one {
-        left: 15px;
-      }
-
-      .visual-card.two {
-        display: none;
-      }
-    }
-  </style>
 </head>
 
 <body>
 
-  <!-- ================= LOGIN ================= -->
+  <!-- =========================================================
+       LOGIN
+  ========================================================== -->
 
   <section id="loginPage" class="login-page">
 
+    <div class="login-background">
+
+      <div class="orb orb-one"></div>
+      <div class="orb orb-two"></div>
+      <div class="orb orb-three"></div>
+
+      <div class="floating-device device-laptop">
+        <div class="laptop-screen">
+          <div class="screen-camera"></div>
+          <div class="screen-content">
+            <span>ONCOMP</span>
+            <strong>BUSINESS</strong>
+          </div>
+        </div>
+        <div class="laptop-base"></div>
+      </div>
+
+      <div class="floating-device device-tablet">
+        <div class="tablet-screen">
+          <span>OC</span>
+        </div>
+      </div>
+
+    </div>
+
+
     <div class="login-card">
 
-      <div class="brand">
-        <div class="brand-icon">OC</div>
+      <div class="login-logo-area">
+
+        <div class="brand-icon premium-logo">
+          OC
+        </div>
 
         <div>
           <h1>ONCOMP</h1>
           <span>Elektron Uçot Sistemi</span>
         </div>
+
       </div>
 
+
       <div class="login-title">
+
+        <div class="welcome-badge">
+          <span class="pulse-dot"></span>
+          Premium Business System
+        </div>
+
         <h2>Xoş gəlmisiniz</h2>
-        <p>Sistemə daxil olmaq üçün məlumatlarınızı daxil edin.</p>
+
+        <p>
+          Biznesinizi daha ağıllı, daha sürətli və daha peşəkar idarə edin.
+        </p>
+
       </div>
+
 
       <form id="loginForm">
 
-        <label>E-poçt</label>
-        <input
-          type="email"
-          id="loginEmail"
-          placeholder="E-poçt ünvanınız"
-          required
-        >
+        <div class="input-group">
 
-        <label>Şifrə</label>
-        <input
-          type="password"
-          id="loginPassword"
-          placeholder="Şifrəniz"
-          required
-        >
+          <label>E-poçt</label>
+
+          <div class="input-wrapper">
+            <span class="input-icon">✉</span>
+
+            <input
+              type="email"
+              id="loginEmail"
+              placeholder="E-poçt ünvanınız"
+              required
+            >
+          </div>
+
+        </div>
+
+
+        <div class="input-group">
+
+          <label>Şifrə</label>
+
+          <div class="input-wrapper">
+
+            <span class="input-icon">⌑</span>
+
+            <input
+              type="password"
+              id="loginPassword"
+              placeholder="Şifrəniz"
+              required
+            >
+
+          </div>
+
+        </div>
+
 
         <button type="submit" class="login-btn">
-          Daxil ol
+
+          <span>Daxil ol</span>
+
+          <span class="button-arrow">→</span>
+
         </button>
 
       </form>
 
+
       <div id="loginMessage"></div>
 
+
       <div class="connection-status">
+
         <span class="status-dot"></span>
-        Supabase bağlantısı aktivdir
+
+        <div>
+          <strong>Sistem aktivdir</strong>
+          <span>Supabase bağlantısı təhlükəsizdir</span>
+        </div>
+
       </div>
 
     </div>
@@ -752,82 +147,126 @@
   </section>
 
 
-  <!-- ================= APP ================= -->
+
+  <!-- =========================================================
+       APPLICATION
+  ========================================================== -->
 
   <section id="appPage" class="app-page hidden">
+
 
     <!-- SIDEBAR -->
 
     <aside class="sidebar">
 
-      <div class="sidebar-brand">
+      <div class="sidebar-top">
 
-        <div class="brand-icon small">OC</div>
+        <div class="sidebar-brand">
 
-        <div>
-          <strong>ONCOMP</strong>
-          <small>Elektron Uçot</small>
+          <div class="brand-icon small premium-logo">
+            OC
+          </div>
+
+          <div class="brand-text">
+            <strong>ONCOMP</strong>
+            <small>Business OS</small>
+          </div>
+
         </div>
+
+
+        <div class="sidebar-label">
+          İDARƏETMƏ
+        </div>
+
+
+        <nav class="main-nav">
+
+          <button class="nav-item active" data-page="dashboard">
+            <span class="nav-icon">⌂</span>
+            <label>Dashboard</label>
+          </button>
+
+
+          <button class="nav-item" data-page="products">
+            <span class="nav-icon">▣</span>
+            <label>Məhsullar</label>
+          </button>
+
+
+          <button class="nav-item" data-page="sales">
+            <span class="nav-icon">↗</span>
+            <label>Satışlar</label>
+          </button>
+
+
+          <button class="nav-item" data-page="customers">
+            <span class="nav-icon">♙</span>
+            <label>Müştərilər</label>
+          </button>
+
+
+          <button class="nav-item" data-page="inventory">
+            <span class="nav-icon">▤</span>
+            <label>Anbar</label>
+          </button>
+
+
+          <div class="sidebar-label second">
+            MALİYYƏ
+          </div>
+
+
+          <button class="nav-item" data-page="expenses">
+            <span class="nav-icon">₼</span>
+            <label>Xərclər</label>
+          </button>
+
+
+          <button class="nav-item" data-page="reports">
+            <span class="nav-icon">◒</span>
+            <label>Hesabatlar</label>
+          </button>
+
+
+          <div class="sidebar-label second">
+            SİSTEM
+          </div>
+
+
+          <button class="nav-item" data-page="settings">
+            <span class="nav-icon">⚙</span>
+            <label>Parametrlər</label>
+          </button>
+
+        </nav>
 
       </div>
 
-      <nav class="main-nav">
-
-        <button class="nav-item active" data-page="dashboard">
-          <span>⌂</span>
-          <label>Dashboard</label>
-        </button>
-
-        <button class="nav-item" data-page="products">
-          <span>▣</span>
-          <label>Məhsullar</label>
-        </button>
-
-        <button class="nav-item" data-page="sales">
-          <span>↗</span>
-          <label>Satışlar</label>
-        </button>
-
-        <button class="nav-item" data-page="customers">
-          <span>♙</span>
-          <label>Müştərilər</label>
-        </button>
-
-        <button class="nav-item" data-page="inventory">
-          <span>▤</span>
-          <label>Anbar</label>
-        </button>
-
-        <button class="nav-item" data-page="expenses">
-          <span>₼</span>
-          <label>Xərclər</label>
-        </button>
-
-        <button class="nav-item" data-page="reports">
-          <span>◒</span>
-          <label>Hesabatlar</label>
-        </button>
-
-        <button class="nav-item" data-page="settings">
-          <span>⚙</span>
-          <label>Parametrlər</label>
-        </button>
-
-      </nav>
 
       <div class="sidebar-bottom">
 
-        <div class="system-status">
-          <span class="status-dot"></span>
+        <div class="sidebar-system-card">
+
+          <div class="system-icon">
+            ✦
+          </div>
 
           <div>
             <strong>Sistem aktivdir</strong>
-            <small>Supabase bağlantısı</small>
+            <small>Real-time bağlantı</small>
           </div>
+
+          <span class="online-dot"></span>
+
         </div>
 
+
         <button id="logoutBtn" class="logout-btn">
-          ⇥ Çıxış
+
+          <span>⇥</span>
+          Çıxış
+
         </button>
 
       </div>
@@ -835,9 +274,11 @@
     </aside>
 
 
-    <!-- MAIN CONTENT -->
+
+    <!-- MAIN -->
 
     <main class="main-content">
+
 
       <!-- TOPBAR -->
 
@@ -845,17 +286,31 @@
 
         <div class="page-heading">
 
-          <span id="pageEyebrow">ONCOMP</span>
+          <div class="breadcrumb">
+            ONCOMP <span>/</span> İdarəetmə
+          </div>
 
-          <h1 id="pageTitle">Dashboard</h1>
+          <h1 id="pageTitle">
+            Dashboard
+          </h1>
+
+          <span id="pageEyebrow">
+            Elektron Uçot Sistemi
+          </span>
 
         </div>
 
+
         <div class="topbar-actions">
 
-          <button class="icon-btn" title="Bildirişlər">
+          <button class="icon-btn notification-btn" title="Bildirişlər">
+
             ♢
+
+            <span class="notification-dot"></span>
+
           </button>
+
 
           <div class="admin-profile">
 
@@ -863,10 +318,21 @@
               A
             </div>
 
-            <div>
-              <strong id="adminName">Admin</strong>
-              <small>Administrator</small>
+            <div class="admin-info">
+
+              <strong id="adminName">
+                Admin
+              </strong>
+
+              <small>
+                Administrator
+              </small>
+
             </div>
+
+            <span class="profile-arrow">
+              ⌄
+            </span>
 
           </div>
 
@@ -875,115 +341,266 @@
       </header>
 
 
-      <!-- ================= DASHBOARD ================= -->
 
-      <section id="dashboardPage" class="content-page active-page">
+      <!-- =====================================================
+           DASHBOARD
+      ====================================================== -->
 
-        <div class="welcome-row">
-
-          <div>
-            <h2>Ümumi vəziyyət</h2>
-            <p>ONCOMP sisteminizin bugünkü göstəriciləri.</p>
-          </div>
-
-          <button class="primary-btn" data-page-action="products">
-            + Məhsul əlavə et
-          </button>
-
-        </div>
+      <section
+        id="dashboardPage"
+        class="content-page active-page"
+      >
 
 
-        <!-- PREMIUM PRODUCT VISUAL -->
+        <!-- HERO -->
 
-        <div class="oncomp-visual">
+        <div class="dashboard-hero">
 
-          <div class="oncomp-visual-title">
+          <div class="hero-copy">
 
-            <span>ONCOMP PREMIUM</span>
+            <div class="hero-badge">
+              <span></span>
+              ONCOMP PREMIUM 2.0
+            </div>
 
-            <h3>
-              Notebook və planşetlərinizi
-              daha peşəkar idarə edin.
-            </h3>
+            <h2>
+              Biznesinizə
+              <strong>nəzarət edin.</strong>
+            </h2>
 
             <p>
-              Satış, müştəri, anbar və maliyyə
-              əməliyyatlarının hamısı bir sistemdə.
+              Satış, məhsul, müştəri və maliyyə göstəriciləriniz
+              artıq bir ekranda.
             </p>
 
+            <div class="hero-actions">
+
+              <button
+                class="primary-btn hero-btn"
+                data-page-action="products"
+              >
+                <span>+</span>
+                Məhsul əlavə et
+              </button>
+
+              <button
+                class="secondary-btn"
+                data-page-action="sales"
+              >
+                Satışlara bax →
+              </button>
+
+            </div>
+
           </div>
 
-          <div class="premium-laptop">
 
-            <div class="laptop-screen"></div>
+          <!-- 3D PRODUCT VISUAL -->
 
-            <div class="laptop-base"></div>
+          <div class="hero-visual">
 
-          </div>
+            <div class="visual-glow"></div>
 
-          <div class="premium-tablet">
+            <div class="product-scene">
 
-            <div class="tablet-screen"></div>
+              <div class="scene-tablet">
 
-          </div>
+                <div class="tablet-frame">
 
-          <div class="visual-card one">
-            <small>Anbar</small>
-            <strong>Aktiv məhsullar</strong>
-          </div>
+                  <div class="tablet-camera"></div>
 
-          <div class="visual-card two">
-            <small>Sistem</small>
-            <strong>Aktiv ✓</strong>
+                  <div class="tablet-display">
+
+                    <div class="display-logo">
+                      OC
+                    </div>
+
+                    <div class="display-line"></div>
+
+                    <span>
+                      ONCOMP
+                    </span>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <div class="scene-laptop">
+
+                <div class="laptop-display">
+
+                  <div class="camera"></div>
+
+                  <div class="dashboard-mini">
+
+                    <div class="mini-top"></div>
+
+                    <div class="mini-cards">
+
+                      <i></i>
+                      <i></i>
+                      <i></i>
+
+                    </div>
+
+                    <div class="mini-chart">
+                      <b></b>
+                      <b></b>
+                      <b></b>
+                      <b></b>
+                      <b></b>
+                    </div>
+
+                  </div>
+
+                </div>
+
+                <div class="laptop-keyboard"></div>
+
+              </div>
+
+            </div>
+
           </div>
 
         </div>
 
 
-        <!-- STAT CARDS -->
 
-        <div class="stats-grid">
+        <!-- STATISTICS -->
+
+        <div class="section-heading">
+
+          <div>
+            <span>ÜMUMİ GÖSTƏRİCİLƏR</span>
+            <h3>Bugünkü vəziyyət</h3>
+          </div>
+
+          <div class="live-indicator">
+            <span></span>
+            Live data
+          </div>
+
+        </div>
+
+
+        <div class="stats-grid premium-stats">
+
 
           <div class="stat-card">
 
-            <div class="stat-icon">▣</div>
+            <div class="stat-top">
 
-            <div>
-              <span>Ümumi məhsullar</span>
-              <strong id="statProducts">0</strong>
+              <div class="stat-icon">
+                ▣
+              </div>
+
+              <span class="stat-trend positive">
+                ↑ Aktiv
+              </span>
+
+            </div>
+
+            <span class="stat-label">
+              Ümumi məhsullar
+            </span>
+
+            <strong id="statProducts">
+              0
+            </strong>
+
+            <div class="stat-footer">
+              Sistemdəki bütün məhsullar
             </div>
 
           </div>
 
+
           <div class="stat-card">
 
-            <div class="stat-icon">₼</div>
+            <div class="stat-top">
 
-            <div>
-              <span>Anbar dəyəri</span>
-              <strong id="statInventory">0 ₼</strong>
+              <div class="stat-icon money">
+                ₼
+              </div>
+
+              <span class="stat-trend">
+                Anbar
+              </span>
+
+            </div>
+
+            <span class="stat-label">
+              Anbar dəyəri
+            </span>
+
+            <strong id="statInventory">
+              0 ₼
+            </strong>
+
+            <div class="stat-footer">
+              Mövcud məhsulların ümumi dəyəri
             </div>
 
           </div>
 
-          <div class="stat-card">
 
-            <div class="stat-icon">↗</div>
+          <div class="stat-card highlight">
 
-            <div>
-              <span>Bu ay satış</span>
-              <strong id="statSales">0 ₼</strong>
+            <div class="stat-top">
+
+              <div class="stat-icon sale">
+                ↗
+              </div>
+
+              <span class="stat-trend positive">
+                ↑ Bu ay
+              </span>
+
+            </div>
+
+            <span class="stat-label">
+              Bu ay satış
+            </span>
+
+            <strong id="statSales">
+              0 ₼
+            </strong>
+
+            <div class="stat-footer">
+              Cari ayın satış dövriyyəsi
             </div>
 
           </div>
 
+
           <div class="stat-card">
 
-            <div class="stat-icon">◆</div>
+            <div class="stat-top">
 
-            <div>
-              <span>Bu ay mənfəət</span>
-              <strong id="statProfit">0 ₼</strong>
+              <div class="stat-icon profit">
+                ◆
+              </div>
+
+              <span class="stat-trend positive">
+                Mənfəət
+              </span>
+
+            </div>
+
+            <span class="stat-label">
+              Bu ay mənfəət
+            </span>
+
+            <strong id="statProfit">
+              0 ₼
+            </strong>
+
+            <div class="stat-footer">
+              Cari ay üzrə xalis mənfəət
             </div>
 
           </div>
@@ -991,31 +608,83 @@
         </div>
 
 
-        <!-- DASHBOARD GRID -->
 
-        <div class="dashboard-grid">
+        <!-- ANALYTICS -->
 
-          <div class="panel large-panel">
+        <div class="dashboard-grid premium-dashboard-grid">
+
+
+          <div class="panel large-panel analytics-panel">
 
             <div class="panel-header">
 
               <div>
-                <h3>Aylıq satışlar</h3>
-                <p>Satış performansı</p>
+
+                <span class="panel-eyebrow">
+                  ANALİTİKA
+                </span>
+
+                <h3>
+                  Aylıq satışlar
+                </h3>
+
+                <p>
+                  Satış performansınızın dinamikası
+                </p>
+
               </div>
 
+
               <select id="salesPeriod">
-                <option>Son 7 gün</option>
-                <option selected>Bu ay</option>
-                <option>Bu il</option>
+
+                <option>
+                  Son 7 gün
+                </option>
+
+                <option selected>
+                  Bu ay
+                </option>
+
+                <option>
+                  Bu il
+                </option>
+
               </select>
 
             </div>
 
-            <div id="salesChart" class="chart-area">
 
-              <div class="empty-chart">
-                Satış məlumatları burada görünəcək
+            <div class="chart-wrapper">
+
+              <div class="chart-y-axis">
+                <span>100%</span>
+                <span>75%</span>
+                <span>50%</span>
+                <span>25%</span>
+                <span>0%</span>
+              </div>
+
+              <div
+                id="salesChart"
+                class="chart-area"
+              >
+
+                <div class="empty-chart">
+
+                  <div class="empty-chart-icon">
+                    ↗
+                  </div>
+
+                  <strong>
+                    Satış məlumatları burada görünəcək
+                  </strong>
+
+                  <span>
+                    Satışlar artdıqca qrafik avtomatik yenilənəcək.
+                  </span>
+
+                </div>
+
               </div>
 
             </div>
@@ -1023,32 +692,97 @@
           </div>
 
 
-          <div class="panel">
+
+          <!-- STOCK -->
+
+          <div class="panel stock-panel">
 
             <div class="panel-header">
 
               <div>
-                <h3>Anbar vəziyyəti</h3>
-                <p>Məhsul stokları</p>
+
+                <span class="panel-eyebrow">
+                  ANBAR
+                </span>
+
+                <h3>
+                  Anbar vəziyyəti
+                </h3>
+
+                <p>
+                  Məhsul stokları
+                </p>
+
+              </div>
+
+              <div class="panel-more">
+                •••
               </div>
 
             </div>
 
-            <div id="stockSummary" class="stock-summary">
+
+            <div class="stock-ring">
+
+              <div class="ring-inner">
+
+                <strong id="stockAvailable">
+                  0
+                </strong>
+
+                <span>
+                  məhsul
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div
+              id="stockSummary"
+              class="stock-summary"
+            >
 
               <div class="stock-row">
-                <span>Mövcud məhsullar</span>
-                <strong id="stockAvailable">0</strong>
+
+                <div>
+                  <i class="stock-dot available"></i>
+                  <span>Mövcud məhsullar</span>
+                </div>
+
+                <strong id="stockAvailableText">
+                  0
+                </strong>
+
               </div>
+
 
               <div class="stock-row warning">
-                <span>Kritik stok</span>
-                <strong id="stockCritical">0</strong>
+
+                <div>
+                  <i class="stock-dot critical"></i>
+                  <span>Kritik stok</span>
+                </div>
+
+                <strong id="stockCritical">
+                  0
+                </strong>
+
               </div>
 
+
               <div class="stock-row">
-                <span>Satılmış məhsullar</span>
-                <strong id="stockSold">0</strong>
+
+                <div>
+                  <i class="stock-dot sold"></i>
+                  <span>Satılmış məhsullar</span>
+                </div>
+
+                <strong id="stockSold">
+                  0
+                </strong>
+
               </div>
 
             </div>
@@ -1058,28 +792,46 @@
         </div>
 
 
+
         <!-- RECENT SALES -->
 
-        <div class="panel">
+        <div class="panel recent-sales-panel">
 
           <div class="panel-header">
 
             <div>
-              <h3>Son satışlar</h3>
-              <p>Sistemdəki son əməliyyatlar</p>
+
+              <span class="panel-eyebrow">
+                ƏMƏLİYYATLAR
+              </span>
+
+              <h3>
+                Son satışlar
+              </h3>
+
+              <p>
+                Sistemdəki son satış əməliyyatları
+              </p>
+
             </div>
 
-            <button class="text-btn" data-page-action="sales">
+
+            <button
+              class="text-btn"
+              data-page-action="sales"
+            >
               Hamısına bax →
             </button>
 
           </div>
+
 
           <div class="table-wrapper">
 
             <table>
 
               <thead>
+
                 <tr>
                   <th>Məhsul</th>
                   <th>Müştəri</th>
@@ -1087,14 +839,33 @@
                   <th>Ödəniş</th>
                   <th>Tarix</th>
                 </tr>
+
               </thead>
+
 
               <tbody id="recentSalesTable">
 
                 <tr>
-                  <td colspan="5" class="empty-state">
-                    Hələ satış yoxdur
+
+                  <td
+                    colspan="5"
+                    class="empty-state"
+                  >
+
+                    <div class="empty-icon">
+                      ↗
+                    </div>
+
+                    <strong>
+                      Hələ satış yoxdur
+                    </strong>
+
+                    <span>
+                      İlk satış əməliyyatınızı əlavə edin.
+                    </span>
+
                   </td>
+
                 </tr>
 
               </tbody>
@@ -1108,42 +879,87 @@
       </section>
 
 
-      <!-- ================= PRODUCTS ================= -->
 
-      <section id="productsPage" class="content-page">
+      <!-- =====================================================
+           PRODUCTS
+      ====================================================== -->
+
+      <section
+        id="productsPage"
+        class="content-page"
+      >
 
         <div class="page-toolbar">
 
           <div>
-            <h2>Məhsullar</h2>
-            <p>Notebook və planşetlərin uçotu</p>
+
+            <div class="page-kicker">
+              INVENTORY MANAGEMENT
+            </div>
+
+            <h2>
+              Məhsullar
+            </h2>
+
+            <p>
+              Notebook və planşetlərin uçotu
+            </p>
+
           </div>
 
-          <button id="addProductBtn" class="primary-btn">
+
+          <button
+            id="addProductBtn"
+            class="primary-btn"
+          >
             + Yeni məhsul
           </button>
 
         </div>
 
-        <div class="filter-bar">
 
-          <input
-            type="search"
-            id="productSearch"
-            placeholder="Məhsul, marka və ya model axtar..."
-          >
+        <div class="filter-bar premium-filter">
+
+          <div class="search-box">
+
+            <span>⌕</span>
+
+            <input
+              type="search"
+              id="productSearch"
+              placeholder="Məhsul, marka və ya model axtar..."
+            >
+
+          </div>
+
 
           <select id="productCategoryFilter">
-            <option value="">Bütün kateqoriyalar</option>
+
+            <option value="">
+              Bütün kateqoriyalar
+            </option>
+
           </select>
 
+
           <select id="productStatusFilter">
-            <option value="">Bütün statuslar</option>
-            <option value="active">Aktiv</option>
-            <option value="sold">Satılıb</option>
+
+            <option value="">
+              Bütün statuslar
+            </option>
+
+            <option value="active">
+              Aktiv
+            </option>
+
+            <option value="sold">
+              Satılıb
+            </option>
+
           </select>
 
         </div>
+
 
         <div class="panel">
 
@@ -1152,6 +968,7 @@
             <table>
 
               <thead>
+
                 <tr>
                   <th>Məhsul</th>
                   <th>Kateqoriya</th>
@@ -1162,14 +979,21 @@
                   <th>Status</th>
                   <th></th>
                 </tr>
+
               </thead>
+
 
               <tbody id="productsTable">
 
                 <tr>
-                  <td colspan="8" class="empty-state">
+
+                  <td
+                    colspan="8"
+                    class="empty-state"
+                  >
                     Məhsul yoxdur
                   </td>
+
                 </tr>
 
               </tbody>
@@ -1183,22 +1007,44 @@
       </section>
 
 
-      <!-- ================= SALES ================= -->
 
-      <section id="salesPage" class="content-page">
+      <!-- =====================================================
+           SALES
+      ====================================================== -->
+
+      <section
+        id="salesPage"
+        class="content-page"
+      >
 
         <div class="page-toolbar">
 
           <div>
-            <h2>Satışlar</h2>
-            <p>Bütün satış əməliyyatları</p>
+
+            <div class="page-kicker">
+              SALES MANAGEMENT
+            </div>
+
+            <h2>
+              Satışlar
+            </h2>
+
+            <p>
+              Bütün satış əməliyyatları
+            </p>
+
           </div>
 
-          <button id="newSaleBtn" class="primary-btn">
+
+          <button
+            id="newSaleBtn"
+            class="primary-btn"
+          >
             + Yeni satış
           </button>
 
         </div>
+
 
         <div class="panel">
 
@@ -1207,6 +1053,7 @@
             <table>
 
               <thead>
+
                 <tr>
                   <th>Satış №</th>
                   <th>Müştəri</th>
@@ -1215,14 +1062,21 @@
                   <th>Ödəniş</th>
                   <th>Tarix</th>
                 </tr>
+
               </thead>
+
 
               <tbody id="salesTable">
 
                 <tr>
-                  <td colspan="6" class="empty-state">
+
+                  <td
+                    colspan="6"
+                    class="empty-state"
+                  >
                     Hələ satış yoxdur
                   </td>
+
                 </tr>
 
               </tbody>
@@ -1236,32 +1090,61 @@
       </section>
 
 
-      <!-- ================= CUSTOMERS ================= -->
 
-      <section id="customersPage" class="content-page">
+      <!-- =====================================================
+           CUSTOMERS
+      ====================================================== -->
+
+      <section
+        id="customersPage"
+        class="content-page"
+      >
 
         <div class="page-toolbar">
 
           <div>
-            <h2>Müştərilər</h2>
-            <p>Müştəri bazası və satış tarixçəsi</p>
+
+            <div class="page-kicker">
+              CUSTOMER MANAGEMENT
+            </div>
+
+            <h2>
+              Müştərilər
+            </h2>
+
+            <p>
+              Müştəri bazası və satış tarixçəsi
+            </p>
+
           </div>
 
-          <button id="addCustomerBtn" class="primary-btn">
+
+          <button
+            id="addCustomerBtn"
+            class="primary-btn"
+          >
             + Yeni müştəri
           </button>
 
         </div>
 
-        <div class="filter-bar">
 
-          <input
-            type="search"
-            id="customerSearch"
-            placeholder="Müştəri adı və ya telefon axtar..."
-          >
+        <div class="filter-bar premium-filter">
+
+          <div class="search-box">
+
+            <span>⌕</span>
+
+            <input
+              type="search"
+              id="customerSearch"
+              placeholder="Müştəri adı və ya telefon axtar..."
+            >
+
+          </div>
 
         </div>
+
 
         <div class="panel">
 
@@ -1270,6 +1153,7 @@
             <table>
 
               <thead>
+
                 <tr>
                   <th>Ad Soyad</th>
                   <th>Telefon</th>
@@ -1278,14 +1162,21 @@
                   <th>Qeydiyyat</th>
                   <th></th>
                 </tr>
+
               </thead>
+
 
               <tbody id="customersTable">
 
                 <tr>
-                  <td colspan="6" class="empty-state">
+
+                  <td
+                    colspan="6"
+                    class="empty-state"
+                  >
                     Müştəri yoxdur
                   </td>
+
                 </tr>
 
               </tbody>
@@ -1299,67 +1190,132 @@
       </section>
 
 
-      <!-- ================= INVENTORY ================= -->
 
-      <section id="inventoryPage" class="content-page">
+      <!-- =====================================================
+           INVENTORY
+      ====================================================== -->
+
+      <section
+        id="inventoryPage"
+        class="content-page"
+      >
 
         <div class="page-toolbar">
 
           <div>
-            <h2>Anbar</h2>
-            <p>Məhsul ehtiyatlarının vəziyyəti</p>
+
+            <div class="page-kicker">
+              INVENTORY
+            </div>
+
+            <h2>
+              Anbar
+            </h2>
+
+            <p>
+              Məhsul ehtiyatlarının vəziyyəti
+            </p>
+
           </div>
 
         </div>
+
 
         <div class="stats-grid">
 
           <div class="stat-card">
-            <div class="stat-icon">▤</div>
-            <div>
-              <span>Anbarda</span>
-              <strong id="inventoryAvailable">0</strong>
+
+            <div class="stat-icon">
+              ▤
             </div>
+
+            <span>
+              Anbarda
+            </span>
+
+            <strong id="inventoryAvailable">
+              0
+            </strong>
+
           </div>
 
-          <div class="stat-card">
-            <div class="stat-icon">!</div>
-            <div>
-              <span>Kritik stok</span>
-              <strong id="inventoryCritical">0</strong>
-            </div>
-          </div>
 
           <div class="stat-card">
-            <div class="stat-icon">✓</div>
-            <div>
-              <span>Satılıb</span>
-              <strong id="inventorySold">0</strong>
+
+            <div class="stat-icon">
+              !
             </div>
+
+            <span>
+              Kritik stok
+            </span>
+
+            <strong id="inventoryCritical">
+              0
+            </strong>
+
           </div>
 
+
           <div class="stat-card">
-            <div class="stat-icon">₼</div>
-            <div>
-              <span>Anbar dəyəri</span>
-              <strong id="inventoryValue">0 ₼</strong>
+
+            <div class="stat-icon">
+              ✓
             </div>
+
+            <span>
+              Satılıb
+            </span>
+
+            <strong id="inventorySold">
+              0
+            </strong>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-icon money">
+              ₼
+            </div>
+
+            <span>
+              Anbar dəyəri
+            </span>
+
+            <strong id="inventoryValue">
+              0 ₼
+            </strong>
+
           </div>
 
         </div>
+
 
         <div class="panel">
 
           <div class="panel-header">
 
             <div>
-              <h3>Anbar məhsulları</h3>
-              <p>Mövcud məhsullar</p>
+
+              <h3>
+                Anbar məhsulları
+              </h3>
+
+              <p>
+                Mövcud məhsullar
+              </p>
+
             </div>
 
           </div>
 
-          <div id="inventoryList" class="inventory-list">
+
+          <div
+            id="inventoryList"
+            class="inventory-list"
+          >
 
             <div class="empty-state">
               Anbarda məhsul yoxdur
@@ -1372,22 +1328,44 @@
       </section>
 
 
-      <!-- ================= EXPENSES ================= -->
 
-      <section id="expensesPage" class="content-page">
+      <!-- =====================================================
+           EXPENSES
+      ====================================================== -->
+
+      <section
+        id="expensesPage"
+        class="content-page"
+      >
 
         <div class="page-toolbar">
 
           <div>
-            <h2>Xərclər</h2>
-            <p>Şirkətin xərc uçotu</p>
+
+            <div class="page-kicker">
+              FINANCE
+            </div>
+
+            <h2>
+              Xərclər
+            </h2>
+
+            <p>
+              Şirkətin xərc uçotu
+            </p>
+
           </div>
 
-          <button id="addExpenseBtn" class="primary-btn">
+
+          <button
+            id="addExpenseBtn"
+            class="primary-btn"
+          >
             + Yeni xərc
           </button>
 
         </div>
+
 
         <div class="panel">
 
@@ -1396,6 +1374,7 @@
             <table>
 
               <thead>
+
                 <tr>
                   <th>Xərc</th>
                   <th>Kateqoriya</th>
@@ -1404,14 +1383,21 @@
                   <th>Qeyd</th>
                   <th></th>
                 </tr>
+
               </thead>
+
 
               <tbody id="expensesTable">
 
                 <tr>
-                  <td colspan="6" class="empty-state">
+
+                  <td
+                    colspan="6"
+                    class="empty-state"
+                  >
                     Xərc yoxdur
                   </td>
+
                 </tr>
 
               </tbody>
@@ -1425,84 +1411,166 @@
       </section>
 
 
-      <!-- ================= REPORTS ================= -->
 
-      <section id="reportsPage" class="content-page">
+      <!-- =====================================================
+           REPORTS
+      ====================================================== -->
+
+      <section
+        id="reportsPage"
+        class="content-page"
+      >
 
         <div class="page-toolbar">
 
           <div>
-            <h2>Hesabatlar</h2>
-            <p>Satış, gəlir, xərc və mənfəət analitikası</p>
+
+            <div class="page-kicker">
+              BUSINESS ANALYTICS
+            </div>
+
+            <h2>
+              Hesabatlar
+            </h2>
+
+            <p>
+              Satış, gəlir, xərc və mənfəət analitikası
+            </p>
+
           </div>
 
-          <button id="refreshReportsBtn" class="secondary-btn">
+
+          <button
+            id="refreshReportsBtn"
+            class="secondary-btn"
+          >
             ↻ Yenilə
           </button>
 
         </div>
 
+
         <div class="stats-grid">
 
           <div class="stat-card">
-            <div class="stat-icon">↗</div>
-            <div>
-              <span>Ümumi gəlir</span>
-              <strong id="reportRevenue">0 ₼</strong>
+
+            <div class="stat-icon sale">
+              ↗
             </div>
+
+            <span>
+              Ümumi gəlir
+            </span>
+
+            <strong id="reportRevenue">
+              0 ₼
+            </strong>
+
           </div>
 
-          <div class="stat-card">
-            <div class="stat-icon">₼</div>
-            <div>
-              <span>Ümumi xərc</span>
-              <strong id="reportExpenses">0 ₼</strong>
-            </div>
-          </div>
 
           <div class="stat-card">
-            <div class="stat-icon">◆</div>
-            <div>
-              <span>Ümumi mənfəət</span>
-              <strong id="reportProfit">0 ₼</strong>
+
+            <div class="stat-icon money">
+              ₼
             </div>
+
+            <span>
+              Ümumi xərc
+            </span>
+
+            <strong id="reportExpenses">
+              0 ₼
+            </strong>
+
           </div>
 
+
           <div class="stat-card">
-            <div class="stat-icon">#</div>
-            <div>
-              <span>Satış sayı</span>
-              <strong id="reportSalesCount">0</strong>
+
+            <div class="stat-icon profit">
+              ◆
             </div>
+
+            <span>
+              Ümumi mənfəət
+            </span>
+
+            <strong id="reportProfit">
+              0 ₼
+            </strong>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-icon">
+              #
+            </div>
+
+            <span>
+              Satış sayı
+            </span>
+
+            <strong id="reportSalesCount">
+              0
+            </strong>
+
           </div>
 
         </div>
+
 
         <div class="dashboard-grid">
 
           <div class="panel large-panel">
 
             <div class="panel-header">
+
               <div>
-                <h3>Satış analitikası</h3>
-                <p>Satış göstəricilərinin təhlili</p>
+
+                <h3>
+                  Satış analitikası
+                </h3>
+
+                <p>
+                  Satış göstəricilərinin təhlili
+                </p>
+
               </div>
+
             </div>
 
-            <div id="reportChart" class="chart-area">
+
+            <div
+              id="reportChart"
+              class="chart-area"
+            >
               Hesabat qrafiki
             </div>
 
           </div>
 
+
           <div class="panel">
 
             <div class="panel-header">
+
               <div>
-                <h3>Kateqoriyalar</h3>
-                <p>Məhsul bölgüsü</p>
+
+                <h3>
+                  Kateqoriyalar
+                </h3>
+
+                <p>
+                  Məhsul bölgüsü
+                </p>
+
               </div>
+
             </div>
+
 
             <div id="categoryReport">
               Məlumat yoxdur
@@ -1515,18 +1583,36 @@
       </section>
 
 
-      <!-- ================= SETTINGS ================= -->
 
-      <section id="settingsPage" class="content-page">
+      <!-- =====================================================
+           SETTINGS
+      ====================================================== -->
+
+      <section
+        id="settingsPage"
+        class="content-page"
+      >
 
         <div class="page-toolbar">
 
           <div>
-            <h2>Parametrlər</h2>
-            <p>ONCOMP sistem ayarları</p>
+
+            <div class="page-kicker">
+              SYSTEM
+            </div>
+
+            <h2>
+              Parametrlər
+            </h2>
+
+            <p>
+              ONCOMP sistem ayarları
+            </p>
+
           </div>
 
         </div>
+
 
         <div class="settings-grid">
 
@@ -1535,52 +1621,109 @@
             <div class="panel-header">
 
               <div>
-                <h3>Şirkət məlumatları</h3>
-                <p>Sistem daxilində istifadə olunan məlumatlar</p>
+
+                <h3>
+                  Şirkət məlumatları
+                </h3>
+
+                <p>
+                  Sistem daxilində istifadə olunan məlumatlar
+                </p>
+
               </div>
 
             </div>
+
 
             <div class="form-grid">
 
               <div class="form-group">
-                <label>Şirkət adı</label>
-                <input id="companyName" value="ONCOMP">
+
+                <label>
+                  Şirkət adı
+                </label>
+
+                <input
+                  id="companyName"
+                  value="ONCOMP"
+                >
+
               </div>
 
-              <div class="form-group">
-                <label>E-poçt</label>
-                <input id="companyEmail" placeholder="info@oncomp.az">
-              </div>
 
               <div class="form-group">
-                <label>Telefon</label>
-                <input id="companyPhone" placeholder="+994">
+
+                <label>
+                  E-poçt
+                </label>
+
+                <input
+                  id="companyEmail"
+                  placeholder="info@oncomp.az"
+                >
+
               </div>
 
+
               <div class="form-group">
-                <label>Ünvan</label>
-                <input id="companyAddress" placeholder="Azərbaycan">
+
+                <label>
+                  Telefon
+                </label>
+
+                <input
+                  id="companyPhone"
+                  placeholder="+994"
+                >
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label>
+                  Ünvan
+                </label>
+
+                <input
+                  id="companyAddress"
+                  placeholder="Azərbaycan"
+                >
+
               </div>
 
             </div>
 
-            <button id="saveSettingsBtn" class="primary-btn">
+
+            <button
+              id="saveSettingsBtn"
+              class="primary-btn"
+            >
               Yadda saxla
             </button>
 
           </div>
+
+
 
           <div class="panel">
 
             <div class="panel-header">
 
               <div>
-                <h3>Sistem</h3>
-                <p>Texniki vəziyyət</p>
+
+                <h3>
+                  Sistem
+                </h3>
+
+                <p>
+                  Texniki vəziyyət
+                </p>
+
               </div>
 
             </div>
+
 
             <div class="system-info">
 
@@ -1612,24 +1755,46 @@
   </section>
 
 
-  <!-- ================= MODAL ================= -->
 
-  <div id="modalOverlay" class="modal-overlay hidden">
+  <!-- =========================================================
+       MODAL
+  ========================================================== -->
+
+  <div
+    id="modalOverlay"
+    class="modal-overlay hidden"
+  >
 
     <div class="modal">
 
       <div class="modal-header">
 
         <div>
-          <h2 id="modalTitle">Yeni məlumat</h2>
-          <p id="modalDescription">Məlumatları daxil edin.</p>
+
+          <div class="modal-kicker">
+            ONCOMP
+          </div>
+
+          <h2 id="modalTitle">
+            Yeni məlumat
+          </h2>
+
+          <p id="modalDescription">
+            Məlumatları daxil edin.
+          </p>
+
         </div>
 
-        <button id="closeModalBtn" class="modal-close">
+
+        <button
+          id="closeModalBtn"
+          class="modal-close"
+        >
           ×
         </button>
 
       </div>
+
 
       <div id="modalBody"></div>
 
@@ -1638,15 +1803,23 @@
   </div>
 
 
-  <!-- ================= TOAST ================= -->
 
-  <div id="toast" class="toast hidden">
+  <!-- =========================================================
+       TOAST
+  ========================================================== -->
+
+  <div
+    id="toast"
+    class="toast hidden"
+  >
+
     <span id="toastMessage"></span>
+
   </div>
+
 
 
   <script src="app.js"></script>
 
 </body>
 </html>
-```
