@@ -3292,3 +3292,254 @@ tbody tr:hover {
     pulse 2s infinite;
 
 }
+/* =========================================================
+   ONCOMP PREMIUM 2.0 — LARGE & CLEAR TYPOGRAPHY
+   ========================================================= */
+
+/* Əsas yazılar */
+body {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Sidebar */
+.sidebar {
+  font-size: 16px;
+}
+
+.sidebar-brand strong {
+  font-size: 21px;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-brand small {
+  font-size: 14px;
+}
+
+.nav-item {
+  font-size: 17px;
+  min-height: 52px;
+}
+
+.nav-item span {
+  font-size: 21px;
+}
+
+.nav-item label {
+  font-size: 17px;
+}
+
+/* Üst panel */
+.page-heading h1 {
+  font-size: 32px;
+  line-height: 1.2;
+}
+
+.page-heading span {
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+/* Başlıqlar */
+.welcome-row h2,
+.page-toolbar h2 {
+  font-size: 28px;
+  line-height: 1.25;
+}
+
+.welcome-row p,
+.page-toolbar p {
+  font-size: 16px;
+}
+
+/* Statistik kartlar */
+.stat-card {
+  min-height: 125px;
+}
+
+.stat-card span {
+  font-size: 15px;
+}
+
+.stat-card strong {
+  font-size: 30px;
+  line-height: 1.2;
+}
+
+.stat-icon {
+  font-size: 25px;
+}
+
+/* Panel başlıqları */
+.panel-header h3 {
+  font-size: 20px;
+}
+
+.panel-header p {
+  font-size: 14px;
+}
+
+/* Cədvəllər */
+table {
+  font-size: 16px;
+}
+
+thead th {
+  font-size: 14px;
+  font-weight: 700;
+  padding: 16px 14px;
+}
+
+tbody td {
+  font-size: 16px;
+  padding: 17px 14px;
+}
+
+/* Düymələr */
+.primary-btn,
+.secondary-btn,
+.text-btn {
+  font-size: 16px;
+}
+
+.primary-btn,
+.secondary-btn {
+  min-height: 48px;
+  padding: 0 20px;
+}
+
+/* Axtarış və seçimlər */
+.filter-bar input,
+.filter-bar select,
+select,
+input {
+  font-size: 16px;
+  min-height: 48px;
+}
+
+/* Anbar */
+.stock-row {
+  font-size: 16px;
+  padding: 15px 0;
+}
+
+.stock-row strong {
+  font-size: 18px;
+}
+
+/* Sistem statusu */
+.system-status strong {
+  font-size: 15px;
+}
+
+.system-status small {
+  font-size: 13px;
+}
+
+/* Admin */
+.admin-profile strong {
+  font-size: 16px;
+}
+
+.admin-profile small {
+  font-size: 13px;
+}
+
+.avatar {
+  font-size: 17px;
+}
+
+/* Login */
+.login-card {
+  max-width: 470px;
+}
+
+.login-title h2 {
+  font-size: 30px;
+}
+
+.login-title p {
+  font-size: 16px;
+}
+
+.login-card label {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.login-card input {
+  font-size: 17px;
+  min-height: 54px;
+}
+
+.login-btn {
+  font-size: 17px;
+  min-height: 54px;
+}
+
+/* Modal */
+.modal-header h2 {
+  font-size: 25px;
+}
+
+.modal-header p {
+  font-size: 15px;
+}
+
+.modal-close {
+  font-size: 28px;
+}
+
+/* Parametrlər */
+.form-group label {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.form-group input {
+  font-size: 16px;
+  min-height: 50px;
+}
+
+.system-info span {
+  font-size: 15px;
+}
+
+.system-info strong {
+  font-size: 17px;
+}
+
+/* Boş vəziyyət */
+.empty-state {
+  font-size: 16px;
+  padding: 35px 20px;
+}
+
+/* Mobil */
+@media (max-width: 768px) {
+
+  .page-heading h1 {
+    font-size: 27px;
+  }
+
+  .welcome-row h2,
+  .page-toolbar h2 {
+    font-size: 24px;
+  }
+
+  .stat-card strong {
+    font-size: 27px;
+  }
+
+  .nav-item {
+    font-size: 16px;
+  }
+
+  table {
+    font-size: 15px;
+  }
+
+  tbody td {
+    font-size: 15px;
+  }
+}
