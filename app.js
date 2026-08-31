@@ -5421,8 +5421,7 @@ function renderCustomers() {
 
 function renderSales() {
 
-  const table =
-    $("salesTable");
+  const table = $("salesTable");
 
   if (!table) return;
 
@@ -5430,7 +5429,7 @@ function renderSales() {
 
     table.innerHTML = `
       <tr>
-        <td colspan="9" class="empty-state">
+        <td colspan="8" class="empty-state">
           Hələ satış yoxdur
         </td>
       </tr>
@@ -5439,113 +5438,103 @@ function renderSales() {
     return;
   }
 
-  table.innerHTML =
-    sales.map((sale, index) => {
+  table.innerHTML = sales.map((sale, index) => {
 
-      const product =
-        getSaleProduct(sale);
+    const product = getSaleProduct(sale);
+    const customer = getSaleCustomer(sale);
 
-      const customer =
-        getSaleCustomer(sale);
+    const purchase = Number(
+      sale.purchase_price ??
+      product?.purchase_price ??
+      0
+    );
 
-      const purchase =
-        Number(
-          sale.purchase_price ??
-          product?.purchase_price ??
-          0
-        );
+    const salePrice = Number(
+      sale.sale_price ??
+      sale.total_amount ??
+      sale.amount ??
+      sale.total ??
+      0
+    );
 
-      const salePrice =
-        Number(
-          sale.sale_price ??
-          sale.total_amount ??
-          sale.amount ??
-          sale.total ??
-          0
-        );
+    const profit = Number(
+      sale.profit ??
+      (salePrice - purchase)
+    );
 
-      const profit =
-        Number(
-          sale.profit ??
-          salePrice - purchase
-        );
+    const saleNumber =
+      sale.sale_number ||
+      `SAT-${String(sales.length - index).padStart(4, "0")}`;
 
-      const saleNumber =
-        sale.sale_number ||
-        `SAT-${String(
-          sales.length - index
-        ).padStart(4, "0")}`;
+    const date =
+      sale.sale_date ||
+      sale.created_at;
 
-      const date =
-        sale.sale_date ||
-        sale.created_at;
+    return `
+      <tr>
 
-      return `
-        <tr>
+        <td>
+          <strong>
+            ${escapeHTML(saleNumber)}
+          </strong>
+        </td>
 
-          <td>
-            <strong>
-              ${escapeHTML(
-                saleNumber
-              )}
-            </strong>
-          </td>
+        <td>
+          ${escapeHTML(
+            product?.name ||
+            product?.model ||
+            sale.product_name ||
+            "-"
+          )}
+        </td>
 
-          <td>
-            ${escapeHTML(
-              product?.name ||
-              product?.model ||
-              sale.product_name ||
-              "-"
-            )}
-          </td>
+        <td>
+          ${escapeHTML(
+            customer?.full_name ||
+            customer?.name ||
+            sale.customer_name ||
+            "-"
+          )}
+        </td>
 
-          <td>
-            ${escapeHTML(
-              customer?.full_name ||
-              customer?.name ||
-              sale.customer_name ||
-              "-"
-            )}
-          </td>
+        <td>
+          ${money(purchase)}
+        </td>
 
-          <td>
-            ${money(purchase)}
-          </td>
+        <td>
+          <strong>
+            ${money(salePrice)}
+          </strong>
+        </td>
 
-          <td>
-            <strong>
-              ${money(salePrice)}
-            </strong>
-          </td>
+        <td>
+          <strong>
+            ${money(profit)}
+          </strong>
+        </td>
 
-          <td>
-            <strong>
-              ${money(profit)}
-            </strong>
-          </td>
+        <td>
+          ${escapeHTML(
+            sale.payment_method ||
+            sale.payment ||
+            "Nağd"
+          )}
+        </td>
 
-          <td>
-            ${escapeHTML(
-              sale.payment_method ||
-              sale.payment ||
-              "Nağd"
-            )}
-          </td>
+        <td>
+          ${
+            date
+              ? new Date(date).toLocaleDateString("az-AZ")
+              : "-"
+          }
+        </td>
 
-          <td>
-            ${
-              date
-                ? new Date(
-                    date
-                  ).toLocaleDateString(
-                    "az-AZ"
-                  )
-                : "-"
-            }
-          </td>
+      </tr>
+    `;
 
-          <td>
+  }).join("");
+
+}
 
             <button
               class="text-btn"
