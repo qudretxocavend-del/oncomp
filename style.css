@@ -1,1825 +1,3294 @@
-<!DOCTYPE html>
-<html lang="az">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+/* =========================================================
+   ONCOMP PREMIUM 2.0
+   ========================================================= */
 
-  <title>ONCOMP — Premium Elektron Uçot Sistemi</title>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-  <link rel="stylesheet" href="style.css">
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
+:root {
 
-<body>
+  --bg: #f5f7fb;
+  --surface: #ffffff;
+  --surface-soft: #f8faff;
 
-  <!-- =========================================================
-       LOGIN
-  ========================================================== -->
+  --text: #172033;
+  --text-soft: #667085;
+  --text-light: #98a2b3;
 
-  <section id="loginPage" class="login-page">
+  --primary: #315bea;
+  --primary-dark: #2446c7;
+  --primary-soft: #eef2ff;
 
-    <div class="login-background">
+  --border: #e7eaf0;
 
-      <div class="orb orb-one"></div>
-      <div class="orb orb-two"></div>
-      <div class="orb orb-three"></div>
+  --success: #18a874;
+  --warning: #f59e0b;
+  --danger: #ef4444;
 
-      <div class="floating-device device-laptop">
-        <div class="laptop-screen">
-          <div class="screen-camera"></div>
-          <div class="screen-content">
-            <span>ONCOMP</span>
-            <strong>BUSINESS</strong>
-          </div>
-        </div>
-        <div class="laptop-base"></div>
-      </div>
+  --sidebar: #ffffff;
 
-      <div class="floating-device device-tablet">
-        <div class="tablet-screen">
-          <span>OC</span>
-        </div>
-      </div>
+  --shadow-sm:
+    0 4px 18px rgba(30, 42, 70, .05);
 
-    </div>
+  --shadow:
+    0 14px 40px rgba(30, 42, 70, .08);
 
+  --shadow-lg:
+    0 25px 70px rgba(30, 42, 70, .12);
 
-    <div class="login-card">
+  --radius: 18px;
+  --radius-lg: 26px;
 
-      <div class="login-logo-area">
+}
 
-        <div class="brand-icon premium-logo">
-          OC
-        </div>
 
-        <div>
-          <h1>ONCOMP</h1>
-          <span>Elektron Uçot Sistemi</span>
-        </div>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-      </div>
 
+html {
+  scroll-behavior: smooth;
+}
 
-      <div class="login-title">
 
-        <div class="welcome-badge">
-          <span class="pulse-dot"></span>
-          Premium Business System
-        </div>
+body {
 
-        <h2>Xoş gəlmisiniz</h2>
+  font-family: "Inter", Arial, sans-serif;
 
-        <p>
-          Biznesinizi daha ağıllı, daha sürətli və daha peşəkar idarə edin.
-        </p>
+  background:
+    radial-gradient(
+      circle at 85% 5%,
+      rgba(49, 91, 234, .06),
+      transparent 28%
+    ),
+    var(--bg);
 
-      </div>
+  color: var(--text);
 
+  min-height: 100vh;
 
-      <form id="loginForm">
+}
 
-        <div class="input-group">
 
-          <label>E-poçt</label>
+button,
+input,
+select {
+  font-family: inherit;
+}
 
-          <div class="input-wrapper">
-            <span class="input-icon">✉</span>
 
-            <input
-              type="email"
-              id="loginEmail"
-              placeholder="E-poçt ünvanınız"
-              required
-            >
-          </div>
+button {
+  border: 0;
+  cursor: pointer;
+}
 
-        </div>
 
+.hidden {
+  display: none !important;
+}
 
-        <div class="input-group">
 
-          <label>Şifrə</label>
 
-          <div class="input-wrapper">
+/* =========================================================
+   LOGIN
+   ========================================================= */
 
-            <span class="input-icon">⌑</span>
+.login-page {
 
-            <input
-              type="password"
-              id="loginPassword"
-              placeholder="Şifrəniz"
-              required
-            >
+  min-height: 100vh;
 
-          </div>
+  display: flex;
 
-        </div>
+  align-items: center;
 
+  justify-content: center;
 
-        <button type="submit" class="login-btn">
+  position: relative;
 
-          <span>Daxil ol</span>
+  overflow: hidden;
 
-          <span class="button-arrow">→</span>
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(49, 91, 234, .08),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 90% 80%,
+      rgba(114, 83, 240, .08),
+      transparent 30%
+    ),
+    #f7f9fc;
 
-        </button>
+}
 
-      </form>
 
+.login-background {
 
-      <div id="loginMessage"></div>
+  position: absolute;
 
+  inset: 0;
 
-      <div class="connection-status">
+  overflow: hidden;
 
-        <span class="status-dot"></span>
+  pointer-events: none;
 
-        <div>
-          <strong>Sistem aktivdir</strong>
-          <span>Supabase bağlantısı təhlükəsizdir</span>
-        </div>
+}
 
-      </div>
 
-    </div>
+.orb {
 
-  </section>
+  position: absolute;
 
+  border-radius: 50%;
 
+  filter: blur(1px);
 
-  <!-- =========================================================
-       APPLICATION
-  ========================================================== -->
+  opacity: .55;
 
-  <section id="appPage" class="app-page hidden">
+}
 
 
-    <!-- SIDEBAR -->
+.orb-one {
 
-    <aside class="sidebar">
+  width: 350px;
 
-      <div class="sidebar-top">
+  height: 350px;
 
-        <div class="sidebar-brand">
+  background: rgba(49, 91, 234, .08);
 
-          <div class="brand-icon small premium-logo">
-            OC
-          </div>
+  top: -120px;
 
-          <div class="brand-text">
-            <strong>ONCOMP</strong>
-            <small>Business OS</small>
-          </div>
+  left: -100px;
 
-        </div>
+}
 
 
-        <div class="sidebar-label">
-          İDARƏETMƏ
-        </div>
+.orb-two {
 
+  width: 420px;
 
-        <nav class="main-nav">
+  height: 420px;
 
-          <button class="nav-item active" data-page="dashboard">
-            <span class="nav-icon">⌂</span>
-            <label>Dashboard</label>
-          </button>
+  background: rgba(122, 90, 240, .08);
 
+  bottom: -180px;
 
-          <button class="nav-item" data-page="products">
-            <span class="nav-icon">▣</span>
-            <label>Məhsullar</label>
-          </button>
+  right: -100px;
 
+}
 
-          <button class="nav-item" data-page="sales">
-            <span class="nav-icon">↗</span>
-            <label>Satışlar</label>
-          </button>
 
+.orb-three {
 
-          <button class="nav-item" data-page="customers">
-            <span class="nav-icon">♙</span>
-            <label>Müştərilər</label>
-          </button>
+  width: 180px;
 
+  height: 180px;
 
-          <button class="nav-item" data-page="inventory">
-            <span class="nav-icon">▤</span>
-            <label>Anbar</label>
-          </button>
+  background: rgba(24, 168, 116, .05);
 
+  top: 30%;
 
-          <div class="sidebar-label second">
-            MALİYYƏ
-          </div>
+  right: 20%;
 
+}
 
-          <button class="nav-item" data-page="expenses">
-            <span class="nav-icon">₼</span>
-            <label>Xərclər</label>
-          </button>
 
 
-          <button class="nav-item" data-page="reports">
-            <span class="nav-icon">◒</span>
-            <label>Hesabatlar</label>
-          </button>
+/* 3D LAPTOP */
 
+.floating-device {
 
-          <div class="sidebar-label second">
-            SİSTEM
-          </div>
+  position: absolute;
 
+  opacity: .55;
 
-          <button class="nav-item" data-page="settings">
-            <span class="nav-icon">⚙</span>
-            <label>Parametrlər</label>
-          </button>
+  transform-style: preserve-3d;
 
-        </nav>
+}
 
-      </div>
 
+.device-laptop {
 
-      <div class="sidebar-bottom">
+  width: 280px;
 
-        <div class="sidebar-system-card">
+  right: 7%;
 
-          <div class="system-icon">
-            ✦
-          </div>
+  top: 13%;
 
-          <div>
-            <strong>Sistem aktivdir</strong>
-            <small>Real-time bağlantı</small>
-          </div>
+  transform:
+    perspective(900px)
+    rotateY(-18deg)
+    rotateX(8deg)
+    rotateZ(4deg);
 
-          <span class="online-dot"></span>
+}
 
-        </div>
 
+.laptop-screen {
 
-        <button id="logoutBtn" class="logout-btn">
+  height: 180px;
 
-          <span>⇥</span>
-          Çıxış
+  background: #172033;
 
-        </button>
+  border: 7px solid #252f43;
 
-      </div>
+  border-radius: 15px;
 
-    </aside>
+  box-shadow:
+    0 30px 50px rgba(23, 32, 51, .15);
 
+  display: flex;
 
+  align-items: center;
 
-    <!-- MAIN -->
+  justify-content: center;
 
-    <main class="main-content">
+}
 
 
-      <!-- TOPBAR -->
+.screen-camera {
 
-      <header class="topbar">
+  position: absolute;
 
-        <div class="page-heading">
+  top: 8px;
 
-          <div class="breadcrumb">
-            ONCOMP <span>/</span> İdarəetmə
-          </div>
+  width: 5px;
 
-          <h1 id="pageTitle">
-            Dashboard
-          </h1>
+  height: 5px;
 
-          <span id="pageEyebrow">
-            Elektron Uçot Sistemi
-          </span>
+  background: #8e99ab;
 
-        </div>
+  border-radius: 50%;
 
+}
 
-        <div class="topbar-actions">
 
-          <button class="icon-btn notification-btn" title="Bildirişlər">
+.screen-content {
 
-            ♢
+  width: 80%;
 
-            <span class="notification-dot"></span>
+  height: 70%;
 
-          </button>
+  border-radius: 8px;
 
+  background:
+    linear-gradient(
+      135deg,
+      #eef2ff,
+      #ffffff
+    );
 
-          <div class="admin-profile">
+  display: flex;
 
-            <div class="avatar">
-              A
-            </div>
+  flex-direction: column;
 
-            <div class="admin-info">
+  align-items: center;
 
-              <strong id="adminName">
-                Admin
-              </strong>
+  justify-content: center;
 
-              <small>
-                Administrator
-              </small>
+}
 
-            </div>
 
-            <span class="profile-arrow">
-              ⌄
-            </span>
+.screen-content span {
 
-          </div>
+  color: var(--primary);
 
-        </div>
+  font-size: 11px;
 
-      </header>
+  font-weight: 800;
 
+  letter-spacing: 2px;
 
+}
 
-      <!-- =====================================================
-           DASHBOARD
-      ====================================================== -->
 
-      <section
-        id="dashboardPage"
-        class="content-page active-page"
-      >
+.screen-content strong {
 
+  color: #172033;
 
-        <!-- HERO -->
+  font-size: 21px;
 
-        <div class="dashboard-hero">
+  margin-top: 5px;
 
-          <div class="hero-copy">
+}
 
-            <div class="hero-badge">
-              <span></span>
-              ONCOMP PREMIUM 2.0
-            </div>
 
-            <h2>
-              Biznesinizə
-              <strong>nəzarət edin.</strong>
-            </h2>
+.laptop-base {
 
-            <p>
-              Satış, məhsul, müştəri və maliyyə göstəriciləriniz
-              artıq bir ekranda.
-            </p>
+  width: 320px;
 
-            <div class="hero-actions">
+  height: 15px;
 
-              <button
-                class="primary-btn hero-btn"
-                data-page-action="products"
-              >
-                <span>+</span>
-                Məhsul əlavə et
-              </button>
+  margin-left: -20px;
 
-              <button
-                class="secondary-btn"
-                data-page-action="sales"
-              >
-                Satışlara bax →
-              </button>
+  background: linear-gradient(
+    90deg,
+    #9ba5b6,
+    #dce1e9,
+    #9ba5b6
+  );
 
-            </div>
+  border-radius: 0 0 15px 15px;
 
-          </div>
+  box-shadow:
+    0 20px 25px rgba(23, 32, 51, .13);
 
+}
 
-          <!-- 3D PRODUCT VISUAL -->
 
-          <div class="hero-visual">
 
-            <div class="visual-glow"></div>
+/* 3D TABLET */
 
-            <div class="product-scene">
+.device-tablet {
 
-              <div class="scene-tablet">
+  width: 130px;
 
-                <div class="tablet-frame">
+  height: 190px;
 
-                  <div class="tablet-camera"></div>
+  left: 7%;
 
-                  <div class="tablet-display">
+  bottom: 13%;
 
-                    <div class="display-logo">
-                      OC
-                    </div>
+  transform:
+    perspective(800px)
+    rotateY(20deg)
+    rotateX(8deg)
+    rotateZ(-7deg);
 
-                    <div class="display-line"></div>
+}
 
-                    <span>
-                      ONCOMP
-                    </span>
 
-                  </div>
+.tablet-screen {
 
-                </div>
+  width: 100%;
 
-              </div>
+  height: 100%;
 
+  border: 7px solid #263145;
 
-              <div class="scene-laptop">
+  border-radius: 20px;
 
-                <div class="laptop-display">
+  background:
+    linear-gradient(
+      145deg,
+      #f7f9ff,
+      #dfe6ff
+    );
 
-                  <div class="camera"></div>
+  display: flex;
 
-                  <div class="dashboard-mini">
+  align-items: center;
 
-                    <div class="mini-top"></div>
+  justify-content: center;
 
-                    <div class="mini-cards">
+  box-shadow:
+    0 35px 50px rgba(30, 42, 70, .15);
 
-                      <i></i>
-                      <i></i>
-                      <i></i>
+}
 
-                    </div>
 
-                    <div class="mini-chart">
-                      <b></b>
-                      <b></b>
-                      <b></b>
-                      <b></b>
-                      <b></b>
-                    </div>
+.tablet-screen span {
 
-                  </div>
+  width: 54px;
 
-                </div>
+  height: 54px;
 
-                <div class="laptop-keyboard"></div>
+  display: flex;
 
-              </div>
+  align-items: center;
 
-            </div>
+  justify-content: center;
 
-          </div>
+  border-radius: 16px;
 
-        </div>
+  background: white;
 
+  color: var(--primary);
 
+  font-size: 17px;
 
-        <!-- STATISTICS -->
+  font-weight: 800;
 
-        <div class="section-heading">
+  box-shadow: var(--shadow);
 
-          <div>
-            <span>ÜMUMİ GÖSTƏRİCİLƏR</span>
-            <h3>Bugünkü vəziyyət</h3>
-          </div>
+}
 
-          <div class="live-indicator">
-            <span></span>
-            Live data
-          </div>
 
-        </div>
 
+/* LOGIN CARD */
 
-        <div class="stats-grid premium-stats">
+.login-card {
 
+  width: min(450px, calc(100% - 40px));
 
-          <div class="stat-card">
+  background: rgba(255,255,255,.92);
 
-            <div class="stat-top">
+  backdrop-filter: blur(25px);
 
-              <div class="stat-icon">
-                ▣
-              </div>
+  border: 1px solid rgba(255,255,255,.8);
 
-              <span class="stat-trend positive">
-                ↑ Aktiv
-              </span>
+  border-radius: 30px;
 
-            </div>
+  padding: 42px;
 
-            <span class="stat-label">
-              Ümumi məhsullar
-            </span>
+  position: relative;
 
-            <strong id="statProducts">
-              0
-            </strong>
+  z-index: 5;
 
-            <div class="stat-footer">
-              Sistemdəki bütün məhsullar
-            </div>
+  box-shadow:
+    0 35px 100px rgba(30,42,70,.13);
 
-          </div>
+}
 
 
-          <div class="stat-card">
+.login-logo-area {
 
-            <div class="stat-top">
+  display: flex;
 
-              <div class="stat-icon money">
-                ₼
-              </div>
+  align-items: center;
 
-              <span class="stat-trend">
-                Anbar
-              </span>
+  gap: 13px;
 
-            </div>
+  margin-bottom: 38px;
 
-            <span class="stat-label">
-              Anbar dəyəri
-            </span>
+}
 
-            <strong id="statInventory">
-              0 ₼
-            </strong>
 
-            <div class="stat-footer">
-              Mövcud məhsulların ümumi dəyəri
-            </div>
+.premium-logo {
 
-          </div>
+  background:
+    linear-gradient(
+      145deg,
+      #4770ff,
+      #294fd2
+    );
 
+  color: white;
 
-          <div class="stat-card highlight">
+  box-shadow:
+    0 10px 25px rgba(49,91,234,.25);
 
-            <div class="stat-top">
+}
 
-              <div class="stat-icon sale">
-                ↗
-              </div>
 
-              <span class="stat-trend positive">
-                ↑ Bu ay
-              </span>
+.brand-icon {
 
-            </div>
+  width: 52px;
 
-            <span class="stat-label">
-              Bu ay satış
-            </span>
+  height: 52px;
 
-            <strong id="statSales">
-              0 ₼
-            </strong>
+  border-radius: 16px;
 
-            <div class="stat-footer">
-              Cari ayın satış dövriyyəsi
-            </div>
+  display: flex;
 
-          </div>
+  align-items: center;
 
+  justify-content: center;
 
-          <div class="stat-card">
+  font-weight: 800;
 
-            <div class="stat-top">
+  letter-spacing: -1px;
 
-              <div class="stat-icon profit">
-                ◆
-              </div>
+}
 
-              <span class="stat-trend positive">
-                Mənfəət
-              </span>
 
-            </div>
+.login-logo-area h1 {
 
-            <span class="stat-label">
-              Bu ay mənfəət
-            </span>
+  font-size: 21px;
 
-            <strong id="statProfit">
-              0 ₼
-            </strong>
+  letter-spacing: -.6px;
 
-            <div class="stat-footer">
-              Cari ay üzrə xalis mənfəət
-            </div>
+}
 
-          </div>
 
-        </div>
+.login-logo-area span {
 
+  display: block;
 
+  color: var(--text-soft);
 
-        <!-- ANALYTICS -->
+  font-size: 11px;
 
-        <div class="dashboard-grid premium-dashboard-grid">
+  margin-top: 2px;
 
+}
 
-          <div class="panel large-panel analytics-panel">
 
-            <div class="panel-header">
+.login-title {
 
-              <div>
+  margin-bottom: 28px;
 
-                <span class="panel-eyebrow">
-                  ANALİTİKA
-                </span>
+}
 
-                <h3>
-                  Aylıq satışlar
-                </h3>
 
-                <p>
-                  Satış performansınızın dinamikası
-                </p>
+.welcome-badge {
 
-              </div>
+  display: inline-flex;
 
+  align-items: center;
 
-              <select id="salesPeriod">
+  gap: 7px;
 
-                <option>
-                  Son 7 gün
-                </option>
+  background: var(--primary-soft);
 
-                <option selected>
-                  Bu ay
-                </option>
+  color: var(--primary);
 
-                <option>
-                  Bu il
-                </option>
+  padding: 7px 11px;
 
-              </select>
+  border-radius: 30px;
 
-            </div>
+  font-size: 10px;
 
+  font-weight: 700;
 
-            <div class="chart-wrapper">
+  letter-spacing: .3px;
 
-              <div class="chart-y-axis">
-                <span>100%</span>
-                <span>75%</span>
-                <span>50%</span>
-                <span>25%</span>
-                <span>0%</span>
-              </div>
+  margin-bottom: 16px;
 
-              <div
-                id="salesChart"
-                class="chart-area"
-              >
+}
 
-                <div class="empty-chart">
 
-                  <div class="empty-chart-icon">
-                    ↗
-                  </div>
+.pulse-dot {
 
-                  <strong>
-                    Satış məlumatları burada görünəcək
-                  </strong>
+  width: 6px;
 
-                  <span>
-                    Satışlar artdıqca qrafik avtomatik yenilənəcək.
-                  </span>
+  height: 6px;
 
-                </div>
+  border-radius: 50%;
 
-              </div>
+  background: var(--primary);
 
-            </div>
+}
 
-          </div>
 
+.login-title h2 {
 
+  font-size: 29px;
 
-          <!-- STOCK -->
+  letter-spacing: -1px;
 
-          <div class="panel stock-panel">
+  margin-bottom: 8px;
 
-            <div class="panel-header">
+}
 
-              <div>
 
-                <span class="panel-eyebrow">
-                  ANBAR
-                </span>
+.login-title p {
 
-                <h3>
-                  Anbar vəziyyəti
-                </h3>
+  color: var(--text-soft);
 
-                <p>
-                  Məhsul stokları
-                </p>
+  font-size: 13px;
 
-              </div>
+  line-height: 1.6;
 
-              <div class="panel-more">
-                •••
-              </div>
+}
 
-            </div>
 
+.input-group {
 
-            <div class="stock-ring">
+  margin-bottom: 18px;
 
-              <div class="ring-inner">
+}
 
-                <strong id="stockAvailable">
-                  0
-                </strong>
 
-                <span>
-                  məhsul
-                </span>
+.input-group label {
 
-              </div>
+  display: block;
 
-            </div>
+  font-size: 12px;
 
+  font-weight: 600;
 
-            <div
-              id="stockSummary"
-              class="stock-summary"
-            >
+  margin-bottom: 8px;
 
-              <div class="stock-row">
+}
 
-                <div>
-                  <i class="stock-dot available"></i>
-                  <span>Mövcud məhsullar</span>
-                </div>
 
-                <strong id="stockAvailableText">
-                  0
-                </strong>
+.input-wrapper {
 
-              </div>
+  position: relative;
 
+}
 
-              <div class="stock-row warning">
 
-                <div>
-                  <i class="stock-dot critical"></i>
-                  <span>Kritik stok</span>
-                </div>
+.input-icon {
 
-                <strong id="stockCritical">
-                  0
-                </strong>
+  position: absolute;
 
-              </div>
+  left: 15px;
 
+  top: 50%;
 
-              <div class="stock-row">
+  transform: translateY(-50%);
 
-                <div>
-                  <i class="stock-dot sold"></i>
-                  <span>Satılmış məhsullar</span>
-                </div>
+  color: #8b95a7;
 
-                <strong id="stockSold">
-                  0
-                </strong>
+}
 
-              </div>
 
-            </div>
+.input-wrapper input {
 
-          </div>
+  width: 100%;
 
-        </div>
+  height: 52px;
 
+  padding: 0 15px 0 43px;
 
+  border: 1px solid var(--border);
 
-        <!-- RECENT SALES -->
+  border-radius: 13px;
 
-        <div class="panel recent-sales-panel">
+  outline: none;
 
-          <div class="panel-header">
+  background: #fbfcfe;
 
-            <div>
+  color: var(--text);
 
-              <span class="panel-eyebrow">
-                ƏMƏLİYYATLAR
-              </span>
+  font-size: 13px;
 
-              <h3>
-                Son satışlar
-              </h3>
+  transition: .25s;
 
-              <p>
-                Sistemdəki son satış əməliyyatları
-              </p>
+}
 
-            </div>
 
+.input-wrapper input:focus {
 
-            <button
-              class="text-btn"
-              data-page-action="sales"
-            >
-              Hamısına bax →
-            </button>
+  border-color: var(--primary);
 
-          </div>
+  background: white;
 
+  box-shadow:
+    0 0 0 4px rgba(49,91,234,.08);
 
-          <div class="table-wrapper">
+}
 
-            <table>
 
-              <thead>
+.login-btn {
 
-                <tr>
-                  <th>Məhsul</th>
-                  <th>Müştəri</th>
-                  <th>Məbləğ</th>
-                  <th>Ödəniş</th>
-                  <th>Tarix</th>
-                </tr>
+  width: 100%;
 
-              </thead>
+  height: 54px;
 
+  margin-top: 7px;
 
-              <tbody id="recentSalesTable">
+  border-radius: 14px;
 
-                <tr>
+  color: white;
 
-                  <td
-                    colspan="5"
-                    class="empty-state"
-                  >
+  font-weight: 700;
 
-                    <div class="empty-icon">
-                      ↗
-                    </div>
+  font-size: 13px;
 
-                    <strong>
-                      Hələ satış yoxdur
-                    </strong>
+  display: flex;
 
-                    <span>
-                      İlk satış əməliyyatınızı əlavə edin.
-                    </span>
+  align-items: center;
 
-                  </td>
+  justify-content: space-between;
 
-                </tr>
+  padding: 0 18px;
 
-              </tbody>
+  background:
+    linear-gradient(
+      135deg,
+      #4770ff,
+      #315bea
+    );
 
-            </table>
+  box-shadow:
+    0 12px 25px rgba(49,91,234,.22);
 
-          </div>
+  transition: .25s;
 
-        </div>
+}
 
-      </section>
 
+.login-btn:hover {
 
+  transform: translateY(-2px);
 
-      <!-- =====================================================
-           PRODUCTS
-      ====================================================== -->
+  box-shadow:
+    0 17px 30px rgba(49,91,234,.28);
 
-      <section
-        id="productsPage"
-        class="content-page"
-      >
+}
 
-        <div class="page-toolbar">
 
-          <div>
+.button-arrow {
 
-            <div class="page-kicker">
-              INVENTORY MANAGEMENT
-            </div>
+  font-size: 18px;
 
-            <h2>
-              Məhsullar
-            </h2>
+}
 
-            <p>
-              Notebook və planşetlərin uçotu
-            </p>
 
-          </div>
+.connection-status {
 
+  display: flex;
 
-          <button
-            id="addProductBtn"
-            class="primary-btn"
-          >
-            + Yeni məhsul
-          </button>
+  align-items: center;
 
-        </div>
+  gap: 10px;
 
+  margin-top: 25px;
 
-        <div class="filter-bar premium-filter">
+  padding-top: 20px;
 
-          <div class="search-box">
+  border-top: 1px solid var(--border);
 
-            <span>⌕</span>
+}
 
-            <input
-              type="search"
-              id="productSearch"
-              placeholder="Məhsul, marka və ya model axtar..."
-            >
 
-          </div>
+.status-dot,
+.online-dot {
 
+  width: 8px;
 
-          <select id="productCategoryFilter">
+  height: 8px;
 
-            <option value="">
-              Bütün kateqoriyalar
-            </option>
+  background: var(--success);
 
-          </select>
+  border-radius: 50%;
 
+  box-shadow:
+    0 0 0 5px rgba(24,168,116,.08);
 
-          <select id="productStatusFilter">
+}
 
-            <option value="">
-              Bütün statuslar
-            </option>
 
-            <option value="active">
-              Aktiv
-            </option>
+.connection-status strong {
 
-            <option value="sold">
-              Satılıb
-            </option>
+  display: block;
 
-          </select>
+  font-size: 11px;
 
-        </div>
+}
 
 
-        <div class="panel">
+.connection-status span:last-child {
 
-          <div class="table-wrapper">
+  display: block;
 
-            <table>
+  color: var(--text-light);
 
-              <thead>
+  font-size: 10px;
 
-                <tr>
-                  <th>Məhsul</th>
-                  <th>Kateqoriya</th>
-                  <th>Seriya / IMEI</th>
-                  <th>Alış</th>
-                  <th>Satış</th>
-                  <th>Stok</th>
-                  <th>Status</th>
-                  <th></th>
-                </tr>
+  margin-top: 3px;
 
-              </thead>
+}
 
 
-              <tbody id="productsTable">
 
-                <tr>
+/* =========================================================
+   APP
+   ========================================================= */
 
-                  <td
-                    colspan="8"
-                    class="empty-state"
-                  >
-                    Məhsul yoxdur
-                  </td>
+.app-page {
 
-                </tr>
+  display: flex;
 
-              </tbody>
+  min-height: 100vh;
 
-            </table>
+}
 
-          </div>
 
-        </div>
+.sidebar {
 
-      </section>
+  width: 248px;
 
+  flex-shrink: 0;
 
+  background: var(--sidebar);
 
-      <!-- =====================================================
-           SALES
-      ====================================================== -->
+  border-right: 1px solid var(--border);
 
-      <section
-        id="salesPage"
-        class="content-page"
-      >
+  padding: 24px 15px;
 
-        <div class="page-toolbar">
+  display: flex;
 
-          <div>
+  flex-direction: column;
 
-            <div class="page-kicker">
-              SALES MANAGEMENT
-            </div>
+  justify-content: space-between;
 
-            <h2>
-              Satışlar
-            </h2>
+  position: sticky;
 
-            <p>
-              Bütün satış əməliyyatları
-            </p>
+  top: 0;
 
-          </div>
+  height: 100vh;
 
+}
 
-          <button
-            id="newSaleBtn"
-            class="primary-btn"
-          >
-            + Yeni satış
-          </button>
 
-        </div>
+.sidebar-brand {
 
+  display: flex;
 
-        <div class="panel">
+  align-items: center;
 
-          <div class="table-wrapper">
+  gap: 11px;
 
-            <table>
+  padding: 0 10px;
 
-              <thead>
+  margin-bottom: 30px;
 
-                <tr>
-                  <th>Satış №</th>
-                  <th>Müştəri</th>
-                  <th>Məbləğ</th>
-                  <th>Mənfəət</th>
-                  <th>Ödəniş</th>
-                  <th>Tarix</th>
-                </tr>
+}
 
-              </thead>
 
+.brand-icon.small {
 
-              <tbody id="salesTable">
+  width: 42px;
 
-                <tr>
+  height: 42px;
 
-                  <td
-                    colspan="6"
-                    class="empty-state"
-                  >
-                    Hələ satış yoxdur
-                  </td>
+  border-radius: 13px;
 
-                </tr>
+  font-size: 14px;
 
-              </tbody>
+}
 
-            </table>
 
-          </div>
+.brand-text strong {
 
-        </div>
+  display: block;
 
-      </section>
+  font-size: 15px;
 
+  letter-spacing: -.4px;
 
+}
 
-      <!-- =====================================================
-           CUSTOMERS
-      ====================================================== -->
 
-      <section
-        id="customersPage"
-        class="content-page"
-      >
+.brand-text small {
 
-        <div class="page-toolbar">
+  display: block;
 
-          <div>
+  color: var(--text-light);
 
-            <div class="page-kicker">
-              CUSTOMER MANAGEMENT
-            </div>
+  font-size: 9px;
 
-            <h2>
-              Müştərilər
-            </h2>
+  margin-top: 2px;
 
-            <p>
-              Müştəri bazası və satış tarixçəsi
-            </p>
+}
 
-          </div>
 
+.sidebar-label {
 
-          <button
-            id="addCustomerBtn"
-            class="primary-btn"
-          >
-            + Yeni müştəri
-          </button>
+  color: #a0a9b8;
 
-        </div>
+  font-size: 9px;
 
+  font-weight: 800;
 
-        <div class="filter-bar premium-filter">
+  letter-spacing: 1.1px;
 
-          <div class="search-box">
+  padding: 0 13px;
 
-            <span>⌕</span>
+  margin-bottom: 9px;
 
-            <input
-              type="search"
-              id="customerSearch"
-              placeholder="Müştəri adı və ya telefon axtar..."
-            >
+}
 
-          </div>
 
-        </div>
+.sidebar-label.second {
 
+  margin-top: 25px;
 
-        <div class="panel">
+}
 
-          <div class="table-wrapper">
 
-            <table>
+.main-nav {
 
-              <thead>
+  display: flex;
 
-                <tr>
-                  <th>Ad Soyad</th>
-                  <th>Telefon</th>
-                  <th>E-poçt</th>
-                  <th>Ünvan</th>
-                  <th>Qeydiyyat</th>
-                  <th></th>
-                </tr>
+  flex-direction: column;
 
-              </thead>
+  gap: 4px;
 
+}
 
-              <tbody id="customersTable">
 
-                <tr>
+.nav-item {
 
-                  <td
-                    colspan="6"
-                    class="empty-state"
-                  >
-                    Müştəri yoxdur
-                  </td>
+  width: 100%;
 
-                </tr>
+  height: 45px;
 
-              </tbody>
+  border-radius: 12px;
 
-            </table>
+  background: transparent;
 
-          </div>
+  display: flex;
 
-        </div>
+  align-items: center;
 
-      </section>
+  gap: 12px;
 
+  padding: 0 13px;
 
+  color: #667085;
 
-      <!-- =====================================================
-           INVENTORY
-      ====================================================== -->
+  transition: .2s;
 
-      <section
-        id="inventoryPage"
-        class="content-page"
-      >
+  text-align: left;
 
-        <div class="page-toolbar">
+}
 
-          <div>
 
-            <div class="page-kicker">
-              INVENTORY
-            </div>
+.nav-item:hover {
 
-            <h2>
-              Anbar
-            </h2>
+  background: #f6f8fc;
 
-            <p>
-              Məhsul ehtiyatlarının vəziyyəti
-            </p>
+  color: var(--text);
 
-          </div>
+}
 
-        </div>
 
+.nav-item.active {
 
-        <div class="stats-grid">
+  background: var(--primary-soft);
 
-          <div class="stat-card">
+  color: var(--primary);
 
-            <div class="stat-icon">
-              ▤
-            </div>
+  font-weight: 700;
 
-            <span>
-              Anbarda
-            </span>
+}
 
-            <strong id="inventoryAvailable">
-              0
-            </strong>
 
-          </div>
+.nav-icon {
 
+  width: 20px;
 
-          <div class="stat-card">
+  text-align: center;
 
-            <div class="stat-icon">
-              !
-            </div>
+  font-size: 16px;
 
-            <span>
-              Kritik stok
-            </span>
+}
 
-            <strong id="inventoryCritical">
-              0
-            </strong>
 
-          </div>
+.nav-item label {
 
+  font-size: 12px;
 
-          <div class="stat-card">
+}
 
-            <div class="stat-icon">
-              ✓
-            </div>
 
-            <span>
-              Satılıb
-            </span>
+.sidebar-system-card {
 
-            <strong id="inventorySold">
-              0
-            </strong>
+  padding: 12px;
 
-          </div>
+  border: 1px solid var(--border);
 
+  border-radius: 15px;
 
-          <div class="stat-card">
+  display: flex;
 
-            <div class="stat-icon money">
-              ₼
-            </div>
+  align-items: center;
 
-            <span>
-              Anbar dəyəri
-            </span>
+  gap: 9px;
 
-            <strong id="inventoryValue">
-              0 ₼
-            </strong>
+  margin-bottom: 10px;
 
-          </div>
+}
 
-        </div>
 
+.system-icon {
 
-        <div class="panel">
+  width: 30px;
 
-          <div class="panel-header">
+  height: 30px;
 
-            <div>
+  border-radius: 9px;
 
-              <h3>
-                Anbar məhsulları
-              </h3>
+  background: #eefaf5;
 
-              <p>
-                Mövcud məhsullar
-              </p>
+  color: var(--success);
 
-            </div>
+  display: flex;
 
-          </div>
+  align-items: center;
 
+  justify-content: center;
 
-          <div
-            id="inventoryList"
-            class="inventory-list"
-          >
+  font-size: 13px;
 
-            <div class="empty-state">
-              Anbarda məhsul yoxdur
-            </div>
+}
 
-          </div>
 
-        </div>
+.sidebar-system-card strong {
 
-      </section>
+  display: block;
 
+  font-size: 10px;
 
+}
 
-      <!-- =====================================================
-           EXPENSES
-      ====================================================== -->
 
-      <section
-        id="expensesPage"
-        class="content-page"
-      >
+.sidebar-system-card small {
 
-        <div class="page-toolbar">
+  display: block;
 
-          <div>
+  color: var(--text-light);
 
-            <div class="page-kicker">
-              FINANCE
-            </div>
+  font-size: 8px;
 
-            <h2>
-              Xərclər
-            </h2>
+  margin-top: 2px;
 
-            <p>
-              Şirkətin xərc uçotu
-            </p>
+}
 
-          </div>
 
+.online-dot {
 
-          <button
-            id="addExpenseBtn"
-            class="primary-btn"
-          >
-            + Yeni xərc
-          </button>
+  margin-left: auto;
 
-        </div>
+  width: 6px;
 
+  height: 6px;
 
-        <div class="panel">
+}
 
-          <div class="table-wrapper">
 
-            <table>
+.logout-btn {
 
-              <thead>
+  width: 100%;
 
-                <tr>
-                  <th>Xərc</th>
-                  <th>Kateqoriya</th>
-                  <th>Məbləğ</th>
-                  <th>Tarix</th>
-                  <th>Qeyd</th>
-                  <th></th>
-                </tr>
+  height: 42px;
 
-              </thead>
+  background: transparent;
 
+  border-radius: 11px;
 
-              <tbody id="expensesTable">
+  color: #7b8493;
 
-                <tr>
+  display: flex;
 
-                  <td
-                    colspan="6"
-                    class="empty-state"
-                  >
-                    Xərc yoxdur
-                  </td>
+  align-items: center;
 
-                </tr>
+  gap: 9px;
 
-              </tbody>
+  padding: 0 13px;
 
-            </table>
+  font-size: 11px;
 
-          </div>
+}
 
-        </div>
 
-      </section>
+.logout-btn:hover {
 
+  background: #fff1f1;
 
+  color: var(--danger);
 
-      <!-- =====================================================
-           REPORTS
-      ====================================================== -->
+}
 
-      <section
-        id="reportsPage"
-        class="content-page"
-      >
 
-        <div class="page-toolbar">
 
-          <div>
+/* =========================================================
+   MAIN
+   ========================================================= */
 
-            <div class="page-kicker">
-              BUSINESS ANALYTICS
-            </div>
+.main-content {
 
-            <h2>
-              Hesabatlar
-            </h2>
+  min-width: 0;
 
-            <p>
-              Satış, gəlir, xərc və mənfəət analitikası
-            </p>
+  flex: 1;
 
-          </div>
+  padding: 0 38px 50px;
 
+}
 
-          <button
-            id="refreshReportsBtn"
-            class="secondary-btn"
-          >
-            ↻ Yenilə
-          </button>
 
-        </div>
+.topbar {
 
+  height: 92px;
 
-        <div class="stats-grid">
+  display: flex;
 
-          <div class="stat-card">
+  align-items: center;
 
-            <div class="stat-icon sale">
-              ↗
-            </div>
+  justify-content: space-between;
 
-            <span>
-              Ümumi gəlir
-            </span>
+  border-bottom: 1px solid rgba(231,234,240,.7);
 
-            <strong id="reportRevenue">
-              0 ₼
-            </strong>
+  margin-bottom: 34px;
 
-          </div>
+}
 
 
-          <div class="stat-card">
+.breadcrumb {
 
-            <div class="stat-icon money">
-              ₼
-            </div>
+  font-size: 9px;
 
-            <span>
-              Ümumi xərc
-            </span>
+  color: var(--text-light);
 
-            <strong id="reportExpenses">
-              0 ₼
-            </strong>
+  margin-bottom: 4px;
 
-          </div>
+}
 
 
-          <div class="stat-card">
+.breadcrumb span {
 
-            <div class="stat-icon profit">
-              ◆
-            </div>
+  padding: 0 5px;
 
-            <span>
-              Ümumi mənfəət
-            </span>
+}
 
-            <strong id="reportProfit">
-              0 ₼
-            </strong>
 
-          </div>
+.page-heading h1 {
 
+  font-size: 22px;
 
-          <div class="stat-card">
+  letter-spacing: -.7px;
 
-            <div class="stat-icon">
-              #
-            </div>
+}
 
-            <span>
-              Satış sayı
-            </span>
 
-            <strong id="reportSalesCount">
-              0
-            </strong>
+.page-heading > span {
 
-          </div>
+  color: var(--text-light);
 
-        </div>
+  font-size: 9px;
 
+}
 
-        <div class="dashboard-grid">
 
-          <div class="panel large-panel">
+.topbar-actions {
 
-            <div class="panel-header">
+  display: flex;
 
-              <div>
+  align-items: center;
 
-                <h3>
-                  Satış analitikası
-                </h3>
+  gap: 18px;
 
-                <p>
-                  Satış göstəricilərinin təhlili
-                </p>
+}
 
-              </div>
 
-            </div>
+.icon-btn {
 
+  width: 39px;
 
-            <div
-              id="reportChart"
-              class="chart-area"
-            >
-              Hesabat qrafiki
-            </div>
+  height: 39px;
 
-          </div>
+  border: 1px solid var(--border);
 
+  border-radius: 11px;
 
-          <div class="panel">
+  background: white;
 
-            <div class="panel-header">
+  color: #687386;
 
-              <div>
+  position: relative;
 
-                <h3>
-                  Kateqoriyalar
-                </h3>
+}
 
-                <p>
-                  Məhsul bölgüsü
-                </p>
 
-              </div>
+.notification-dot {
 
-            </div>
+  position: absolute;
 
+  width: 5px;
 
-            <div id="categoryReport">
-              Məlumat yoxdur
-            </div>
+  height: 5px;
 
-          </div>
+  background: var(--danger);
 
-        </div>
+  border-radius: 50%;
 
-      </section>
+  top: 9px;
 
+  right: 10px;
 
+}
 
-      <!-- =====================================================
-           SETTINGS
-      ====================================================== -->
 
-      <section
-        id="settingsPage"
-        class="content-page"
-      >
+.admin-profile {
 
-        <div class="page-toolbar">
+  display: flex;
 
-          <div>
+  align-items: center;
 
-            <div class="page-kicker">
-              SYSTEM
-            </div>
+  gap: 10px;
 
-            <h2>
-              Parametrlər
-            </h2>
+  padding-left: 18px;
 
-            <p>
-              ONCOMP sistem ayarları
-            </p>
+  border-left: 1px solid var(--border);
 
-          </div>
+}
 
-        </div>
 
+.avatar {
 
-        <div class="settings-grid">
+  width: 37px;
 
-          <div class="panel">
+  height: 37px;
 
-            <div class="panel-header">
+  border-radius: 12px;
 
-              <div>
+  display: flex;
 
-                <h3>
-                  Şirkət məlumatları
-                </h3>
+  align-items: center;
 
-                <p>
-                  Sistem daxilində istifadə olunan məlumatlar
-                </p>
+  justify-content: center;
 
-              </div>
+  background:
+    linear-gradient(
+      135deg,
+      #e8edff,
+      #d6defc
+    );
 
-            </div>
+  color: var(--primary);
 
+  font-weight: 800;
 
-            <div class="form-grid">
+  font-size: 12px;
 
-              <div class="form-group">
+}
 
-                <label>
-                  Şirkət adı
-                </label>
 
-                <input
-                  id="companyName"
-                  value="ONCOMP"
-                >
+.admin-info strong {
 
-              </div>
+  display: block;
 
+  font-size: 11px;
 
-              <div class="form-group">
+}
 
-                <label>
-                  E-poçt
-                </label>
 
-                <input
-                  id="companyEmail"
-                  placeholder="info@oncomp.az"
-                >
+.admin-info small {
 
-              </div>
+  display: block;
 
+  color: var(--text-light);
 
-              <div class="form-group">
+  font-size: 9px;
 
-                <label>
-                  Telefon
-                </label>
+  margin-top: 2px;
 
-                <input
-                  id="companyPhone"
-                  placeholder="+994"
-                >
+}
 
-              </div>
 
+.profile-arrow {
 
-              <div class="form-group">
+  color: var(--text-light);
 
-                <label>
-                  Ünvan
-                </label>
+  font-size: 13px;
 
-                <input
-                  id="companyAddress"
-                  placeholder="Azərbaycan"
-                >
+  margin-left: 4px;
 
-              </div>
+}
 
-            </div>
 
 
-            <button
-              id="saveSettingsBtn"
-              class="primary-btn"
-            >
-              Yadda saxla
-            </button>
+/* =========================================================
+   PAGES
+   ========================================================= */
 
-          </div>
+.content-page {
 
+  display: none;
 
+}
 
-          <div class="panel">
 
-            <div class="panel-header">
+.content-page.active-page {
 
-              <div>
+  display: block;
 
-                <h3>
-                  Sistem
-                </h3>
+}
 
-                <p>
-                  Texniki vəziyyət
-                </p>
 
-              </div>
+.dashboard-hero {
 
-            </div>
+  min-height: 285px;
 
+  border-radius: var(--radius-lg);
 
-            <div class="system-info">
+  background:
+    linear-gradient(
+      110deg,
+      #ffffff 0%,
+      #f7f9ff 65%,
+      #eef2ff 100%
+    );
 
-              <div>
-                <span>Frontend</span>
-                <strong>ONCOMP</strong>
-              </div>
+  border: 1px solid #e8ebf5;
 
-              <div>
-                <span>Database</span>
-                <strong>Supabase</strong>
-              </div>
+  display: flex;
 
-              <div>
-                <span>Status</span>
-                <strong class="online">Aktiv</strong>
-              </div>
+  align-items: center;
 
-            </div>
+  overflow: hidden;
 
-          </div>
+  position: relative;
 
-        </div>
+  margin-bottom: 36px;
 
-      </section>
+}
 
-    </main>
 
-  </section>
+.hero-copy {
 
+  width: 55%;
 
+  padding: 40px 0 40px 42px;
 
-  <!-- =========================================================
-       MODAL
-  ========================================================== -->
+  position: relative;
 
-  <div
-    id="modalOverlay"
-    class="modal-overlay hidden"
-  >
+  z-index: 3;
 
-    <div class="modal">
+}
 
-      <div class="modal-header">
 
-        <div>
+.hero-badge {
 
-          <div class="modal-kicker">
-            ONCOMP
-          </div>
+  display: inline-flex;
 
-          <h2 id="modalTitle">
-            Yeni məlumat
-          </h2>
+  align-items: center;
 
-          <p id="modalDescription">
-            Məlumatları daxil edin.
-          </p>
+  gap: 7px;
 
-        </div>
+  font-size: 9px;
 
+  font-weight: 800;
 
-        <button
-          id="closeModalBtn"
-          class="modal-close"
-        >
-          ×
-        </button>
+  color: var(--primary);
 
-      </div>
+  letter-spacing: 1px;
 
+  margin-bottom: 13px;
 
-      <div id="modalBody"></div>
+}
 
-    </div>
 
-  </div>
+.hero-badge span {
 
+  width: 6px;
 
+  height: 6px;
 
-  <!-- =========================================================
-       TOAST
-  ========================================================== -->
+  background: var(--primary);
 
-  <div
-    id="toast"
-    class="toast hidden"
-  >
+  border-radius: 50%;
 
-    <span id="toastMessage"></span>
+}
 
-  </div>
 
+.hero-copy h2 {
 
+  max-width: 500px;
 
-  <script src="app.js"></script>
+  font-size: 34px;
 
-</body>
-</html>
+  letter-spacing: -1.7px;
+
+  line-height: 1.15;
+
+}
+
+
+.hero-copy h2 strong {
+
+  color: var(--primary);
+
+}
+
+
+.hero-copy p {
+
+  color: var(--text-soft);
+
+  font-size: 12px;
+
+  line-height: 1.7;
+
+  max-width: 440px;
+
+  margin: 13px 0 22px;
+
+}
+
+
+.hero-actions {
+
+  display: flex;
+
+  gap: 10px;
+
+}
+
+
+.primary-btn {
+
+  height: 43px;
+
+  padding: 0 17px;
+
+  border-radius: 11px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #4770ff,
+      #315bea
+    );
+
+  color: white;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  box-shadow:
+    0 9px 22px rgba(49,91,234,.18);
+
+  transition: .2s;
+
+}
+
+
+.primary-btn:hover {
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 13px 25px rgba(49,91,234,.23);
+
+}
+
+
+.hero-btn {
+
+  display: flex;
+
+  gap: 7px;
+
+  align-items: center;
+
+}
+
+
+.secondary-btn {
+
+  height: 43px;
+
+  padding: 0 17px;
+
+  border-radius: 11px;
+
+  background: white;
+
+  border: 1px solid var(--border);
+
+  color: #5f6b7d;
+
+  font-size: 11px;
+
+  font-weight: 600;
+
+}
+
+
+
+/* =========================================================
+   3D HERO DEVICE
+   ========================================================= */
+
+.hero-visual {
+
+  position: absolute;
+
+  right: 0;
+
+  top: 0;
+
+  width: 48%;
+
+  height: 100%;
+
+}
+
+
+.visual-glow {
+
+  position: absolute;
+
+  width: 280px;
+
+  height: 280px;
+
+  border-radius: 50%;
+
+  background: rgba(49,91,234,.09);
+
+  filter: blur(20px);
+
+  top: 10px;
+
+  right: 90px;
+
+}
+
+
+.product-scene {
+
+  position: absolute;
+
+  width: 430px;
+
+  height: 270px;
+
+  right: 25px;
+
+  top: 15px;
+
+  transform-style: preserve-3d;
+
+  transform:
+    perspective(1000px)
+    rotateY(-8deg);
+
+}
+
+
+.scene-laptop {
+
+  position: absolute;
+
+  width: 320px;
+
+  left: 70px;
+
+  bottom: 25px;
+
+  transform:
+    rotateY(-12deg)
+    rotateX(5deg)
+    rotateZ(-1deg);
+
+  z-index: 2;
+
+}
+
+
+.laptop-display {
+
+  height: 185px;
+
+  background: #182236;
+
+  border: 8px solid #263145;
+
+  border-radius: 15px;
+
+  box-shadow:
+    20px 25px 35px rgba(25,35,60,.22);
+
+  padding: 14px;
+
+}
+
+
+.camera {
+
+  width: 5px;
+
+  height: 5px;
+
+  background: #8691a3;
+
+  border-radius: 50%;
+
+  position: absolute;
+
+  top: 11px;
+
+  left: 50%;
+
+}
+
+
+.dashboard-mini {
+
+  height: 100%;
+
+  border-radius: 7px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f8faff,
+      #edf1ff
+    );
+
+  padding: 12px;
+
+}
+
+
+.mini-top {
+
+  width: 55%;
+
+  height: 8px;
+
+  background: #cad4f8;
+
+  border-radius: 4px;
+
+}
+
+
+.mini-cards {
+
+  display: flex;
+
+  gap: 6px;
+
+  margin-top: 14px;
+
+}
+
+
+.mini-cards i {
+
+  width: 55px;
+
+  height: 28px;
+
+  background: white;
+
+  border-radius: 5px;
+
+  box-shadow: 0 4px 9px rgba(50,70,110,.08);
+
+}
+
+
+.mini-chart {
+
+  height: 75px;
+
+  display: flex;
+
+  align-items: end;
+
+  gap: 8px;
+
+  padding: 10px 20px;
+
+  margin-top: 9px;
+
+}
+
+
+.mini-chart b {
+
+  display: block;
+
+  width: 18px;
+
+  border-radius: 4px 4px 0 0;
+
+  background: #6f8cff;
+
+}
+
+
+.mini-chart b:nth-child(1) { height: 35%; }
+.mini-chart b:nth-child(2) { height: 55%; }
+.mini-chart b:nth-child(3) { height: 45%; }
+.mini-chart b:nth-child(4) { height: 75%; }
+.mini-chart b:nth-child(5) { height: 92%; }
+
+
+.laptop-keyboard {
+
+  width: 360px;
+
+  height: 17px;
+
+  margin-left: -20px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #9ca7b9,
+      #e2e6ec,
+      #9ca7b9
+    );
+
+  border-radius: 0 0 14px 14px;
+
+  box-shadow:
+    0 18px 25px rgba(30,42,70,.15);
+
+}
+
+
+.scene-tablet {
+
+  position: absolute;
+
+  width: 115px;
+
+  height: 165px;
+
+  left: 10px;
+
+  bottom: 20px;
+
+  transform:
+    rotateY(18deg)
+    rotateZ(-8deg);
+
+  z-index: 3;
+
+}
+
+
+.tablet-frame {
+
+  width: 100%;
+
+  height: 100%;
+
+  padding: 7px;
+
+  border-radius: 18px;
+
+  background: #222c40;
+
+  box-shadow:
+    15px 22px 30px rgba(30,42,70,.2);
+
+}
+
+
+.tablet-camera {
+
+  width: 5px;
+
+  height: 5px;
+
+  background: #8f99aa;
+
+  border-radius: 50%;
+
+  margin: 4px auto 5px;
+
+}
+
+
+.tablet-display {
+
+  height: calc(100% - 17px);
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f8faff,
+      #dfe6ff
+    );
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  flex-direction: column;
+
+}
+
+
+.display-logo {
+
+  width: 36px;
+
+  height: 36px;
+
+  border-radius: 10px;
+
+  background: white;
+
+  color: var(--primary);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-weight: 800;
+
+  font-size: 11px;
+
+  box-shadow: 0 6px 15px rgba(40,60,120,.1);
+
+}
+
+
+.display-line {
+
+  width: 35px;
+
+  height: 3px;
+
+  background: #b7c3eb;
+
+  margin: 10px 0 7px;
+
+  border-radius: 3px;
+
+}
+
+
+.tablet-display span {
+
+  font-size: 8px;
+
+  font-weight: 800;
+
+  color: #5d6a85;
+
+  letter-spacing: 1px;
+
+}
+
+
+
+/* =========================================================
+   SECTION
+   ========================================================= */
+
+.section-heading {
+
+  display: flex;
+
+  align-items: end;
+
+  justify-content: space-between;
+
+  margin-bottom: 15px;
+
+}
+
+
+.section-heading span {
+
+  display: block;
+
+  color: var(--text-light);
+
+  font-size: 8px;
+
+  font-weight: 800;
+
+  letter-spacing: 1px;
+
+}
+
+
+.section-heading h3 {
+
+  font-size: 17px;
+
+  margin-top: 3px;
+
+  letter-spacing: -.4px;
+
+}
+
+
+.live-indicator {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  color: var(--success);
+
+  font-size: 9px;
+
+  font-weight: 600;
+
+}
+
+
+.live-indicator span {
+
+  width: 6px;
+
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: var(--success);
+
+}
+
+
+
+/* =========================================================
+   STATS
+   ========================================================= */
+
+.stats-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
+  gap: 15px;
+
+  margin-bottom: 22px;
+
+}
+
+
+.stat-card {
+
+  background: white;
+
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius);
+
+  padding: 19px;
+
+  box-shadow: var(--shadow-sm);
+
+  transition: .25s;
+
+}
+
+
+.stat-card:hover {
+
+  transform: translateY(-3px);
+
+  box-shadow: var(--shadow);
+
+}
+
+
+.stat-top {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin-bottom: 17px;
+
+}
+
+
+.stat-icon {
+
+  width: 38px;
+
+  height: 38px;
+
+  border-radius: 11px;
+
+  background: #f0f3ff;
+
+  color: var(--primary);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+}
+
+
+.stat-icon.money {
+
+  background: #edf9f4;
+
+  color: var(--success);
+
+}
+
+
+.stat-icon.sale {
+
+  background: #fff5e6;
+
+  color: #e88c00;
+
+}
+
+
+.stat-icon.profit {
+
+  background: #f2edff;
+
+  color: #7954db;
+
+}
+
+
+.stat-trend {
+
+  color: #9aa3b2;
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+}
+
+
+.stat-trend.positive {
+
+  color: var(--success);
+
+}
+
+
+.stat-label {
+
+  display: block;
+
+  color: var(--text-soft);
+
+  font-size: 10px;
+
+  margin-bottom: 5px;
+
+}
+
+
+.stat-card > strong {
+
+  display: block;
+
+  font-size: 23px;
+
+  letter-spacing: -.9px;
+
+}
+
+
+.stat-footer {
+
+  color: #a4acb9;
+
+  font-size: 8px;
+
+  margin-top: 8px;
+
+}
+
+
+.stat-card.highlight {
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f5f7ff
+    );
+
+  border-color: #dfe5ff;
+
+}
+
+
+
+/* =========================================================
+   PANELS
+   ========================================================= */
+
+.dashboard-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    1.7fr 1fr;
+
+  gap: 17px;
+
+  margin-bottom: 22px;
+
+}
+
+
+.panel {
+
+  background: white;
+
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius);
+
+  box-shadow: var(--shadow-sm);
+
+  overflow: hidden;
+
+}
+
+
+.panel.large-panel {
+
+  min-width: 0;
+
+}
+
+
+.panel-header {
+
+  padding: 20px 21px 14px;
+
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+}
+
+
+.panel-eyebrow {
+
+  display: block;
+
+  color: #a1aaba;
+
+  font-size: 7px;
+
+  font-weight: 800;
+
+  letter-spacing: 1px;
+
+  margin-bottom: 4px;
+
+}
+
+
+.panel-header h3 {
+
+  font-size: 14px;
+
+  letter-spacing: -.3px;
+
+}
+
+
+.panel-header p {
+
+  color: var(--text-light);
+
+  font-size: 9px;
+
+  margin-top: 4px;
+
+}
+
+
+.panel-header select {
+
+  height: 34px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 9px;
+
+  background: #fafbfe;
+
+  padding: 0 10px;
+
+  color: #667085;
+
+  font-size: 9px;
+
+  outline: none;
+
+}
+
+
+.panel-more {
+
+  color: #a0a8b7;
+
+  font-size: 13px;
+
+}
+
+
+
+/* =========================================================
+   CHART
+   ========================================================= */
+
+.chart-wrapper {
+
+  height: 220px;
+
+  display: flex;
+
+  padding: 10px 20px 20px;
+
+}
+
+
+.chart-y-axis {
+
+  width: 35px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: space-between;
+
+  padding-bottom: 5px;
+
+  color: #a7afbd;
+
+  font-size: 8px;
+
+}
+
+
+.chart-area {
+
+  flex: 1;
+
+  min-width: 0;
+
+  min-height: 180px;
+
+  position: relative;
+
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 39px,
+      #f0f2f6 40px
+    );
+
+  border-bottom: 1px solid #e8ebf0;
+
+}
+
+
+.empty-chart {
+
+  height: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  color: var(--text-light);
+
+  text-align: center;
+
+}
+
+
+.empty-chart-icon {
+
+  width: 38px;
+
+  height: 38px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background: var(--primary-soft);
+
+  color: var(--primary);
+
+  border-radius: 12px;
+
+  margin-bottom: 8px;
+
+}
+
+
+.empty-chart strong {
+
+  font-size: 10px;
+
+  color: #778193;
+
+}
+
+
+.empty-chart span {
+
+  font-size: 8px;
+
+  margin-top: 5px;
+
+}
+
+
+
+/* =========================================================
+   STOCK
+   ========================================================= */
+
+.stock-panel {
+
+  min-height: 320px;
+
+}
+
+
+.stock-ring {
+
+  width: 125px;
+
+  height: 125px;
+
+  border-radius: 50%;
+
+  margin: 7px auto 17px;
+
+  background:
+    conic-gradient(
+      var(--primary) 0deg,
+      #dfe5ff 0deg
+    );
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  position: relative;
+
+}
+
+
+.stock-ring::after {
+
+  content: "";
+
+  position: absolute;
+
+  inset: 8px;
+
+  background: white;
+
+  border-radius: 50%;
+
+}
+
+
+.ring-inner {
+
+  position: relative;
+
+  z-index: 2;
+
+  text-align: center;
+
+}
+
+
+.ring-inner strong {
+
+  display: block;
+
+  font-size: 25px;
+
+}
+
+
+.ring-inner span {
+
+  color: var(--text-light);
+
+  font-size: 8px;
+
+}
+
+
+.stock-summary {
+
+  padding: 0 20px 18px;
+
+}
+
+
+.stock-row {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 11px 0;
+
+  border-top: 1px solid #f0f1f4;
+
+}
+
+
+.stock-row > div {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+}
+
+
+.stock-row span {
+
+  color: var(--text-soft);
+
+  font-size: 9px;
+
+}
+
+
+.stock-row strong {
+
+  font-size: 11px;
+
+}
+
+
+.stock-dot {
+
+  width: 7px;
+
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: var(--primary);
+
+}
+
+
+.stock-dot.critical {
+
+  background: var(--warning);
+
+}
+
+
+.stock-dot.sold {
+
+  background: var(--success);
+
+}
+
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.recent-sales-panel {
+
+  margin-bottom: 20px;
+
+}
+
+
+.table-wrapper {
+
+  width: 100%;
+
+  overflow-x: auto;
+
+}
+
+
+table {
+
+  width: 100%;
+
+  border-collapse: collapse;
+
+}
+
+
+thead th {
+
+  text-align: left;
+
+  color: #9aa3b2;
+
+  background: #fafbfc;
+
+  font-size: 8px;
+
+  text-transform: uppercase;
+
+  letter-spacing: .4px;
+
+  font-weight: 700;
+
+  padding: 12px 20px;
+
+  border-top: 1px solid #f0f1f4;
+
+  border-bottom: 1px solid #f0f1f4;
+
+}
+
+
+tbody td {
+
+  padding: 14px 20px;
+
+  border-bottom: 1px solid #f0f1f4;
+
+  font-size: 10px;
+
+  color: #596579;
+
+}
+
+
+tbody tr:last-child td {
+
+  border-bottom: 0;
+
+}
+
+
+tbody tr:hover {
+
+  background: #fbfcff;
+
+}
+
+
+.empty-state {
+
+  height: 150px;
+
+  text-align: center !important;
+
+  color: var(--text-light) !important;
+
+}
+
+
+.empty-icon {
+
+  width: 34px;
+
+  height: 34px;
+
+  background: #f1f4ff;
+
+  color: var(--primary);
+
+  border-radius: 10px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  margin: 0 auto 8px;
+
+}
+
+
+.empty-state strong {
+
+  display: block;
+
+  font-size: 10px;
+
+  color: #7a8494;
+
+}
+
+
+.empty-state span {
+
+  display: block;
+
+  font-size: 8px;
+
+  margin-top: 4px;
+
+}
+
+
+
+/* =========================================================
+   PAGE TOOLBAR
+   ========================================================= */
+
+.page-toolbar {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: end;
+
+  margin-bottom: 23px;
+
+}
+
+
+.page-kicker {
+
+  color: var(--primary);
+
+  font-size: 8px;
+
+  font-weight: 800;
+
+  letter-spacing: 1px;
+
+  margin-bottom: 6px;
+
+}
+
+
+.page-toolbar h2 {
+
+  font-size: 24px;
+
+  letter-spacing: -.8px;
+
+}
+
+
+.page-toolbar p {
+
+  color: var(--text-soft);
+
+  font-size: 10px;
+
+  margin-top: 5px;
+
+}
+
+
+.text-btn {
+
+  background: transparent;
+
+  color: var(--primary);
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+}
+
+
+
+/* =========================================================
+   FILTERS
+   ========================================================= */
+
+.filter-bar {
+
+  display: flex;
+
+  gap: 10px;
+
+  margin-bottom: 17px;
+
+}
+
+
+.search-box {
+
+  position: relative;
+
+  flex: 1;
+
+}
+
+
+.search-box > span {
+
+  position: absolute;
+
+  left: 13px;
+
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: #99a2b2;
+
+}
+
+
+.search-box input {
+
+  width: 100%;
+
+  height: 42px;
+
+  padding-left: 35px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 11px;
+
+  outline: none;
+
+  background: white;
+
+  font-size: 10px;
+
+}
+
+
+.filter-bar select {
+
+  height: 42px;
+
+  min-width: 160px;
+
+  padding: 0 12px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 11px;
+
+  background: white;
+
+  color: #667085;
+
+  font-size: 10px;
+
+  outline: none;
+
+}
+
+
+
+/* =========================================================
+   INVENTORY
+   ========================================================= */
+
+.inventory-list {
+
+  padding: 20px;
+
+}
+
+
+
+/* =========================================================
+   SETTINGS
+   ========================================================= */
+
+.settings-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    1.5fr 1fr;
+
+  gap: 18px;
+
+}
+
+
+.form-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
+  gap: 15px;
+
+  padding: 5px 20px 20px;
+
+}
+
+
+.form-group label {
+
+  display: block;
+
+  font-size: 9px;
+
+  font-weight: 700;
+
+  margin-bottom: 7px;
+
+}
+
+
+.form-group input {
+
+  width: 100%;
+
+  height: 42px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 10px;
+
+  padding: 0 12px;
+
+  outline: none;
+
+  font-size: 10px;
+
+  color: var(--text);
+
+}
+
+
+.form-group input:focus {
+
+  border-color: var(--primary);
+
+  box-shadow:
+    0 0 0 3px rgba(49,91,234,.06);
+
+}
+
+
+.settings-grid > .panel > .primary-btn {
+
+  margin: 0 20px 20px;
+
+}
+
+
+.system-info {
+
+  padding: 5px 20px 20px;
+
+}
+
+
+.system-info > div {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 15px 0;
+
+  border-bottom: 1px solid #f0f1f4;
+
+}
+
+
+.system-info span {
+
+  color: var(--text-soft);
+
+  font-size: 10px;
+
+}
+
+
+.system-info strong {
+
+  font-size: 10px;
+
+}
+
+
+.system-info .online {
+
+  color: var(--success);
+
+}
+
+
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+.modal-overlay {
+
+  position: fixed;
+
+  inset: 0;
+
+  background: rgba(18,27,44,.42);
+
+  backdrop-filter: blur(8px);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  z-index: 1000;
+
+  padding: 20px;
+
+}
+
+
+.modal {
+
+  width: min(600px, 100%);
+
+  max-height: 90vh;
+
+  overflow-y: auto;
+
+  background: white;
+
+  border-radius: 22px;
+
+  box-shadow: var(--shadow-lg);
+
+  border: 1px solid rgba(255,255,255,.7);
+
+}
+
+
+.modal-header {
+
+  padding: 23px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: flex-start;
+
+  border-bottom: 1px solid var(--border);
+
+}
+
+
+.modal-kicker {
+
+  color: var(--primary);
+
+  font-size: 8px;
+
+  font-weight: 800;
+
+  letter-spacing: 1px;
+
+  margin-bottom: 5px;
+
+}
+
+
+.modal-header h2 {
+
+  font-size: 18px;
+
+}
+
+
+.modal-header p {
+
+  color: var(--text-soft);
+
+  font-size: 9px;
+
+  margin-top: 4px;
+
+}
+
+
+.modal-close {
+
+  width: 34px;
+
+  height: 34px;
+
+  border-radius: 9px;
+
+  background: #f5f6f8;
+
+  color: #778193;
+
+  font-size: 20px;
+
+}
+
+
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+
+.toast {
+
+  position: fixed;
+
+  bottom: 25px;
+
+  right: 25px;
+
+  min-width: 250px;
+
+  padding: 14px 17px;
+
+  border-radius: 13px;
+
+  background: #182236;
+
+  color: white;
+
+  font-size: 10px;
+
+  box-shadow: var(--shadow-lg);
+
+  z-index: 2000;
+
+}
+
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+  .main-content {
+    padding-left: 25px;
+    padding-right: 25px;
+  }
+
+  .hero-visual {
+    opacity: .55;
+  }
+
+  .stats-grid {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+}
+
+
+@media (max-width: 900px) {
+
+  .sidebar {
+    width: 78px;
+    padding: 20px 10px;
+  }
+
+  .brand-text,
+  .sidebar-label,
+  .nav-item label,
+  .sidebar-system-card div,
+  .sidebar-system-card .online-dot {
+    display: none;
+  }
+
+  .sidebar-brand {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .nav-item {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .sidebar-system-card {
+    justify-content: center;
+  }
+
+  .logout-btn {
+    justify-content: center;
+  }
+
+  .hero-copy {
+    width: 70%;
+    padding-left: 30px;
+  }
+
+  .hero-visual {
+    opacity: .35;
+  }
+
+  .dashboard-grid,
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+@media (max-width: 650px) {
+
+  .sidebar {
+    display: none;
+  }
+
+  .main-content {
+    padding: 0 15px 30px;
+  }
+
+  .topbar {
+    height: 75px;
+  }
+
+  .admin-info,
+  .profile-arrow {
+    display: none;
+  }
+
+  .admin-profile {
+    border-left: 0;
+    padding-left: 0;
+  }
+
+  .dashboard-hero {
+    min-height: 420px;
+  }
+
+  .hero-copy {
+    width: 100%;
+    align-self: flex-start;
+    padding: 30px 25px;
+  }
+
+  .hero-copy h2 {
+    font-size: 29px;
+  }
+
+  .hero-visual {
+    width: 100%;
+    top: 170px;
+    right: -50px;
+    opacity: .8;
+    transform: scale(.75);
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-bar {
+    flex-direction: column;
+  }
+
+  .filter-bar select {
+    width: 100%;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-toolbar {
+    align-items: flex-start;
+    gap: 15px;
+    flex-direction: column;
+  }
+
+}
+
+
+
+/* =========================================================
+   MICRO ANIMATIONS
+   ========================================================= */
+
+@keyframes floatDevice {
+
+  0% {
+    transform:
+      perspective(900px)
+      rotateY(-18deg)
+      rotateX(8deg)
+      rotateZ(4deg)
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      perspective(900px)
+      rotateY(-18deg)
+      rotateX(8deg)
+      rotateZ(4deg)
+      translateY(-8px);
+  }
+
+  100% {
+    transform:
+      perspective(900px)
+      rotateY(-18deg)
+      rotateX(8deg)
+      rotateZ(4deg)
+      translateY(0);
+  }
+
+}
+
+
+.device-laptop {
+
+  animation:
+    floatDevice 6s ease-in-out infinite;
+
+}
+
+
+@keyframes pulse {
+
+  0% {
+    opacity: .5;
+    transform: scale(.95);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: .5;
+    transform: scale(.95);
+  }
+
+}
+
+
+.pulse-dot {
+
+  animation:
+    pulse 2s infinite;
+
+}
