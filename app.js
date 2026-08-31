@@ -1,43 +1,27 @@
 /* =========================================================
-   ONCOMP — ELEKTRON UÇOT SİSTEMİ
-   PREMIUM VERSION
-   Supabase + Vanilla JS
+   ONCOMP — Elektron Uçot Sistemi
+   AUTH + DASHBOARD + PRODUCTS + SALES + CUSTOMERS
+   INVENTORY + EXPENSES + REPORTS
    ========================================================= */
 
-const SUPABASE_URL =
-  "https://frnbduzaiuitpxgvvzwq.supabase.co";
+const SUPABASE_URL = "https://frnbduzaiuitpxgvvzwq.supabase.co";
+const SUPABASE_KEY = "sb_publishable_LyQAUsn6sYJlxVzL5gNDNQ_PHQEH8mO";
 
-const SUPABASE_KEY =
-  "sb_publishable_LyQAUsn6sYJlxVzL5gNDNQ_PHQEH8mO";
-
-const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 /* =========================================================
-   ELEMENTS
+   GLOBAL
    ========================================================= */
-
-const loginPage = document.getElementById("loginPage");
-const appPage = document.getElementById("appPage");
-const loginForm = document.getElementById("loginForm");
-const loginMessage = document.getElementById("loginMessage");
-const logoutBtn = document.getElementById("logoutBtn");
 
 let products = [];
 let customers = [];
 let sales = [];
 let expenses = [];
 
-/* =========================================================
-   HELPERS
-   ========================================================= */
-
-function $(id) {
-  return document.getElementById(id);
-}
+const $ = id => document.getElementById(id);
 
 function money(value) {
   return Number(value || 0).toLocaleString("az-AZ", {
@@ -55,18 +39,6 @@ function escapeHTML(value) {
     .replaceAll("'", "&#039;");
 }
 
-function todayISO() {
-  const d = new Date();
-
-  const year = d.getFullYear();
-  const month =
-    String(d.getMonth() + 1).padStart(2, "0");
-  const day =
-    String(d.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-}
-
 function showToast(message) {
   const toast = $("toast");
   const text = $("toastMessage");
@@ -82,8 +54,14 @@ function showToast(message) {
 }
 
 /* =========================================================
-   AUTH
+   AUTH — BU HİSSƏYƏ TOXUNULMUR
    ========================================================= */
+
+const loginPage = $("loginPage");
+const appPage = $("appPage");
+const loginForm = $("loginForm");
+const loginMessage = $("loginMessage");
+const logoutBtn = $("logoutBtn");
 
 function showLogin() {
   loginPage?.classList.remove("hidden");
@@ -103,11 +81,8 @@ function showMessage(message, type = "error") {
 }
 
 async function checkSession() {
-
-  const {
-    data,
-    error
-  } = await supabaseClient.auth.getSession();
+  const { data, error } =
+    await supabaseClient.auth.getSession();
 
   if (error) {
     console.error(error);
@@ -115,119 +90,86 @@ async function checkSession() {
     return;
   }
 
-  if (data?.session) {
-
+  if (data.session) {
     showApp();
-
     await loadAll();
-
   } else {
-
     showLogin();
-
   }
 }
 
-loginForm?.addEventListener(
-  "submit",
-  async event => {
+loginForm?.addEventListener("submit", async event => {
+  event.preventDefault();
 
-    event.preventDefault();
+  const email =
+    $("loginEmail")?.value.trim();
 
-    const email =
-      $("loginEmail")?.value.trim();
+  const password =
+    $("loginPassword")?.value;
 
-    const password =
-      $("loginPassword")?.value;
-
-    if (!email || !password) {
-
-      showMessage(
-        "E-poçt və şifrə daxil edin."
-      );
-
-      return;
-    }
-
-    const button =
-      loginForm.querySelector("button");
-
-    if (button) {
-      button.disabled = true;
-      button.textContent = "Daxil olunur...";
-    }
-
-    showMessage("");
-
-    const {
-      data,
-      error
-    } =
-      await supabaseClient.auth.signInWithPassword({
-        email,
-        password
-      });
-
-    if (button) {
-      button.disabled = false;
-      button.textContent = "Daxil ol";
-    }
-
-    if (error) {
-
-      console.error(error);
-
-      showMessage(
-        "E-poçt və ya şifrə yanlışdır."
-      );
-
-      return;
-    }
-
-    if (data?.session) {
-
-      showApp();
-
-      showMessage(
-        "Uğurla daxil oldunuz.",
-        "success"
-      );
-
-      await loadAll();
-    }
-
+  if (!email || !password) {
+    showMessage("E-poçt və şifrə daxil edin.");
+    return;
   }
-);
+
+  const button =
+    loginForm.querySelector("button");
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Daxil olunur...";
+  }
+
+  showMessage("");
+
+  const { data, error } =
+    await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+
+  if (button) {
+    button.disabled = false;
+    button.textContent = "Daxil ol";
+  }
+
+  if (error) {
+    console.error(error);
+    showMessage(
+      "E-poçt və ya şifrə yanlışdır."
+    );
+    return;
+  }
+
+  if (data.session) {
+    showApp();
+    showMessage(
+      "Uğurla daxil oldunuz.",
+      "success"
+    );
+
+    await loadAll();
+  }
+});
 
 logoutBtn?.addEventListener(
   "click",
   async () => {
-
     await supabaseClient.auth.signOut();
 
     showLogin();
 
     loginForm?.reset();
-
   }
 );
 
-/*
-  Vacib:
-  Burada artıq loadDashboard() çağırmırıq.
-  Supabase auth callback daxilində başqa Supabase
-  sorğularını gözlətmirik.
-*/
-
 supabaseClient.auth.onAuthStateChange(
-  (_event, session) => {
-
+  async (_event, session) => {
     if (session) {
       showApp();
     } else {
       showLogin();
     }
-
   }
 );
 
@@ -242,7 +184,6 @@ const contentPages =
   document.querySelectorAll(".content-page");
 
 const pageTitles = {
-
   dashboard: "Dashboard",
   products: "Məhsullar",
   sales: "Satışlar",
@@ -251,7 +192,6 @@ const pageTitles = {
   expenses: "Xərclər",
   reports: "Hesabatlar",
   settings: "Parametrlər"
-
 };
 
 function openPage(pageName) {
@@ -265,19 +205,14 @@ function openPage(pageName) {
   });
 
   const targetPage =
-    document.getElementById(
-      `${pageName}Page`
-    );
+    $(`${pageName}Page`);
 
   const targetNav =
     document.querySelector(
       `.nav-item[data-page="${pageName}"]`
     );
 
-  targetPage?.classList.add(
-    "active-page"
-  );
-
+  targetPage?.classList.add("active-page");
   targetNav?.classList.add("active");
 
   if ($("pageTitle")) {
@@ -290,47 +225,26 @@ function openPage(pageName) {
     updateReports();
   }
 
-  if (pageName === "inventory") {
-    updateInventory();
+  if (pageName === "dashboard") {
+    updateDashboard();
   }
-
 }
 
 navItems.forEach(item => {
-
-  item.addEventListener(
-    "click",
-    () => {
-
-      const page =
-        item.dataset.page;
-
-      if (page) {
-        openPage(page);
-      }
-
-    }
-  );
-
+  item.addEventListener("click", () => {
+    openPage(item.dataset.page);
+  });
 });
 
 document
   .querySelectorAll("[data-page-action]")
   .forEach(button => {
 
-    button.addEventListener(
-      "click",
-      () => {
-
-        const page =
-          button.dataset.pageAction;
-
-        if (page) {
-          openPage(page);
-        }
-
-      }
-    );
+    button.addEventListener("click", () => {
+      openPage(
+        button.dataset.pageAction
+      );
+    });
 
   });
 
@@ -350,7 +264,6 @@ async function loadAll() {
   updateDashboard();
   updateInventory();
   updateReports();
-
 }
 
 /* =========================================================
@@ -359,55 +272,65 @@ async function loadAll() {
 
 async function loadProducts() {
 
-  const {
-    data,
-    error
-  } =
+  const { data, error } =
     await supabaseClient
       .from("products")
       .select("*")
-      .order(
-        "product_date",
-        { ascending: false }
-      );
+      .order("created_at", {
+        ascending: false
+      });
 
   if (error) {
-
-    console.error(
-      "Products:",
-      error
-    );
-
+    console.error(error);
     products = [];
-
   } else {
-
     products = data || [];
-
   }
 
   renderProducts();
   populateProductCategoryFilter();
+}
 
+function getProductPurchase(product) {
+  return Number(
+    product?.purchase_price ??
+    product?.buy_price ??
+    product?.cost ??
+    0
+  );
+}
+
+function getProductSale(product) {
+  return Number(
+    product?.sale_price ??
+    product?.selling_price ??
+    0
+  );
+}
+
+function getProductDate(product) {
+  return (
+    product.product_date ||
+    product.purchase_date ||
+    product.created_at
+  );
 }
 
 function renderProducts() {
 
-  const table =
-    $("productsTable");
+  const table = $("productsTable");
 
   if (!table) return;
 
   if (!products.length) {
-
     table.innerHTML = `
       <tr>
-        <td colspan="8" class="empty-state">
+        <td colspan="8"
+            class="empty-state">
           Məhsul yoxdur
         </td>
       </tr>
     `;
-
     return;
   }
 
@@ -415,24 +338,13 @@ function renderProducts() {
     products.map(product => {
 
       const purchase =
-        Number(
-          product.purchase_price ??
-          product.buy_price ??
-          product.cost ??
-          0
-        );
+        getProductPurchase(product);
 
       const sale =
-        Number(
-          product.sale_price ??
-          product.selling_price ??
-          0
-        );
+        getProductSale(product);
 
       const stock =
-        Number(
-          product.stock ?? 1
-        );
+        Number(product.stock ?? 1);
 
       const status =
         product.status === "sold" ||
@@ -451,7 +363,6 @@ function renderProducts() {
                 "Məhsul"
               )}
             </strong>
-
             <small>
               ${escapeHTML(
                 product.brand || ""
@@ -495,8 +406,7 @@ function renderProducts() {
           <td>
             <button
               class="text-btn"
-              onclick="deleteProduct('${product.id}')"
-            >
+              onclick="deleteProduct('${product.id}')">
               Sil
             </button>
           </td>
@@ -505,7 +415,6 @@ function renderProducts() {
       `;
 
     }).join("");
-
 }
 
 function populateProductCategoryFilter() {
@@ -528,70 +437,48 @@ function populateProductCategoryFilter() {
       Bütün kateqoriyalar
     </option>
 
-    ${categories.map(c => `
-      <option value="${escapeHTML(c)}">
-        ${escapeHTML(c)}
+    ${categories.map(category => `
+      <option value="${escapeHTML(category)}">
+        ${escapeHTML(category)}
       </option>
     `).join("")}
   `;
-
 }
 
 async function addProduct(formData) {
 
   const product = {
-
-    name:
-      formData.name,
-
-    brand:
-      formData.brand || null,
-
-    model:
-      formData.model || null,
-
-    category:
-      formData.category || null,
-
-    imei:
-      formData.imei || null,
-
+    name: formData.name,
+    brand: formData.brand || null,
+    model: formData.model || null,
+    category: formData.category || null,
+    imei: formData.imei || null,
     purchase_price:
-      Number(
-        formData.purchase_price || 0
-      ),
-
+      Number(formData.purchase_price || 0),
     sale_price:
-      Number(
-        formData.sale_price || 0
-      ),
-
+      Number(formData.sale_price || 0),
     stock:
-      Number(
-        formData.stock || 1
-      ),
-
-    status:
-      "active",
-
-    notes:
-      formData.notes || null,
-
-    product_date:
-      formData.product_date ||
-      todayISO()
-
+      Number(formData.stock || 1),
+    status: "active",
+    notes: formData.notes || null
   };
 
-  const {
-    error
-  } =
+  /*
+    Tarix sütunu bazada varsa istifadə edilir.
+    Yoxdursa created_at yenə avtomatik işləyəcək.
+  */
+
+  if (formData.product_date) {
+    product.product_date =
+      formData.product_date;
+  }
+
+  const { error } =
     await supabaseClient
       .from("products")
       .insert(product);
 
   if (error) {
-
     console.error(error);
 
     showToast(
@@ -602,51 +489,43 @@ async function addProduct(formData) {
     return false;
   }
 
-  showToast(
-    "Məhsul uğurla əlavə edildi."
-  );
+  showToast("Məhsul əlavə edildi");
 
   await loadProducts();
   updateDashboard();
+  updateInventory();
+  updateReports();
 
   return true;
 }
 
 async function deleteProduct(id) {
 
-  if (
-    !confirm(
-      "Bu məhsulu silmək istəyirsiniz?"
-    )
-  ) return;
+  if (!confirm(
+    "Bu məhsulu silmək istəyirsiniz?"
+  )) return;
 
-  const {
-    error
-  } =
+  const { error } =
     await supabaseClient
       .from("products")
       .delete()
       .eq("id", id);
 
   if (error) {
-
     showToast(
       "Məhsul silinmədi: " +
       error.message
     );
-
     return;
   }
 
-  showToast(
-    "Məhsul silindi."
-  );
+  showToast("Məhsul silindi");
 
   await loadProducts();
 
   updateDashboard();
   updateInventory();
-
+  updateReports();
 }
 
 /* =========================================================
@@ -655,32 +534,31 @@ async function deleteProduct(id) {
 
 async function loadCustomers() {
 
-  const {
-    data,
-    error
-  } =
+  const { data, error } =
     await supabaseClient
       .from("customers")
       .select("*")
-      .order(
-        "created_at",
-        { ascending: false }
-      );
+      .order("created_at", {
+        ascending: false
+      });
 
   if (error) {
-
     console.error(error);
-
     customers = [];
-
   } else {
-
     customers = data || [];
-
   }
 
   renderCustomers();
+}
 
+function getCustomerName(customer) {
+  return (
+    customer.name ||
+    customer.full_name ||
+    `${customer.first_name || ""} ${customer.last_name || ""}`.trim() ||
+    "Müştəri"
+  );
 }
 
 function renderCustomers() {
@@ -691,131 +569,89 @@ function renderCustomers() {
   if (!table) return;
 
   if (!customers.length) {
-
     table.innerHTML = `
       <tr>
-        <td colspan="6" class="empty-state">
+        <td colspan="6"
+            class="empty-state">
           Müştəri yoxdur
         </td>
       </tr>
     `;
-
     return;
   }
 
   table.innerHTML =
-    customers.map(customer => {
+    customers.map(customer => `
+      <tr>
 
-      const name =
-        customer.full_name ||
-        customer.name ||
-        `${customer.first_name || ""} ${
-          customer.last_name || ""
-        }`.trim();
-
-      return `
-        <tr>
-
-          <td>
-            <strong>
-              ${escapeHTML(
-                name || "Müştəri"
-              )}
-            </strong>
-          </td>
-
-          <td>
+        <td>
+          <strong>
             ${escapeHTML(
-              customer.phone || "-"
+              getCustomerName(customer)
             )}
-          </td>
+          </strong>
+        </td>
 
-          <td>
-            ${escapeHTML(
-              customer.email || "-"
-            )}
-          </td>
+        <td>
+          ${escapeHTML(
+            customer.phone || "-"
+          )}
+        </td>
 
-          <td>
-            ${escapeHTML(
-              customer.address || "-"
-            )}
-          </td>
+        <td>
+          ${escapeHTML(
+            customer.email || "-"
+          )}
+        </td>
 
-          <td>
-            ${
-              customer.created_at
-                ? new Date(
-                    customer.created_at
-                  ).toLocaleDateString(
-                    "az-AZ"
-                  )
-                : "-"
-            }
-          </td>
+        <td>
+          ${escapeHTML(
+            customer.address || "-"
+          )}
+        </td>
 
-          <td></td>
+        <td>
+          ${
+            customer.created_at
+              ? new Date(
+                  customer.created_at
+                ).toLocaleDateString("az-AZ")
+              : "-"
+          }
+        </td>
 
-        </tr>
-      `;
+        <td></td>
 
-    }).join("");
-
+      </tr>
+    `).join("");
 }
 
 async function addCustomer(formData) {
 
-  const fullName =
-    formData.full_name ||
-    formData.name ||
-    "";
-
-  if (!fullName.trim()) {
-
-    showToast(
-      "Müştərinin adı daxil edilməlidir."
-    );
-
-    return false;
-  }
-
   /*
-    full_name mütləq göndərilir.
-    Səndə əvvəlki xəta məhz buna görə çıxırdı.
+    Sənin bazanda full_name NOT NULL olduğu
+    üçün həm name, həm full_name göndəririk.
   */
 
+  const fullName =
+    formData.name?.trim() ||
+    `${formData.first_name || ""} ${formData.last_name || ""}`.trim();
+
   const customer = {
-
-    full_name:
-      fullName.trim(),
-
-    name:
-      fullName.trim(),
-
-    phone:
-      formData.phone || null,
-
-    email:
-      formData.email || null,
-
-    address:
-      formData.address || null,
-
-    notes:
-      formData.notes || null
-
+    name: fullName,
+    full_name: fullName,
+    phone: formData.phone || null,
+    email: formData.email || null,
+    address: formData.address || null,
+    notes: formData.notes || null
   };
 
-  const {
-    error
-  } =
+  const { error } =
     await supabaseClient
       .from("customers")
       .insert(customer);
 
   if (error) {
-
-    console.error(error);
 
     showToast(
       "Müştəri əlavə edilmədi: " +
@@ -825,11 +661,10 @@ async function addCustomer(formData) {
     return false;
   }
 
-  showToast(
-    "Müştəri uğurla əlavə edildi."
-  );
+  showToast("Müştəri əlavə edildi");
 
   await loadCustomers();
+  updateReports();
 
   return true;
 }
@@ -840,53 +675,85 @@ async function addCustomer(formData) {
 
 async function loadSales() {
 
-  const {
-    data,
-    error
-  } =
+  const { data, error } =
     await supabaseClient
       .from("sales")
       .select("*")
-      .order(
-        "sale_date",
-        { ascending: false }
-      );
+      .order("created_at", {
+        ascending: false
+      });
 
   if (error) {
-
     console.error(error);
-
     sales = [];
-
   } else {
-
     sales = data || [];
-
   }
 
   renderSales();
   renderRecentSales();
-
 }
 
 function getSaleProduct(sale) {
-
   return products.find(
     p =>
       String(p.id) ===
       String(sale.product_id)
   );
-
 }
 
 function getSaleCustomer(sale) {
-
   return customers.find(
     c =>
       String(c.id) ===
       String(sale.customer_id)
   );
+}
 
+function getSaleAmount(sale) {
+
+  return Number(
+    sale.sale_price ??
+    sale.total_amount ??
+    sale.amount ??
+    sale.total ??
+    0
+  );
+}
+
+function getSalePurchase(sale) {
+
+  const product =
+    getSaleProduct(sale);
+
+  return Number(
+    sale.purchase_price ??
+    sale.cost_price ??
+    getProductPurchase(product)
+  );
+}
+
+function getSaleProfit(sale) {
+
+  if (
+    sale.profit !== null &&
+    sale.profit !== undefined
+  ) {
+    return Number(sale.profit);
+  }
+
+  return (
+    getSaleAmount(sale) -
+    getSalePurchase(sale)
+  );
+}
+
+function getSaleDate(sale) {
+
+  return (
+    sale.sale_date ||
+    sale.created_at
+  );
 }
 
 function renderSales() {
@@ -900,7 +767,8 @@ function renderSales() {
 
     table.innerHTML = `
       <tr>
-        <td colspan="8" class="empty-state">
+        <td colspan="8"
+            class="empty-state">
           Hələ satış yoxdur
         </td>
       </tr>
@@ -919,26 +787,13 @@ function renderSales() {
         getSaleCustomer(sale);
 
       const purchase =
-        Number(
-          sale.purchase_price ??
-          product?.purchase_price ??
-          0
-        );
+        getSalePurchase(sale);
 
-      const salePrice =
-        Number(
-          sale.sale_price ??
-          sale.total_amount ??
-          sale.amount ??
-          sale.total ??
-          0
-        );
+      const amount =
+        getSaleAmount(sale);
 
       const profit =
-        Number(
-          sale.profit ??
-          salePrice - purchase
-        );
+        getSaleProfit(sale);
 
       const saleNumber =
         sale.sale_number ||
@@ -947,8 +802,7 @@ function renderSales() {
         ).padStart(4, "0")}`;
 
       const date =
-        sale.sale_date ||
-        sale.created_at;
+        getSaleDate(sale);
 
       return `
         <tr>
@@ -966,16 +820,20 @@ function renderSales() {
               product?.name ||
               product?.model ||
               sale.product_name ||
-              "-"
+              "Məhsul"
             )}
           </td>
 
           <td>
             ${escapeHTML(
-              customer?.full_name ||
-              customer?.name ||
-              sale.customer_name ||
-              "-"
+              getCustomerName(
+                customer || {}
+              ) !== "Müştəri"
+                ? getCustomerName(customer)
+                : (
+                    sale.customer_name ||
+                    "Müştəri"
+                  )
             )}
           </td>
 
@@ -985,7 +843,7 @@ function renderSales() {
 
           <td>
             <strong>
-              ${money(salePrice)}
+              ${money(amount)}
             </strong>
           </td>
 
@@ -1008,9 +866,7 @@ function renderSales() {
               date
                 ? new Date(
                     date
-                  ).toLocaleDateString(
-                    "az-AZ"
-                  )
+                  ).toLocaleDateString("az-AZ")
                 : "-"
             }
           </td>
@@ -1019,7 +875,6 @@ function renderSales() {
       `;
 
     }).join("");
-
 }
 
 function renderRecentSales() {
@@ -1036,7 +891,8 @@ function renderRecentSales() {
 
     table.innerHTML = `
       <tr>
-        <td colspan="5" class="empty-state">
+        <td colspan="5"
+            class="empty-state">
           Hələ satış yoxdur
         </td>
       </tr>
@@ -1054,17 +910,8 @@ function renderRecentSales() {
       const customer =
         getSaleCustomer(sale);
 
-      const salePrice =
-        Number(
-          sale.sale_price ??
-          sale.total_amount ??
-          sale.amount ??
-          0
-        );
-
       const date =
-        sale.sale_date ||
-        sale.created_at;
+        getSaleDate(sale);
 
       return `
         <tr>
@@ -1079,22 +926,24 @@ function renderRecentSales() {
 
           <td>
             ${escapeHTML(
-              customer?.full_name ||
-              customer?.name ||
-              sale.customer_name ||
-              "-"
+              customer
+                ? getCustomerName(customer)
+                : sale.customer_name || "-"
             )}
           </td>
 
           <td>
             <strong>
-              ${money(salePrice)}
+              ${money(
+                getSaleAmount(sale)
+              )}
             </strong>
           </td>
 
           <td>
             ${escapeHTML(
               sale.payment_method ||
+              sale.payment ||
               "Nağd"
             )}
           </td>
@@ -1104,9 +953,7 @@ function renderRecentSales() {
               date
                 ? new Date(
                     date
-                  ).toLocaleDateString(
-                    "az-AZ"
-                  )
+                  ).toLocaleDateString("az-AZ")
                 : "-"
             }
           </td>
@@ -1115,7 +962,6 @@ function renderRecentSales() {
       `;
 
     }).join("");
-
 }
 
 async function addSale(formData) {
@@ -1127,20 +973,16 @@ async function addSale(formData) {
     formData.customer_id;
 
   if (!productId) {
-
     showToast(
       "Məhsul seçilməlidir."
     );
-
     return false;
   }
 
   if (!customerId) {
-
     showToast(
       "Müştəri seçilməlidir."
     );
-
     return false;
   }
 
@@ -1151,6 +993,13 @@ async function addSale(formData) {
         String(productId)
     );
 
+  if (!product) {
+    showToast(
+      "Seçilmiş məhsul tapılmadı."
+    );
+    return false;
+  }
+
   const customer =
     customers.find(
       c =>
@@ -1158,48 +1007,21 @@ async function addSale(formData) {
         String(customerId)
     );
 
-  if (!product) {
-
-    showToast(
-      "Məhsul tapılmadı."
-    );
-
-    return false;
-  }
-
   if (!customer) {
-
     showToast(
-      "Müştəri tapılmadı."
+      "Seçilmiş müştəri tapılmadı."
     );
-
     return false;
   }
 
   const purchasePrice =
-    Number(
-      product.purchase_price ??
-      product.buy_price ??
-      product.cost ??
-      0
-    );
+    getProductPurchase(product);
 
   const salePrice =
     Number(
       formData.sale_price ||
-      product.sale_price ||
-      product.selling_price ||
-      0
+      getProductSale(product)
     );
-
-  if (salePrice <= 0) {
-
-    showToast(
-      "Satış qiyməti düzgün daxil edilməlidir."
-    );
-
-    return false;
-  }
 
   const profit =
     salePrice - purchasePrice;
@@ -1226,10 +1048,10 @@ async function addSale(formData) {
     sale_price:
       salePrice,
 
-    total_amount:
+    amount:
       salePrice,
 
-    amount:
+    total_amount:
       salePrice,
 
     profit:
@@ -1239,19 +1061,16 @@ async function addSale(formData) {
       formData.payment_method ||
       "Nağd",
 
-    sale_date:
-      formData.sale_date ||
-      todayISO(),
-
     notes:
-      formData.notes ||
-      null
-
+      formData.notes || null
   };
 
-  const {
-    error
-  } =
+  if (formData.sale_date) {
+    sale.sale_date =
+      formData.sale_date;
+  }
+
+  const { error } =
     await supabaseClient
       .from("sales")
       .insert(sale);
@@ -1268,32 +1087,16 @@ async function addSale(formData) {
     return false;
   }
 
-  /*
-    Məhsulu satılmış kimi qeyd et
-  */
-
-  const {
-    error: productError
-  } =
-    await supabaseClient
-      .from("products")
-      .update({
-        stock: 0,
-        status: "sold"
-      })
-      .eq("id", productId);
-
-  if (productError) {
-
-    console.error(
-      "Məhsul statusu:",
-      productError
-    );
-
-  }
+  await supabaseClient
+    .from("products")
+    .update({
+      stock: 0,
+      status: "sold"
+    })
+    .eq("id", productId);
 
   showToast(
-    "Satış uğurla tamamlandı."
+    "Satış uğurla yaradıldı"
   );
 
   await loadAll();
@@ -1307,32 +1110,31 @@ async function addSale(formData) {
 
 async function loadExpenses() {
 
-  const {
-    data,
-    error
-  } =
+  const { data, error } =
     await supabaseClient
       .from("expenses")
       .select("*")
-      .order(
-        "expense_date",
-        { ascending: false }
-      );
+      .order("created_at", {
+        ascending: false
+      });
 
   if (error) {
-
     console.error(error);
-
     expenses = [];
-
   } else {
-
     expenses = data || [];
-
   }
 
   renderExpenses();
+}
 
+function getExpenseDate(expense) {
+
+  return (
+    expense.expense_date ||
+    expense.date ||
+    expense.created_at
+  );
 }
 
 function renderExpenses() {
@@ -1346,7 +1148,8 @@ function renderExpenses() {
 
     table.innerHTML = `
       <tr>
-        <td colspan="6" class="empty-state">
+        <td colspan="6"
+            class="empty-state">
           Xərc yoxdur
         </td>
       </tr>
@@ -1359,24 +1162,24 @@ function renderExpenses() {
     expenses.map(expense => {
 
       const date =
-        expense.expense_date ||
-        expense.created_at;
+        getExpenseDate(expense);
 
       return `
         <tr>
 
           <td>
-            ${escapeHTML(
-              expense.name ||
-              expense.title ||
-              "-"
-            )}
+            <strong>
+              ${escapeHTML(
+                expense.name ||
+                expense.title ||
+                "-"
+              )}
+            </strong>
           </td>
 
           <td>
             ${escapeHTML(
-              expense.category ||
-              "-"
+              expense.category || "-"
             )}
           </td>
 
@@ -1393,27 +1196,37 @@ function renderExpenses() {
               date
                 ? new Date(
                     date
-                  ).toLocaleDateString(
-                    "az-AZ"
-                  )
+                  ).toLocaleDateString("az-AZ")
                 : "-"
             }
           </td>
 
           <td>
             ${escapeHTML(
-              expense.notes ||
-              "-"
+              expense.notes || "-"
             )}
           </td>
 
-          <td></td>
+          <td>
+
+            <button
+              class="text-btn"
+              onclick="editExpense('${expense.id}')">
+              Redaktə et
+            </button>
+
+            <button
+              class="text-btn"
+              onclick="deleteExpense('${expense.id}')">
+              Sil
+            </button>
+
+          </td>
 
         </tr>
       `;
 
     }).join("");
-
 }
 
 async function addExpense(formData) {
@@ -1425,34 +1238,26 @@ async function addExpense(formData) {
       formData.title,
 
     category:
-      formData.category ||
-      null,
+      formData.category || null,
 
     amount:
-      Number(
-        formData.amount || 0
-      ),
-
-    expense_date:
-      formData.expense_date ||
-      todayISO(),
+      Number(formData.amount || 0),
 
     notes:
-      formData.notes ||
-      null
-
+      formData.notes || null
   };
 
-  const {
-    error
-  } =
+  if (formData.expense_date) {
+    expense.expense_date =
+      formData.expense_date;
+  }
+
+  const { error } =
     await supabaseClient
       .from("expenses")
       .insert(expense);
 
   if (error) {
-
-    console.error(error);
 
     showToast(
       "Xərc əlavə edilmədi: " +
@@ -1463,14 +1268,250 @@ async function addExpense(formData) {
   }
 
   showToast(
-    "Xərc uğurla əlavə edildi."
+    "Xərc əlavə edildi"
   );
 
   await loadExpenses();
-
   updateReports();
 
   return true;
+}
+
+async function editExpense(id) {
+
+  const expense =
+    expenses.find(
+      e =>
+        String(e.id) ===
+        String(id)
+    );
+
+  if (!expense) {
+    showToast(
+      "Xərc tapılmadı."
+    );
+    return;
+  }
+
+  openModal(
+    "Xərci redaktə et",
+    "Xərc məlumatlarını dəyişdirin.",
+    `
+      <form id="editExpenseForm"
+            class="form-grid">
+
+        <div class="form-group">
+
+          <label>Xərc adı</label>
+
+          <input
+            name="name"
+            value="${escapeHTML(
+              expense.name ||
+              expense.title ||
+              ""
+            )}"
+            required
+          >
+
+        </div>
+
+        <div class="form-group">
+
+          <label>Kateqoriya</label>
+
+          <select name="category">
+
+            <option
+              ${expense.category === "İcarə" ? "selected" : ""}>
+              İcarə
+            </option>
+
+            <option
+              ${expense.category === "Kommunal" ? "selected" : ""}>
+              Kommunal
+            </option>
+
+            <option
+              ${expense.category === "Nəqliyyat" ? "selected" : ""}>
+              Nəqliyyat
+            </option>
+
+            <option
+              ${expense.category === "Əmək haqqı" ? "selected" : ""}>
+              Əmək haqqı
+            </option>
+
+            <option
+              ${expense.category === "Digər" ? "selected" : ""}>
+              Digər
+            </option>
+
+          </select>
+
+        </div>
+
+        <div class="form-group">
+
+          <label>Məbləğ</label>
+
+          <input
+            type="number"
+            step="0.01"
+            name="amount"
+            value="${Number(
+              expense.amount || 0
+            )}"
+            required
+          >
+
+        </div>
+
+        <div class="form-group">
+
+          <label>Tarix</label>
+
+          <input
+            type="date"
+            name="expense_date"
+            min="2000-01-01"
+            max="2100-12-31"
+            value="${
+              expense.expense_date ||
+              expense.date ||
+              (
+                expense.created_at
+                  ? new Date(
+                      expense.created_at
+                    )
+                    .toISOString()
+                    .split("T")[0]
+                  : ""
+              )
+            }"
+          >
+
+        </div>
+
+        <div
+          class="form-group"
+          style="grid-column:1/-1">
+
+          <label>Qeyd</label>
+
+          <textarea
+            name="notes"
+          >${escapeHTML(
+            expense.notes || ""
+          )}</textarea>
+
+        </div>
+
+        <div
+          style="grid-column:1/-1">
+
+          <button
+            type="submit"
+            class="primary-btn">
+            Dəyişikliyi yadda saxla
+          </button>
+
+        </div>
+
+      </form>
+    `
+  );
+
+  $("editExpenseForm")
+    ?.addEventListener(
+      "submit",
+      async event => {
+
+        event.preventDefault();
+
+        const data =
+          Object.fromEntries(
+            new FormData(
+              event.target
+            ).entries()
+          );
+
+        const updateData = {
+
+          name:
+            data.name,
+
+          category:
+            data.category,
+
+          amount:
+            Number(data.amount || 0),
+
+          notes:
+            data.notes || null
+        };
+
+        if (data.expense_date) {
+          updateData.expense_date =
+            data.expense_date;
+        }
+
+        const { error } =
+          await supabaseClient
+            .from("expenses")
+            .update(updateData)
+            .eq("id", id);
+
+        if (error) {
+
+          showToast(
+            "Xərc yenilənmədi: " +
+            error.message
+          );
+
+          return;
+        }
+
+        closeModal();
+
+        showToast(
+          "Xərc yeniləndi"
+        );
+
+        await loadExpenses();
+        updateReports();
+      }
+    );
+}
+
+async function deleteExpense(id) {
+
+  if (!confirm(
+    "Bu xərci silmək istəyirsiniz?"
+  )) return;
+
+  const { error } =
+    await supabaseClient
+      .from("expenses")
+      .delete()
+      .eq("id", id);
+
+  if (error) {
+
+    showToast(
+      "Xərc silinmədi: " +
+      error.message
+    );
+
+    return;
+  }
+
+  showToast(
+    "Xərc silindi"
+  );
+
+  await loadExpenses();
+  updateReports();
 }
 
 /* =========================================================
@@ -1479,7 +1520,7 @@ async function addExpense(formData) {
 
 function updateDashboard() {
 
-  const available =
+  const activeProducts =
     products.filter(
       p =>
         p.status !== "sold" &&
@@ -1487,15 +1528,11 @@ function updateDashboard() {
     );
 
   const inventoryValue =
-    available.reduce(
-      (sum, p) =>
+    activeProducts.reduce(
+      (sum, product) =>
         sum +
-        Number(
-          p.purchase_price || 0
-        ) *
-        Number(
-          p.stock ?? 1
-        ),
+        getProductPurchase(product) *
+        Number(product.stock ?? 1),
       0
     );
 
@@ -1503,12 +1540,11 @@ function updateDashboard() {
     new Date();
 
   const monthlySales =
-    sales.filter(s => {
+    sales.filter(sale => {
 
       const date =
         new Date(
-          s.sale_date ||
-          s.created_at
+          getSaleDate(sale)
         );
 
       return (
@@ -1517,29 +1553,21 @@ function updateDashboard() {
         date.getFullYear() ===
           now.getFullYear()
       );
-
     });
 
-  const revenue =
+  const monthlyRevenue =
     monthlySales.reduce(
-      (sum, s) =>
+      (sum, sale) =>
         sum +
-        Number(
-          s.sale_price ??
-          s.total_amount ??
-          s.amount ??
-          0
-        ),
+        getSaleAmount(sale),
       0
     );
 
-  const profit =
+  const monthlyProfit =
     monthlySales.reduce(
-      (sum, s) =>
+      (sum, sale) =>
         sum +
-        Number(
-          s.profit || 0
-        ),
+        getSaleProfit(sale),
       0
     );
 
@@ -1553,32 +1581,28 @@ function updateDashboard() {
 
   if ($("statSales"))
     $("statSales").textContent =
-      money(revenue);
+      money(monthlyRevenue);
 
   if ($("statProfit"))
     $("statProfit").textContent =
-      money(profit);
+      money(monthlyProfit);
 
   if ($("stockAvailable"))
     $("stockAvailable").textContent =
-      available.length;
+      activeProducts.length;
 
   if ($("stockSold"))
     $("stockSold").textContent =
       products.filter(
-        p =>
-          p.status === "sold"
+        p => p.status === "sold"
       ).length;
 
   if ($("stockCritical"))
     $("stockCritical").textContent =
-      available.filter(
+      activeProducts.filter(
         p =>
-          Number(
-            p.stock ?? 1
-          ) <= 1
+          Number(p.stock ?? 1) <= 1
       ).length;
-
 }
 
 /* =========================================================
@@ -1604,21 +1628,15 @@ function updateInventory() {
   const critical =
     available.filter(
       p =>
-        Number(
-          p.stock ?? 1
-        ) <= 1
+        Number(p.stock ?? 1) <= 1
     );
 
   const value =
     available.reduce(
       (sum, p) =>
         sum +
-        Number(
-          p.purchase_price || 0
-        ) *
-        Number(
-          p.stock ?? 1
-        ),
+        getProductPurchase(p) *
+        Number(p.stock ?? 1),
       0
     );
 
@@ -1656,7 +1674,6 @@ function updateInventory() {
 
   list.innerHTML =
     available.map(p => `
-
       <div class="stock-row">
 
         <span>
@@ -1674,46 +1691,182 @@ function updateInventory() {
         </strong>
 
       </div>
-
     `).join("");
-
 }
 
 /* =========================================================
-   REPORTS
+   REPORTS — TƏKMİLLƏŞDİRİLMİŞ
    ========================================================= */
+
+function getDateOnly(dateValue) {
+
+  if (!dateValue)
+    return null;
+
+  const date =
+    new Date(dateValue);
+
+  if (isNaN(date.getTime()))
+    return null;
+
+  return new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate()
+  );
+}
+
+function startOfWeek(date) {
+
+  const result =
+    new Date(date);
+
+  const day =
+    result.getDay();
+
+  const diff =
+    day === 0 ? -6 : 1 - day;
+
+  result.setDate(
+    result.getDate() + diff
+  );
+
+  result.setHours(
+    0, 0, 0, 0
+  );
+
+  return result;
+}
+
+function isSameDay(a, b) {
+
+  return (
+    a &&
+    b &&
+    a.getFullYear() ===
+      b.getFullYear() &&
+    a.getMonth() ===
+      b.getMonth() &&
+    a.getDate() ===
+      b.getDate()
+  );
+}
+
+function isInReportPeriod(
+  dateValue,
+  period
+) {
+
+  const date =
+    getDateOnly(dateValue);
+
+  if (!date)
+    return false;
+
+  const now =
+    new Date();
+
+  const today =
+    getDateOnly(now);
+
+  if (period === "daily") {
+    return isSameDay(
+      date,
+      today
+    );
+  }
+
+  if (period === "weekly") {
+
+    const weekStart =
+      startOfWeek(today);
+
+    const weekEnd =
+      new Date(weekStart);
+
+    weekEnd.setDate(
+      weekEnd.getDate() + 6
+    );
+
+    return (
+      date >= weekStart &&
+      date <= weekEnd
+    );
+  }
+
+  if (period === "monthly") {
+
+    return (
+      date.getMonth() ===
+        now.getMonth() &&
+      date.getFullYear() ===
+        now.getFullYear()
+    );
+  }
+
+  if (period === "yearly") {
+
+    return (
+      date.getFullYear() ===
+      now.getFullYear()
+    );
+  }
+
+  return true;
+}
 
 function updateReports() {
 
+  const periodSelect =
+    $("reportPeriod");
+
+  const period =
+    periodSelect?.value ||
+    "monthly";
+
+  const filteredSales =
+    sales.filter(
+      sale =>
+        isInReportPeriod(
+          getSaleDate(sale),
+          period
+        )
+    );
+
+  const filteredExpenses =
+    expenses.filter(
+      expense =>
+        isInReportPeriod(
+          getExpenseDate(expense),
+          period
+        )
+    );
+
   const revenue =
-    sales.reduce(
-      (sum, s) =>
+    filteredSales.reduce(
+      (sum, sale) =>
         sum +
-        Number(
-          s.sale_price ??
-          s.total_amount ??
-          s.amount ??
-          0
-        ),
+        getSaleAmount(sale),
       0
     );
 
-  const expenseTotal =
-    expenses.reduce(
-      (sum, e) =>
+  const cost =
+    filteredSales.reduce(
+      (sum, sale) =>
         sum +
-        Number(
-          e.amount || 0
-        ),
+        getSalePurchase(sale),
       0
     );
 
   const grossProfit =
-    sales.reduce(
-      (sum, s) =>
+    revenue - cost;
+
+  const expenseTotal =
+    filteredExpenses.reduce(
+      (sum, expense) =>
         sum +
         Number(
-          s.profit || 0
+          expense.amount || 0
         ),
       0
     );
@@ -1736,387 +1889,247 @@ function updateReports() {
 
   if ($("reportSalesCount"))
     $("reportSalesCount").textContent =
-      sales.length;
+      filteredSales.length;
 
-  renderCategoryReport();
+  /*
+    Əlavə hesabat göstəriciləri
+    HTML-də varsa avtomatik doldurulur.
+  */
 
-}
+  if ($("reportCost"))
+    $("reportCost").textContent =
+      money(cost);
 
-/* =========================================================
-   CATEGORY REPORT
-   ========================================================= */
+  if ($("reportGrossProfit"))
+    $("reportGrossProfit").textContent =
+      money(grossProfit);
 
-function renderCategoryReport() {
+  if ($("reportNetProfit"))
+    $("reportNetProfit").textContent =
+      money(netProfit);
 
-  const container =
+  if ($("reportAverageSale")) {
+
+    const average =
+      filteredSales.length
+        ? revenue /
+          filteredSales.length
+        : 0;
+
+    $("reportAverageSale")
+      .textContent =
+      money(average);
+  }
+
+  /*
+    Kateqoriya analitikası
+  */
+
+  const categoryReport =
     $("categoryReport");
 
-  if (!container) return;
+  if (categoryReport) {
 
-  const map = {};
+    const categoryMap = {};
 
-  products.forEach(product => {
+    filteredSales.forEach(sale => {
 
-    const category =
-      product.category ||
-      "Digər";
+      const product =
+        getSaleProduct(sale);
 
-    map[category] =
-      (map[category] || 0) + 1;
+      const category =
+        product?.category ||
+        "Digər";
 
-  });
+      if (!categoryMap[category]) {
 
-  const entries =
-    Object.entries(map);
+        categoryMap[category] = {
+          count: 0,
+          revenue: 0,
+          profit: 0
+        };
 
-  if (!entries.length) {
+      }
 
-    container.innerHTML =
-      "Məlumat yoxdur";
+      categoryMap[category].count++;
 
-    return;
+      categoryMap[category].revenue +=
+        getSaleAmount(sale);
+
+      categoryMap[category].profit +=
+        getSaleProfit(sale);
+    });
+
+    const entries =
+      Object.entries(
+        categoryMap
+      );
+
+    if (!entries.length) {
+
+      categoryReport.innerHTML =
+        `<div class="empty-state">
+          Seçilmiş dövrdə məlumat yoxdur
+        </div>`;
+
+    } else {
+
+      categoryReport.innerHTML =
+        entries.map(
+          ([category, info]) => `
+            <div class="stock-row">
+
+              <span>
+                <strong>
+                  ${escapeHTML(category)}
+                </strong>
+                <small>
+                  ${info.count} satış
+                </small>
+              </span>
+
+              <strong>
+                ${money(info.revenue)}
+              </strong>
+
+            </div>
+          `
+        ).join("");
+    }
   }
 
-  container.innerHTML =
-    entries.map(
-      ([category, count]) => `
+  /*
+    Hesabat qrafik sahəsində
+    rəqəmlərin xülasəsi
+  */
 
-        <div class="stock-row">
+  const reportChart =
+    $("reportChart");
 
-          <span>
-            ${escapeHTML(
-              category
-            )}
-          </span>
+  if (reportChart) {
 
-          <strong>
-            ${count}
-          </strong>
+    reportChart.innerHTML = `
+      <div class="report-summary">
 
+        <div>
+          <span>Satış gəliri</span>
+          <strong>${money(revenue)}</strong>
         </div>
 
-      `
-    ).join("");
+        <div>
+          <span>Maya dəyəri</span>
+          <strong>${money(cost)}</strong>
+        </div>
 
-}
+        <div>
+          <span>Brüt mənfəət</span>
+          <strong>${money(grossProfit)}</strong>
+        </div>
 
-/* =========================================================
-   DATE REPORT SYSTEM
-   ========================================================= */
+        <div>
+          <span>Xərclər</span>
+          <strong>${money(expenseTotal)}</strong>
+        </div>
 
-function getDate(value) {
+        <div>
+          <span>Xalis mənfəət</span>
+          <strong>${money(netProfit)}</strong>
+        </div>
 
-  if (!value) return null;
-
-  const d =
-    new Date(
-      value + (
-        value.length === 10
-          ? "T00:00:00"
-          : ""
-      )
-    );
-
-  return isNaN(d)
-    ? null
-    : d;
-
-}
-
-function isSameDay(date, target) {
-
-  return (
-    date.getFullYear() ===
-      target.getFullYear() &&
-    date.getMonth() ===
-      target.getMonth() &&
-    date.getDate() ===
-      target.getDate()
-  );
-
-}
-
-function isSameMonth(date, target) {
-
-  return (
-    date.getFullYear() ===
-      target.getFullYear() &&
-    date.getMonth() ===
-      target.getMonth()
-  );
-
-}
-
-function isSameYear(date, target) {
-
-  return (
-    date.getFullYear() ===
-      target.getFullYear()
-  );
-
-}
-
-function getWeekStart(date) {
-
-  const d =
-    new Date(date);
-
-  const day =
-    d.getDay();
-
-  const diff =
-    day === 0
-      ? -6
-      : 1 - day;
-
-  d.setDate(
-    d.getDate() + diff
-  );
-
-  d.setHours(
-    0, 0, 0, 0
-  );
-
-  return d;
-
-}
-
-function isSameWeek(date, target) {
-
-  const start =
-    getWeekStart(target);
-
-  const end =
-    new Date(start);
-
-  end.setDate(
-    end.getDate() + 7
-  );
-
-  return (
-    date >= start &&
-    date < end
-  );
-
-}
-
-/* =========================================================
-   DATE REPORT SELECTOR
-   ========================================================= */
-
-function getReportData(period) {
-
-  const target =
-    new Date();
-
-  let filteredSales = [];
-  let filteredExpenses = [];
-
-  if (period === "daily") {
-
-    filteredSales =
-      sales.filter(s => {
-
-        const d =
-          getDate(
-            s.sale_date ||
-            s.created_at
-          );
-
-        return d &&
-          isSameDay(
-            d,
-            target
-          );
-
-      });
-
-    filteredExpenses =
-      expenses.filter(e => {
-
-        const d =
-          getDate(
-            e.expense_date ||
-            e.created_at
-          );
-
-        return d &&
-          isSameDay(
-            d,
-            target
-          );
-
-      });
-
+      </div>
+    `;
   }
 
-  else if (period === "weekly") {
+  /*
+    Əgər hesabat cədvəli varsa,
+    onu da doldur.
+  */
 
-    filteredSales =
-      sales.filter(s => {
+  const reportSalesTable =
+    $("reportSalesTable");
 
-        const d =
-          getDate(
-            s.sale_date ||
-            s.created_at
-          );
+  if (reportSalesTable) {
 
-        return d &&
-          isSameWeek(
-            d,
-            target
-          );
+    if (!filteredSales.length) {
 
-      });
+      reportSalesTable.innerHTML = `
+        <tr>
+          <td colspan="6"
+              class="empty-state">
+            Bu dövrdə satış yoxdur
+          </td>
+        </tr>
+      `;
 
-    filteredExpenses =
-      expenses.filter(e => {
+    } else {
 
-        const d =
-          getDate(
-            e.expense_date ||
-            e.created_at
-          );
+      reportSalesTable.innerHTML =
+        filteredSales.map(sale => {
 
-        return d &&
-          isSameWeek(
-            d,
-            target
-          );
+          const product =
+            getSaleProduct(sale);
 
-      });
+          const customer =
+            getSaleCustomer(sale);
 
+          return `
+            <tr>
+
+              <td>
+                ${escapeHTML(
+                  product?.name ||
+                  sale.product_name ||
+                  "-"
+                )}
+              </td>
+
+              <td>
+                ${escapeHTML(
+                  customer
+                    ? getCustomerName(customer)
+                    : sale.customer_name ||
+                      "-"
+                )}
+              </td>
+
+              <td>
+                ${money(
+                  getSalePurchase(sale)
+                )}
+              </td>
+
+              <td>
+                <strong>
+                  ${money(
+                    getSaleAmount(sale)
+                  )}
+                </strong>
+              </td>
+
+              <td>
+                ${money(
+                  getSaleProfit(sale)
+                )}
+              </td>
+
+              <td>
+                ${
+                  getSaleDate(sale)
+                    ? new Date(
+                        getSaleDate(sale)
+                      ).toLocaleDateString(
+                        "az-AZ"
+                      )
+                    : "-"
+                }
+              </td>
+
+            </tr>
+          `;
+
+        }).join("");
+    }
   }
-
-  else if (period === "monthly") {
-
-    filteredSales =
-      sales.filter(s => {
-
-        const d =
-          getDate(
-            s.sale_date ||
-            s.created_at
-          );
-
-        return d &&
-          isSameMonth(
-            d,
-            target
-          );
-
-      });
-
-    filteredExpenses =
-      expenses.filter(e => {
-
-        const d =
-          getDate(
-            e.expense_date ||
-            e.created_at
-          );
-
-        return d &&
-          isSameMonth(
-            d,
-            target
-          );
-
-      });
-
-  }
-
-  else if (period === "yearly") {
-
-    filteredSales =
-      sales.filter(s => {
-
-        const d =
-          getDate(
-            s.sale_date ||
-            s.created_at
-          );
-
-        return d &&
-          isSameYear(
-            d,
-            target
-          );
-
-      });
-
-    filteredExpenses =
-      expenses.filter(e => {
-
-        const d =
-          getDate(
-            e.expense_date ||
-            e.created_at
-          );
-
-        return d &&
-          isSameYear(
-            d,
-            target
-          );
-
-      });
-
-  }
-
-  const revenue =
-    filteredSales.reduce(
-      (sum, s) =>
-        sum +
-        Number(
-          s.sale_price ??
-          s.total_amount ??
-          s.amount ??
-          0
-        ),
-      0
-    );
-
-  const grossProfit =
-    filteredSales.reduce(
-      (sum, s) =>
-        sum +
-        Number(
-          s.profit || 0
-        ),
-      0
-    );
-
-  const expensesTotal =
-    filteredExpenses.reduce(
-      (sum, e) =>
-        sum +
-        Number(
-          e.amount || 0
-        ),
-      0
-    );
-
-  return {
-
-    sales:
-      filteredSales,
-
-    expenses:
-      filteredExpenses,
-
-    revenue,
-
-    grossProfit,
-
-    expensesTotal,
-
-    netProfit:
-      grossProfit -
-      expensesTotal
-
-  };
-
 }
 
 /* =========================================================
@@ -2142,23 +2155,16 @@ function openModal(
       html;
 
   $("modalOverlay")
-    ?.classList.remove(
-      "hidden"
-    );
-
+    ?.classList.remove("hidden");
 }
 
 function closeModal() {
 
   $("modalOverlay")
-    ?.classList.add(
-      "hidden"
-    );
+    ?.classList.add("hidden");
 
   if ($("modalBody"))
-    $("modalBody").innerHTML =
-      "";
-
+    $("modalBody").innerHTML = "";
 }
 
 /* =========================================================
@@ -2169,19 +2175,15 @@ function openProductModal() {
 
   openModal(
     "Yeni məhsul",
-    "Məhsul məlumatlarını və uçot tarixini daxil edin.",
+    "Məhsul məlumatlarını daxil edin.",
     `
-
       <form
         id="productModalForm"
-        class="form-grid"
-      >
+        class="form-grid">
 
         <div class="form-group">
 
-          <label>
-            Məhsul adı
-          </label>
+          <label>Məhsul adı</label>
 
           <input
             name="name"
@@ -2192,37 +2194,25 @@ function openProductModal() {
 
         <div class="form-group">
 
-          <label>
-            Marka
-          </label>
+          <label>Marka</label>
 
-          <input
-            name="brand"
-          >
+          <input name="brand">
 
         </div>
 
         <div class="form-group">
 
-          <label>
-            Model
-          </label>
+          <label>Model</label>
 
-          <input
-            name="model"
-          >
+          <input name="model">
 
         </div>
 
         <div class="form-group">
 
-          <label>
-            Kateqoriya
-          </label>
+          <label>Kateqoriya</label>
 
-          <select
-            name="category"
-          >
+          <select name="category">
 
             <option value="Notebook">
               Notebook
@@ -2242,26 +2232,19 @@ function openProductModal() {
 
         <div class="form-group">
 
-          <label>
-            Seriya / IMEI
-          </label>
+          <label>Seriya / IMEI</label>
 
-          <input
-            name="imei"
-          >
+          <input name="imei">
 
         </div>
 
         <div class="form-group">
 
-          <label>
-            Alış qiyməti
-          </label>
+          <label>Alış qiyməti</label>
 
           <input
             type="number"
             step="0.01"
-            min="0"
             name="purchase_price"
             required
           >
@@ -2270,14 +2253,11 @@ function openProductModal() {
 
         <div class="form-group">
 
-          <label>
-            Satış qiyməti
-          </label>
+          <label>Satış qiyməti</label>
 
           <input
             type="number"
             step="0.01"
-            min="0"
             name="sale_price"
             required
           >
@@ -2286,9 +2266,7 @@ function openProductModal() {
 
         <div class="form-group">
 
-          <label>
-            Stok
-          </label>
+          <label>Stok</label>
 
           <input
             type="number"
@@ -2302,16 +2280,18 @@ function openProductModal() {
 
         <div class="form-group">
 
-          <label>
-            Məhsul tarixi
-          </label>
+          <label>Tarix</label>
 
           <input
             type="date"
             name="product_date"
             min="2000-01-01"
             max="2100-12-31"
-            value="${todayISO()}"
+            value="${
+              new Date()
+                .toISOString()
+                .split("T")[0]
+            }"
             required
           >
 
@@ -2319,34 +2299,28 @@ function openProductModal() {
 
         <div
           class="form-group"
-          style="grid-column:1/-1"
-        >
+          style="grid-column:1/-1">
 
-          <label>
-            Qeyd
-          </label>
+          <label>Qeyd</label>
 
           <textarea
-            name="notes"
-          ></textarea>
+            name="notes">
+          </textarea>
 
         </div>
 
         <div
-          style="grid-column:1/-1"
-        >
+          style="grid-column:1/-1">
 
           <button
             type="submit"
-            class="primary-btn"
-          >
+            class="primary-btn">
             Məhsulu yadda saxla
           </button>
 
         </div>
 
       </form>
-
     `
   );
 
@@ -2365,17 +2339,12 @@ function openProductModal() {
           );
 
         const success =
-          await addProduct(
-            data
-          );
+          await addProduct(data);
 
-        if (success) {
+        if (success)
           closeModal();
-        }
-
       }
     );
-
 }
 
 /* =========================================================
@@ -2388,20 +2357,16 @@ function openCustomerModal() {
     "Yeni müştəri",
     "Müştəri məlumatlarını daxil edin.",
     `
-
       <form
         id="customerModalForm"
-        class="form-grid"
-      >
+        class="form-grid">
 
         <div class="form-group">
 
-          <label>
-            Ad Soyad
-          </label>
+          <label>Ad Soyad</label>
 
           <input
-            name="full_name"
+            name="name"
             required
           >
 
@@ -2409,21 +2374,15 @@ function openCustomerModal() {
 
         <div class="form-group">
 
-          <label>
-            Telefon
-          </label>
+          <label>Telefon</label>
 
-          <input
-            name="phone"
-          >
+          <input name="phone">
 
         </div>
 
         <div class="form-group">
 
-          <label>
-            E-poçt
-          </label>
+          <label>E-poçt</label>
 
           <input
             type="email"
@@ -2434,46 +2393,36 @@ function openCustomerModal() {
 
         <div class="form-group">
 
-          <label>
-            Ünvan
-          </label>
+          <label>Ünvan</label>
 
-          <input
-            name="address"
-          >
+          <input name="address">
 
         </div>
 
         <div
           class="form-group"
-          style="grid-column:1/-1"
-        >
+          style="grid-column:1/-1">
 
-          <label>
-            Qeyd
-          </label>
+          <label>Qeyd</label>
 
           <textarea
-            name="notes"
-          ></textarea>
+            name="notes">
+          </textarea>
 
         </div>
 
         <div
-          style="grid-column:1/-1"
-        >
+          style="grid-column:1/-1">
 
           <button
             type="submit"
-            class="primary-btn"
-          >
+            class="primary-btn">
             Müştərini yadda saxla
           </button>
 
         </div>
 
       </form>
-
     `
   );
 
@@ -2492,17 +2441,12 @@ function openCustomerModal() {
           );
 
         const success =
-          await addCustomer(
-            data
-          );
+          await addCustomer(data);
 
-        if (success) {
+        if (success)
           closeModal();
-        }
-
       }
     );
-
 }
 
 /* =========================================================
@@ -2520,54 +2464,36 @@ function openSaleModal() {
 
   openModal(
     "Yeni satış",
-    "Məhsul, müştəri, faktiki satış qiyməti və tarix seçin.",
+    "Məhsul, müştəri, qiymət və tarixi seçin.",
     `
-
       <form
         id="saleModalForm"
-        class="form-grid"
-      >
+        class="form-grid">
 
         <div class="form-group">
 
-          <label>
-            Məhsul
-          </label>
+          <label>Məhsul</label>
 
           <select
             name="product_id"
             id="saleProductSelect"
-            required
-          >
+            required>
 
             <option value="">
               Məhsul seçin
             </option>
 
             ${availableProducts.map(p => `
-
-              <option
-                value="${p.id}"
-              >
-
+              <option value="${p.id}">
                 ${escapeHTML(
                   p.name ||
                   p.model ||
                   "Məhsul"
                 )}
-
-                — Alış:
-                ${money(
-                  p.purchase_price
+                — ${money(
+                  getProductSale(p)
                 )}
-
-                — Satış:
-                ${money(
-                  p.sale_price
-                )}
-
               </option>
-
             `).join("")}
 
           </select>
@@ -2576,33 +2502,22 @@ function openSaleModal() {
 
         <div class="form-group">
 
-          <label>
-            Müştəri
-          </label>
+          <label>Müştəri</label>
 
           <select
             name="customer_id"
-            required
-          >
+            required>
 
             <option value="">
               Müştəri seçin
             </option>
 
             ${customers.map(c => `
-
-              <option
-                value="${c.id}"
-              >
-
+              <option value="${c.id}">
                 ${escapeHTML(
-                  c.full_name ||
-                  c.name ||
-                  "Müştəri"
+                  getCustomerName(c)
                 )}
-
               </option>
-
             `).join("")}
 
           </select>
@@ -2611,14 +2526,11 @@ function openSaleModal() {
 
         <div class="form-group">
 
-          <label>
-            Satış qiyməti
-          </label>
+          <label>Satış qiyməti</label>
 
           <input
             type="number"
             step="0.01"
-            min="0"
             name="sale_price"
             id="salePriceInput"
             required
@@ -2628,13 +2540,29 @@ function openSaleModal() {
 
         <div class="form-group">
 
-          <label>
-            Ödəniş üsulu
-          </label>
+          <label>Satış tarixi</label>
+
+          <input
+            type="date"
+            name="sale_date"
+            min="2000-01-01"
+            max="2100-12-31"
+            value="${
+              new Date()
+                .toISOString()
+                .split("T")[0]
+            }"
+            required
+          >
+
+        </div>
+
+        <div class="form-group">
+
+          <label>Ödəniş üsulu</label>
 
           <select
-            name="payment_method"
-          >
+            name="payment_method">
 
             <option value="Nağd">
               Nağd
@@ -2656,53 +2584,30 @@ function openSaleModal() {
 
         </div>
 
-        <div class="form-group">
-
-          <label>
-            Satış tarixi
-          </label>
-
-          <input
-            type="date"
-            name="sale_date"
-            min="2000-01-01"
-            max="2100-12-31"
-            value="${todayISO()}"
-            required
-          >
-
-        </div>
-
         <div
           class="form-group"
-          style="grid-column:1/-1"
-        >
+          style="grid-column:1/-1">
 
-          <label>
-            Qeyd
-          </label>
+          <label>Qeyd</label>
 
           <textarea
-            name="notes"
-          ></textarea>
+            name="notes">
+          </textarea>
 
         </div>
 
         <div
-          style="grid-column:1/-1"
-        >
+          style="grid-column:1/-1">
 
           <button
             type="submit"
-            class="primary-btn"
-          >
+            class="primary-btn">
             Satışı tamamla
           </button>
 
         </div>
 
       </form>
-
     `
   );
 
@@ -2725,20 +2630,11 @@ function openSaleModal() {
             )
         );
 
-      if (
-        product &&
-        priceInput
-      ) {
+      if (product && priceInput) {
 
         priceInput.value =
-          Number(
-            product.sale_price ||
-            product.selling_price ||
-            0
-          ).toFixed(2);
-
+          getProductSale(product);
       }
-
     }
   );
 
@@ -2757,17 +2653,12 @@ function openSaleModal() {
           );
 
         const success =
-          await addSale(
-            data
-          );
+          await addSale(data);
 
-        if (success) {
+        if (success)
           closeModal();
-        }
-
       }
     );
-
 }
 
 /* =========================================================
@@ -2778,19 +2669,15 @@ function openExpenseModal() {
 
   openModal(
     "Yeni xərc",
-    "Xərc məbləğini və tarixini daxil edin.",
+    "Xərc məlumatlarını daxil edin.",
     `
-
       <form
         id="expenseModalForm"
-        class="form-grid"
-      >
+        class="form-grid">
 
         <div class="form-group">
 
-          <label>
-            Xərc adı
-          </label>
+          <label>Xərc adı</label>
 
           <input
             name="name"
@@ -2801,13 +2688,9 @@ function openExpenseModal() {
 
         <div class="form-group">
 
-          <label>
-            Kateqoriya
-          </label>
+          <label>Kateqoriya</label>
 
-          <select
-            name="category"
-          >
+          <select name="category">
 
             <option value="İcarə">
               İcarə
@@ -2835,14 +2718,11 @@ function openExpenseModal() {
 
         <div class="form-group">
 
-          <label>
-            Məbləğ
-          </label>
+          <label>Məbləğ</label>
 
           <input
             type="number"
             step="0.01"
-            min="0"
             name="amount"
             required
           >
@@ -2851,48 +2731,45 @@ function openExpenseModal() {
 
         <div class="form-group">
 
-          <label>
-            Xərc tarixi
-          </label>
+          <label>Xərc tarixi</label>
 
           <input
             type="date"
             name="expense_date"
             min="2000-01-01"
             max="2100-12-31"
-            value="${todayISO()}"
+            value="${
+              new Date()
+                .toISOString()
+                .split("T")[0]
+            }"
             required
           >
 
         </div>
 
-        <div class="form-group">
+        <div
+          class="form-group"
+          style="grid-column:1/-1">
 
-          <label>
-            Qeyd
-          </label>
+          <label>Qeyd</label>
 
-          <input
-            name="notes"
-          >
+          <input name="notes">
 
         </div>
 
         <div
-          style="grid-column:1/-1"
-        >
+          style="grid-column:1/-1">
 
           <button
             type="submit"
-            class="primary-btn"
-          >
+            class="primary-btn">
             Xərci yadda saxla
           </button>
 
         </div>
 
       </form>
-
     `
   );
 
@@ -2911,81 +2788,208 @@ function openExpenseModal() {
           );
 
         const success =
-          await addExpense(
-            data
-          );
+          await addExpense(data);
 
-        if (success) {
+        if (success)
           closeModal();
-        }
-
       }
     );
+}
 
+/* =========================================================
+   REPORT FILTER
+   ========================================================= */
+
+function createReportFilterIfMissing() {
+
+  const reportsPage =
+    $("reportsPage");
+
+  if (!reportsPage)
+    return;
+
+  if ($("reportPeriod"))
+    return;
+
+  const toolbar =
+    reportsPage.querySelector(
+      ".page-toolbar"
+    );
+
+  if (!toolbar)
+    return;
+
+  const filter =
+    document.createElement("div");
+
+  filter.className =
+    "report-period-control";
+
+  filter.innerHTML = `
+    <label
+      style="
+        display:block;
+        margin-bottom:6px;
+        font-weight:600;
+      ">
+      Hesabat dövrü
+    </label>
+
+    <select
+      id="reportPeriod"
+      style="
+        padding:10px 14px;
+        border-radius:10px;
+        border:1px solid #ddd;
+      ">
+
+      <option value="daily">
+        Bugün
+      </option>
+
+      <option value="weekly">
+        Bu həftə
+      </option>
+
+      <option
+        value="monthly"
+        selected>
+        Bu ay
+      </option>
+
+      <option value="yearly">
+        Bu il
+      </option>
+
+    </select>
+  `;
+
+  toolbar.appendChild(filter);
+
+  $("reportPeriod")
+    ?.addEventListener(
+      "change",
+      updateReports
+    );
 }
 
 /* =========================================================
    SEARCH
    ========================================================= */
 
-$("productSearch")
+function setupSearch() {
+
+  $("productSearch")
+    ?.addEventListener(
+      "input",
+      event => {
+
+        const query =
+          event.target.value
+            .toLowerCase()
+            .trim();
+
+        document
+          .querySelectorAll(
+            "#productsTable tr"
+          )
+          .forEach(row => {
+
+            row.style.display =
+              row.textContent
+                .toLowerCase()
+                .includes(query)
+                ? ""
+                : "none";
+
+          });
+      }
+    );
+
+  $("customerSearch")
+    ?.addEventListener(
+      "input",
+      event => {
+
+        const query =
+          event.target.value
+            .toLowerCase()
+            .trim();
+
+        document
+          .querySelectorAll(
+            "#customersTable tr"
+          )
+          .forEach(row => {
+
+            row.style.display =
+              row.textContent
+                .toLowerCase()
+                .includes(query)
+                ? ""
+                : "none";
+
+          });
+      }
+    );
+
+  $("productCategoryFilter")
+    ?.addEventListener(
+      "change",
+      event => {
+
+        const category =
+          event.target.value;
+
+        document
+          .querySelectorAll(
+            "#productsTable tr"
+          )
+          .forEach(row => {
+
+            if (!category) {
+              row.style.display = "";
+              return;
+            }
+
+            row.style.display =
+              row.textContent
+                .includes(category)
+                ? ""
+                : "none";
+
+          });
+      }
+    );
+}
+
+/* =========================================================
+   MODAL EVENTS
+   ========================================================= */
+
+$("closeModalBtn")
   ?.addEventListener(
-    "input",
-    event => {
-
-      const query =
-        event.target.value
-          .toLowerCase()
-          .trim();
-
-      document
-        .querySelectorAll(
-          "#productsTable tr"
-        )
-        .forEach(row => {
-
-          row.style.display =
-            row.textContent
-              .toLowerCase()
-              .includes(query)
-              ? ""
-              : "none";
-
-        });
-
-    }
+    "click",
+    closeModal
   );
 
-$("customerSearch")
+$("modalOverlay")
   ?.addEventListener(
-    "input",
+    "click",
     event => {
 
-      const query =
-        event.target.value
-          .toLowerCase()
-          .trim();
-
-      document
-        .querySelectorAll(
-          "#customersTable tr"
-        )
-        .forEach(row => {
-
-          row.style.display =
-            row.textContent
-              .toLowerCase()
-              .includes(query)
-              ? ""
-              : "none";
-
-        });
+      if (
+        event.target ===
+        $("modalOverlay")
+      ) {
+        closeModal();
+      }
 
     }
   );
 
 /* =========================================================
-   MODAL EVENTS
+   BUTTONS
    ========================================================= */
 
 $("addProductBtn")
@@ -3012,24 +3016,16 @@ $("addExpenseBtn")
     openExpenseModal
   );
 
-$("closeModalBtn")
+$("refreshReportsBtn")
   ?.addEventListener(
     "click",
-    closeModal
-  );
+    async () => {
 
-$("modalOverlay")
-  ?.addEventListener(
-    "click",
-    event => {
+      await loadAll();
 
-      if (
-        event.target ===
-        $("modalOverlay")
-      ) {
-        closeModal();
-      }
-
+      showToast(
+        "Hesabatlar yeniləndi"
+      );
     }
   );
 
@@ -3041,9 +3037,11 @@ document.addEventListener(
   "DOMContentLoaded",
   async () => {
 
-    openPage(
-      "dashboard"
-    );
+    openPage("dashboard");
+
+    createReportFilterIfMissing();
+
+    setupSearch();
 
     await checkSession();
 
@@ -3051,11 +3049,17 @@ document.addEventListener(
 );
 
 /* =========================================================
-   GLOBAL
+   GLOBAL FUNCTIONS
    ========================================================= */
+
+window.openPage =
+  openPage;
 
 window.deleteProduct =
   deleteProduct;
 
-window.openPage =
-  openPage;
+window.editExpense =
+  editExpense;
+
+window.deleteExpense =
+  deleteExpense;
